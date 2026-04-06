@@ -1,0 +1,2 @@
+.features { display:flex; gap:1rem; padding:2rem; }
+.features div { background:#333; color:#fff; padding:1rem; flex:1; }

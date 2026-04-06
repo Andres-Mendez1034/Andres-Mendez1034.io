@@ -1,0 +1,266 @@
+/* =========================
+   DashboardPage.css - Brand Connect Ultra Boosted
+========================= */
+
+/* Variables Brand Connect (omite si ya existen globalmente) */
+:root {
+  --bc-bg: #0D1117;        /* Azul noche profundo */
+  --bc-surface: #161B22;   /* Gris carbón */
+  --bc-primary: #3B82F6;   /* Azul cobalto */
+  --bc-text: #FFFFFF;      /* Blanco puro */
+  --bc-muted: #8B95A1;     /* Gris medio */
+  --bc-border: #E5E7EB;    /* Gris claro */
+  --bc-success: #10B981;   /* Verde grisáceo */
+
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+  --blur: 14px;
+  --shadow-strong: 0 18px 40px rgba(0,0,0,0.55);
+  --shadow-soft: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+/* Página base */
+.page.dashboard-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--bc-bg) 0%, #0a0e14 100%);
+  color: var(--bc-text);
+  padding-top: 76px; /* espacio para navbar fixed */
+}
+
+/* ========== HERO CABECERA ========== */
+.dp-hero {
+  position: relative;
+  padding: 2.2rem 1.25rem 1.25rem;
+  background: linear-gradient(135deg, rgba(22,27,34,0.85), rgba(13,17,23,0.9));
+  border-bottom: 1px solid rgba(229,231,235,0.06);
+  overflow: hidden;
+}
+
+.dp-hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: dpHeadIn 0.6s ease-out both;
+}
+
+.dp-hero h2 {
+  margin: 0 0 0.4rem 0;
+  font-size: 1.8rem;
+  letter-spacing: 0.4px;
+  text-shadow: 0 0 12px rgba(59,130,246,0.25);
+}
+
+.dp-hero p {
+  margin: 0;
+  color: var(--bc-muted);
+}
+
+.dp-hero-glow {
+  position: absolute;
+  right: -120px;
+  top: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(closest-side, rgba(59,130,246,0.25), transparent 70%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+/* ========== CONTENIDO ========== */
+.dp-content {
+  max-width: 1200px;
+  margin: 1.2rem auto 2.2rem;
+  padding: 0 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+/* ========== BLOQUES/SECCIONES ========== */
+.dp-section {
+  background: linear-gradient(180deg, rgba(22,27,34,0.82), rgba(13,17,23,0.95));
+  border: 1px solid rgba(229,231,235,0.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  padding: 1rem;
+}
+
+.dp-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .75rem;
+}
+.dp-section-title {
+  font-size: 1.05rem;
+  color: var(--bc-text);
+  letter-spacing: 0.3px;
+}
+.dp-section-subtitle {
+  color: var(--bc-muted);
+  font-size: .9rem;
+}
+
+/* ========== STATS GRID (si el hijo usa estas clases) ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: .9rem;
+}
+
+.stat-card {
+  grid-column: span 4;
+  background: linear-gradient(180deg, rgba(22,27,34,0.82), rgba(13,17,23,0.95));
+  border: 1px solid rgba(229,231,235,0.06);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow-soft);
+  transform: translateY(0);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  animation: statIn .5s ease-out both;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-strong);
+  border-color: rgba(59,130,246,0.35);
+}
+
+.stat-label {
+  color: var(--bc-muted);
+  font-size: .9rem;
+  margin-bottom: .3rem;
+}
+.stat-value {
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 0.3px;
+}
+.stat-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: .35rem;
+  font-size: .85rem;
+  padding: .18rem .45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(229,231,235,0.08);
+}
+.stat-trend.up {
+  color: var(--bc-success);
+  background: rgba(16,185,129,0.12);
+  border-color: rgba(16,185,129,0.35);
+}
+.stat-trend.down {
+  color: var(--danger);
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.35);
+}
+
+/* ========== TABLA CAMPAÑAS (si el hijo usa estas clases) ========== */
+.campaigns-card {
+  background: linear-gradient(180deg, rgba(22,27,34,0.82), rgba(13,17,23,0.95));
+  border: 1px solid rgba(229,231,235,0.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table thead th {
+  text-align: left;
+  font-size: .85rem;
+  color: var(--bc-muted);
+  padding: .75rem 1rem;
+  background: rgba(22,27,34,0.75);
+  border-bottom: 1px solid rgba(229,231,235,0.08);
+}
+.table tbody td {
+  padding: .8rem 1rem;
+  border-bottom: 1px solid rgba(229,231,235,0.06);
+  color: var(--bc-text);
+}
+.table tbody tr:hover {
+  background: rgba(22,27,34,0.5);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+  border: 1px solid rgba(229,231,235,0.16);
+  backdrop-filter: blur(6px);
+}
+.badge-active {
+  color: var(--bc-success);
+  background: rgba(16,185,129,0.14);
+  border-color: rgba(16,185,129,0.35);
+}
+.badge-paused {
+  color: var(--warning);
+  background: rgba(245,158,11,0.14);
+  border-color: rgba(245,158,11,0.35);
+}
+.badge-draft {
+  color: var(--bc-muted);
+  background: rgba(139,149,161,0.14);
+  border-color: rgba(139,149,161,0.35);
+}
+
+/* ========== BOTONES REUTILIZABLES ========== */
+.btn {
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--bc-primary), #4f46e5);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(59,130,246,0.25);
+}
+.btn-primary:hover { box-shadow: 0 14px 28px rgba(59,130,246,0.35); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--bc-primary);
+  border-color: rgba(59,130,246,0.45);
+}
+.btn-outline:hover { background: rgba(59,130,246,0.1); }
+
+/* ========== ANIMACIONES ========== */
+@keyframes dpHeadIn {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes statIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .stat-card { grid-column: span 6; }
+}
+@media (max-width: 640px) {
+  .dp-hero { padding: 1.6rem 1rem 1rem; }
+  .dp-hero h2 { font-size: 1.45rem; }
+  .stats-grid { grid-template-columns: repeat(6, 1fr); }
+  .stat-card { grid-column: span 6; }
+  .table thead { display: none; }
+  .table tbody tr { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem 1rem; padding: .6rem 0; }
+  .table tbody td { border: none; padding: .25rem 1rem; }
+}

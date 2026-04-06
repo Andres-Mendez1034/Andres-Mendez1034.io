@@ -1,0 +1,256 @@
+/* =========================
+   Navbar.css - Brand Connect Ultra Boosted
+   Paleta:
+   --bc-bg:#0D1117; --bc-surface:#161B22; --bc-primary:#3B82F6;
+   --bc-text:#FFFFFF; --bc-muted:#8B95A1; --bc-border:#E5E7EB; --bc-success:#10B981;
+========================= */
+
+:root {
+  --bc-bg: #0D1117;        /* Azul noche profundo */
+  --bc-surface: #161B22;   /* Gris carbón */
+  --bc-primary: #3B82F6;   /* Azul cobalto */
+  --bc-text: #FFFFFF;      /* Blanco puro */
+  --bc-muted: #8B95A1;     /* Gris medio */
+  --bc-border: #E5E7EB;    /* Gris claro */
+  --bc-success: #10B981;   /* Verde grisáceo */
+
+  --blur: 14px;
+  --radius: 14px;
+}
+
+/* Navbar principal */
+nav.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: linear-gradient(135deg, var(--bc-bg), #0b0f14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  backdrop-filter: blur(var(--blur));
+  animation: fadeInNavbar 0.8s ease-out forwards;
+  opacity: 0;
+  transition: transform 0.4s ease, background 0.4s ease, opacity 0.4s ease;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.06); /* var(--bc-border) con baja opacidad */
+}
+
+/* Ocultamiento elegante */
+nav.navbar.hide {
+  transform: translateY(-100%);
+  opacity: 0;
+  backdrop-filter: blur(8px);
+}
+
+nav.navbar.open {
+  /* leve intensificación de fondo cuando menú móvil está abierto */
+  background: linear-gradient(135deg, var(--bc-bg), #0a0e12);
+}
+
+/* Contenedor interno */
+nav.navbar > .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Lado izquierdo (logo + greeting) */
+nav.navbar .left {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Logo */
+nav.navbar .logo {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--bc-text);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  animation: fadeInLogo 1s ease-out forwards;
+  opacity: 0;
+  transition: color 0.25s ease, text-shadow 0.25s ease, transform 0.25s ease;
+  text-decoration: none;
+  will-change: transform;
+}
+
+nav.navbar .logo:hover {
+  color: var(--bc-primary);
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.55);
+  transform: translateY(-1px);
+}
+
+/* Greeting/claim */
+.navbar-greeting {
+  font-size: 0.95rem;
+  color: var(--bc-muted);
+  opacity: 0.9;
+}
+
+/* Menú de escritorio */
+nav.navbar ul.desktop-menu {
+  display: flex;
+  gap: 1.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  animation: fadeInMenu 1s ease-out forwards;
+  opacity: 0;
+}
+
+nav.navbar ul.desktop-menu li a {
+  color: var(--bc-text);
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease;
+}
+
+/* Subrayado gradiente */
+nav.navbar ul.desktop-menu li a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(to right, var(--bc-primary), #6366f1);
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
+  border-radius: 999px;
+  transition: width 0.28s ease;
+}
+
+nav.navbar ul.desktop-menu li a:hover,
+nav.navbar ul.desktop-menu li a.active {
+  color: var(--bc-primary);
+  transform: translateY(-1px);
+  text-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+}
+
+nav.navbar ul.desktop-menu li a:hover::after,
+nav.navbar ul.desktop-menu li a.active::after {
+  width: 100%;
+}
+
+/* Botón hamburguesa */
+button.menu-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: none; /* hidden on desktop */
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.32rem;
+  padding: 0.5rem;
+  z-index: 101;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+button.menu-toggle:hover {
+  opacity: 0.9;
+}
+
+button.menu-toggle span {
+  display: block;
+  width: 1.6rem;
+  height: 2px;
+  background-color: var(--bc-text);
+  border-radius: 4px;
+  transition: all 0.4s ease;
+}
+
+/* Animación a X */
+button.menu-toggle.open span:nth-child(1) {
+  transform: rotate(45deg) translateY(6px);
+}
+button.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+button.menu-toggle.open span:nth-child(3) {
+  transform: rotate(-45deg) translateY(-6px);
+}
+
+/* Menú móvil */
+nav.navbar ul.mobile-menu {
+  display: none; /* controlled via JSX render */
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 0 1.1rem;
+  background: linear-gradient(135deg, var(--bc-surface), #121820);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  list-style: none;
+  border-top: 1px solid rgba(229,231,235,0.08);
+  margin: 0;
+  animation: fadeInMobileMenu 0.5s ease-out forwards;
+}
+
+nav.navbar ul.mobile-menu li a {
+  font-size: 1.06rem;
+  font-weight: 600;
+  color: var(--bc-text);
+  text-decoration: none;
+  transition: color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease;
+  padding: 0.25rem 0;
+}
+
+nav.navbar ul.mobile-menu li a:hover,
+nav.navbar ul.mobile-menu li a.active {
+  color: var(--bc-primary);
+  transform: translateY(-1px);
+  text-shadow: 0 0 6px rgba(59,130,246,0.5);
+}
+
+/* Animaciones */
+@keyframes fadeInNavbar {
+  0% { opacity: 0; transform: translateY(-30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLogo {
+  0% { opacity: 0; transform: translateX(-30px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInMenu {
+  0% { opacity: 0; transform: translateX(30px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInMobileMenu {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  nav.navbar ul.mobile-menu {
+    display: none !important;
+  }
+  button.menu-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  nav.navbar ul.desktop-menu {
+    display: none;
+  }
+  nav.navbar > .container {
+    flex-direction: row;
+    align-items: center;
+  }
+  .navbar-greeting {
+    display: none; /* reduce ruido en móvil */
+  }
+  button.menu-toggle {
+    display: flex;
+  }
+  nav.navbar {
+    backdrop-filter: blur(8px);
+  }
+}

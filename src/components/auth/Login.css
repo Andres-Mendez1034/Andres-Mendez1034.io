@@ -1,0 +1,217 @@
+:root {
+  --bc-bg: #0D1117;
+  --bc-surface: #161B22;
+  --bc-primary: #3B82F6;
+  --bc-text: #FFFFFF;
+  --bc-muted: #8B95A1;
+  --bc-success: #10B981;
+  --danger: #ef4444;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+  --blur: 14px;
+  --shadow-soft: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+/* =========================
+   Wrapper general
+========================= */
+.auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, var(--bc-bg), #0a0e14);
+  color: var(--bc-text);
+  padding: 2rem 1rem;
+}
+
+/* =========================
+   Card
+========================= */
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: linear-gradient(180deg, rgba(22,27,34,0.82), rgba(13,17,23,0.95));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  padding: 1.5rem 1.8rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: authIn .5s ease-out both;
+}
+
+/* Glow sutil */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  top: -120px; 
+  right: -120px;
+  width: 320px; 
+  height: 320px;
+  background: radial-gradient(closest-side, rgba(59,130,246,0.22), transparent 70%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+/* =========================
+   Header
+========================= */
+.auth-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.auth-badge {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  color: var(--bc-primary);
+  background: rgba(59,130,246,0.14);
+  border-radius: 999px;
+  margin-bottom: 0.6rem;
+}
+.auth-title {
+  font-size: 1.4rem;
+  margin: 0;
+  letter-spacing: 0.4px;
+}
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: var(--bc-muted);
+  margin: 0.3rem 0 0 0;
+}
+
+/* =========================
+   Formulario
+========================= */
+.auth-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.form-field {
+  display: grid;
+  gap: 0.35rem;
+}
+.form-field label {
+  font-size: 0.85rem;
+  color: var(--bc-muted);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  background: rgba(22,27,34,0.7);
+  color: var(--bc-text);
+  border: 1px solid rgba(229,231,235,0.08);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9rem;
+  outline: none;
+  transition: all 0.25s ease;
+}
+.input:focus {
+  border-color: rgba(59,130,246,0.6);
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
+  background: rgba(22,27,34,0.9);
+}
+.input.error {
+  border-color: rgba(239,68,68,0.6);
+  box-shadow: 0 0 0 4px rgba(239,68,68,0.14);
+}
+
+/* =========================
+   Toggle password
+========================= */
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  translate: 0 -50%;
+  background: rgba(22,27,34,0.7);
+  border: 1px solid rgba(229,231,235,0.08);
+  border-radius: 10px;
+  color: var(--bc-muted);
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.password-toggle:hover {
+  background: rgba(59,130,246,0.12);
+  color: var(--bc-primary);
+}
+
+/* =========================
+   Acciones
+========================= */
+.auth-actions {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.btn {
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--bc-primary), #4f46e5);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(59,130,246,0.25);
+}
+.btn-primary:hover {
+  box-shadow: 0 14px 28px rgba(59,130,246,0.35);
+}
+
+/* =========================
+   Errores
+========================= */
+.form-error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.35);
+  padding: 0.5rem 0.7rem;
+  border-radius: 12px;
+}
+
+/* =========================
+   Animación
+========================= */
+@keyframes authIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 500px) {
+  .auth-card {
+    padding: 1rem 1.2rem;
+  }
+  .auth-title {
+    font-size: 1.25rem;
+  }
+  .auth-subtitle {
+    font-size: 0.9rem;
+  }
+  .btn {
+    padding: 0.65rem 0.85rem;
+  }
+}
