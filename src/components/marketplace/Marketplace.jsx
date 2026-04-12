@@ -1,31 +1,42 @@
-// src/pages/Marketplace/Marketplace.jsx
 import React, { useState } from "react";
 import { items } from "../../data/items";
-import { useMarketplace } from "../../hooks/useMarketplace"; // hook del carrito
-import "./Marketplace.css"; 
+import { useMarketplace } from "../../hooks/useMarketplace";
+import "./Marketplace.css";
 
 export default function Marketplace() {
   const [category, setCategory] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
   const [sort, setSort] = useState("trending");
   const [query, setQuery] = useState("");
 
-  const { addItem } = useMarketplace(); // función para agregar al carrito
+  const { addItem } = useMarketplace();
 
   const filtered = items
-    .filter(i => (category === "all" ? true : i.tag.toLowerCase() === category.toLowerCase()))
-    .filter(i => (statusFilter === "all" ? true : i.status === statusFilter))
-    .filter(i => i.title.toLowerCase().includes(query.toLowerCase()))
+    .filter(i =>
+      category === "all"
+        ? true
+        : i.tag.toLowerCase() === category.toLowerCase()
+    )
+    .filter(i =>
+      statusFilter === "all"
+        ? true
+        : i.status === statusFilter
+    )
+    .filter(i =>
+      locationFilter === "all"
+        ? true
+        : i.location === locationFilter
+    )
+    .filter(i =>
+      i.title.toLowerCase().includes(query.toLowerCase())
+    )
     .sort((a, b) => {
       if (sort === "price-asc") {
-        const aPrice = Number(a.price.replace("$", ""));
-        const bPrice = Number(b.price.replace("$", ""));
-        return aPrice - bPrice;
+        return Number(a.price.replace("$", "")) - Number(b.price.replace("$", ""));
       }
       if (sort === "price-desc") {
-        const aPrice = Number(a.price.replace("$", ""));
-        const bPrice = Number(b.price.replace("$", ""));
-        return bPrice - aPrice;
+        return Number(b.price.replace("$", "")) - Number(a.price.replace("$", ""));
       }
       if (sort === "trending") {
         return (b.trending ? 1 : 0) - (a.trending ? 1 : 0);
@@ -33,19 +44,22 @@ export default function Marketplace() {
       return 0;
     });
 
+  const locations = ["Suba", "Kennedy", "Engativá", "Chapinero"];
+
   return (
     <div className="marketplace">
-      {/* Hero */}
+
+      {/* HERO */}
       <section className="mk-hero">
         <div className="mk-hero-content">
           <h1>Marketplace de Influencers</h1>
           <p>Explora y conecta con los mejores influencers colombianos</p>
         </div>
-        <div className="mk-hero-glow"></div>
       </section>
 
-      {/* Filtros */}
+      {/* FILTROS */}
       <div className="mk-filters">
+
         <div className="mk-search">
           <input
             type="text"
@@ -54,7 +68,10 @@ export default function Marketplace() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
+
         <div className="mk-selects">
+
+          {/* CATEGORÍA */}
           <div className="select">
             <label>Categoría</label>
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -67,6 +84,8 @@ export default function Marketplace() {
               <option value="beauty">Beauty</option>
             </select>
           </div>
+
+          {/* ESTADO */}
           <div className="select">
             <label>Estado</label>
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
@@ -76,6 +95,21 @@ export default function Marketplace() {
               <option value="soldout">Agotado</option>
             </select>
           </div>
+
+          {/* 📍 LOCALIDAD (NUEVO) */}
+          <div className="select">
+            <label>Localidad</label>
+            <select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)}>
+              <option value="all">Todas</option>
+              {locations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* ORDEN */}
           <div className="select">
             <label>Ordenar</label>
             <select value={sort} onChange={(e) => setSort(e.target.value)}>
@@ -84,45 +118,66 @@ export default function Marketplace() {
               <option value="price-desc">Precio ↓</option>
             </select>
           </div>
+
         </div>
       </div>
 
-      {/* Grid de resultados */}
+      {/* GRID */}
       <div className="mk-grid">
         {filtered.map((i) => (
           <div key={i.id} className="mk-card">
+
             <div className="mk-card-media">
               <div className="mk-thumb"></div>
-              {i.trending && <span className="badge badge-primary">🔥 Trending</span>}
-              {i.status === "available" && <span className="badge badge-success">Disponible</span>}
-              {i.status === "limited" && <span className="badge badge-muted">Limitado</span>}
-              {i.status === "soldout" && <span className="badge badge-muted">Agotado</span>}
+
+              {i.trending && (
+                <span className="badge badge-primary">🔥 Trending</span>
+              )}
+
+              {i.status === "available" && (
+                <span className="badge badge-success">Disponible</span>
+              )}
+
+              {i.status === "limited" && (
+                <span className="badge badge-muted">Limitado</span>
+              )}
+
+              {i.status === "soldout" && (
+                <span className="badge badge-muted">Agotado</span>
+              )}
             </div>
+
             <div className="mk-card-body">
               <h3 className="mk-card-title">{i.title}</h3>
+
               <div className="mk-card-meta">
                 <span className="chip">{i.tag}</span>
+                <span className="chip">{i.location}</span> {/* 👈 NUEVO */}
                 <span className="price">{i.price}</span>
               </div>
-              {/* Botón agregar al carrito */}
+
               {i.status !== "soldout" && (
                 <button
                   className="add-to-cart-btn"
-                  onClick={() => addItem({
-                    id: i.id,
-                    name: i.title,           // nombre que se verá en el carrito
-                    price: Number(i.price.replace("$","")), // precio como número
-                    image: i.image || "",    // si tienes imagen en items
-                    quantity: 1
-                  })}
+                  onClick={() =>
+                    addItem({
+                      id: i.id,
+                      name: i.title,
+                      price: Number(i.price.replace("$", "")),
+                      image: i.image || "",
+                      quantity: 1,
+                    })
+                  }
                 >
                   Agregar al carrito
                 </button>
               )}
+
             </div>
           </div>
         ))}
       </div>
+
     </div>
   );
 }

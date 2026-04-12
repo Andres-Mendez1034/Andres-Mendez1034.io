@@ -1,12 +1,11 @@
-// src/components/auth/RegisterForm.jsx
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import MFASetup from "./MFASetup.jsx"; // Componente MFA
 import "./Register.css";
 
-export default function RegisterForm() {
-  const { register, mfaRequired, user } = useContext(AuthContext);
+export default function RegisterForm({ onSuccess }) {
+  const { register } = useContext(AuthContext);
 
+  const [role, setRole] = useState("influencer"); // 👈 NUEVO
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,7 +15,7 @@ export default function RegisterForm() {
   const [error, setError] = useState("");
 
   // ----------------------
-  // Validación de contraseña
+  // password score
   // ----------------------
   const getPasswordScore = (pwd) => {
     let score = 0;
@@ -27,153 +26,143 @@ export default function RegisterForm() {
     if (/[^A-Za-z0-9]/.test(pwd)) score++;
     return Math.min(score, 4);
   };
+
   const score = getPasswordScore(password);
-  const strengthLabel = ["Muy débil", "Débil", "Media", "Fuerte", "Muy fuerte"][score] || "Muy débil";
 
   // ----------------------
-  // Validaciones del formulario
+  // validate
   // ----------------------
   const validate = () => {
-    if (!email || !password || !confirmPassword) return "Completa todos los campos.";
-    if (!/^\S+@\S+\.\S+$/.test(email)) return "Ingresa un correo válido.";
-    if (password.length < 8) return "La contraseña debe tener al menos 8 caracteres.";
-    if (password !== confirmPassword) return "Las contraseñas no coinciden.";
-    if (!acceptTerms) return "Debes aceptar los términos y condiciones.";
+    if (!email || !password || !confirmPassword)
+      return "Completa todos los campos.";
+    if (!/^\S+@\S+\.\S+$/.test(email)) return "Correo inválido.";
+    if (password.length < 8)
+      return "Mínimo 8 caracteres.";
+    if (password !== confirmPassword)
+      return "No coinciden las contraseñas.";
+    if (!acceptTerms)
+      return "Debes aceptar términos.";
     return "";
   };
 
   // ----------------------
-  // Enviar registro
+  // submit
   // ----------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     const msg = validate();
     if (msg) return setError(msg);
 
     try {
       setLoading(true);
-      await register(email, password); // ✅ solo registro
-      // Si mfaRequired es true, MFASetup se mostrará automáticamente
+
+      await register(email, password);
+
+      // 👉 DECISIÓN DE FLUJO SEGÚN ROL
+      onSuccess?.(role);
+
     } catch (err) {
-      setError(err.response?.data?.message || "No pudimos crear tu cuenta. Intenta de nuevo.");
+      setError("Error al crear cuenta");
     } finally {
       setLoading(false);
     }
   };
 
-  // ----------------------
-  // Mostrar MFA si es necesario
-  // ----------------------
-  if (mfaRequired && user) {
-    return <MFASetup email={user.username} />;
-  }
-
-  // ----------------------
-  // Formulario de registro
-  // ----------------------
   return (
     <div className="register-page">
-      <div className="auth-card" role="region" aria-labelledby="register-title">
+      <div className="auth-card">
+
         <header className="auth-header">
           <span className="auth-badge">Registro</span>
-          <h2 id="register-title" className="auth-title">Crea tu cuenta</h2>
-          <p className="auth-subtitle">Introduce tus datos para registrarte</p>
+          <h2 className="auth-title">Elige tu tipo de cuenta</h2>
+          <p className="auth-subtitle">
+            Influencer o Cliente
+          </p>
         </header>
 
-        {!!error && (
-          <div className="form-error" role="alert" aria-live="assertive">{error}</div>
-        )}
+        {/* 🔥 SELECT ROL */}
+        <div className="form-field">
+          <label>Tipo de cuenta</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="input"
+          >
+            <option value="influencer">Influencer</option>
+            <option value="client">Cliente (Negocio)</option>
+          </select>
+        </div>
 
-        <form className="auth-form" onSubmit={handleSubmit} noValidate>
+        <form className="auth-form" onSubmit={handleSubmit}>
+
           {/* Email */}
           <div className="form-field">
-            <label htmlFor="email">Correo electrónico</label>
+            <label>Correo electrónico</label>
             <input
-              id="email"
               type="email"
               className="input"
-              placeholder="correo@ejemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
               required
-              aria-invalid={!!error && !/^\S+@\S+\.\S+$/.test(email)}
             />
           </div>
 
-          {/* Contraseña */}
+          {/* Password */}
           <div className="form-field">
-            <label htmlFor="password">Contraseña</label>
-            <div className="input-wrapper">
-              <input
-                id="password"
-                type={showPwd ? "text" : "password"}
-                className="input"
-                placeholder="Mínimo 8 caracteres"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPwd((v) => !v)}
-                aria-label={showPwd ? "Ocultar contraseña" : "Mostrar contraseña"}
-              >
-                {showPwd ? "Ocultar" : "Mostrar"}
-              </button>
-            </div>
-            <div className={`pwd-strength level-${score}`} aria-live="polite">
-              <span className="label">{strengthLabel}</span>
-            </div>
+            <label>Contraseña</label>
+
+            <input
+              type={showPwd ? "text" : "password"}
+              className="input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPwd(!showPwd)}
+            >
+              {showPwd ? "Ocultar" : "Mostrar"}
+            </button>
           </div>
 
-          {/* Confirmar contraseña */}
+          {/* Confirm */}
           <div className="form-field">
-            <label htmlFor="confirmPassword">Confirmar contraseña</label>
+            <label>Confirmar contraseña</label>
+
             <input
-              id="confirmPassword"
               type={showPwd ? "text" : "password"}
-              className={`input${password && confirmPassword && password !== confirmPassword ? " error" : ""}`}
-              placeholder="Repite tu contraseña"
+              className="input"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
               required
             />
-            {password && confirmPassword && password !== confirmPassword && (
-              <small className="hint error-hint" role="alert">Las contraseñas no coinciden.</small>
-            )}
           </div>
 
-          {/* Términos */}
-          <div className="form-field terms-field">
-            <label className="terms-label">
+          {/* Terms */}
+          <div className="form-field">
+            <label>
               <input
                 type="checkbox"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
-                aria-checked={acceptTerms}
-                required
               />
-              <span>Acepto los <a href="/terms">Términos y Condiciones</a> y la <a href="/privacy">Política de Privacidad</a>.</span>
+              Acepto términos
             </label>
           </div>
 
-          {/* Botones */}
-          <div className="auth-actions">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={loading}
-              aria-busy={loading ? "true" : "false"}
-            >
-              {loading ? "Creando..." : "Registrarse"}
-            </button>
-            <a className="btn btn-ghost" href="/login">Ya tengo cuenta</a>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={loading}
+          >
+            {loading ? "Creando..." : "Continuar"}
+          </button>
+
         </form>
       </div>
     </div>

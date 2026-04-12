@@ -1,40 +1,56 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 
-import Home from '../pages/Home/Home';
-import MarketplacePage from '../pages/Marketplace/MarketplacePage';
-import Profile from '../pages/Profile/Profile';
-import DashboardPage from '../pages/Dashboard/DashboardPage';
-import Login from '../pages/Login/Login';
-import Register from '../pages/Register/Register';
-import CartPage from '../pages/Cart/CartPage'; 
+import Layout from "../layout/Layout";
 
-import Pricing from '../pages/Pricing/Pricing';
-import Support from '../pages/Support/Support';
-import Status from '../pages/Status/Status';
+import InfluOnboarding from "../pages/Onboarding/InfluOnboarding/Onboarding";
+import ClientOnboarding from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
 
-import Privacy from '../pages/Legal/Privacy/Privacy';
-import Terms from '../pages/Legal/Terms/Terms';
-import Cookies from '../pages/Legal/Cookies/Cookies';
+import Home from "../pages/Home/Home";
+import MarketplacePage from "../pages/Marketplace/MarketplacePage";
+import Profile from "../pages/Profile/Profile";
+import DashboardPage from "../pages/Dashboard/DashboardPage";
+import Login from "../pages/Login/Login";
+import Register from "../pages/Register/Register";
+import CartPage from "../pages/Cart/CartPage";
+
+import Pricing from "../pages/Pricing/Pricing";
+import Support from "../pages/Support/Support";
+import Status from "../pages/Status/Status";
+
+import Privacy from "../pages/Legal/Privacy/Privacy";
+import Terms from "../pages/Legal/Terms/Terms";
+import Cookies from "../pages/Legal/Cookies/Cookies";
 
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/marketplace" element={<MarketplacePage />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/cart" element={<CartPage />} /> 
+      <Route element={<Layout />}>
 
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/support" element={<Support />} />
-      <Route path="/status" element={<Status />} />
+        {/* CORE */}
+        <Route path="/" element={<Home />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/cart" element={<CartPage />} />
 
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/terms" element={<Terms />} />
-      <Route path="/cookies" element={<Cookies />} />
+        {/* ONBOARDING */}
+        <Route path="/onboarding/influencer" element={<InfluOnboarding />} />
+        <Route path="/onboarding/client" element={<ClientOnboarding />} />
+
+        {/* INFO */}
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/status" element={<Status />} />
+
+        {/* LEGAL */}
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/cookies" element={<Cookies />} />
+
+      </Route>
     </Routes>
   );
 }

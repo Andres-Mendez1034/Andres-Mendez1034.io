@@ -5,8 +5,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
 
-  // 🔹 base en '/' para desarrollo local
-  base: '/',
+  base: '/Andres-Mendez1034.io/',
 
   resolve: {
     alias: {
