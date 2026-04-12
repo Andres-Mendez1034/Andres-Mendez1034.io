@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 export default function Footer() {
@@ -8,30 +9,30 @@ export default function Footer() {
     <footer className="footer" role="contentinfo">
       <div className="footer-top">
         <div className="ft-col brand">
-          <a href="/" className="brand-link" aria-label="Brand Connect - inicio">
+          <Link to="/" className="brand-link" aria-label="Brand Connect - inicio">
             <span className="brand-logo">BC</span>
             <span className="brand-name">Brand Connect</span>
-          </a>
+          </Link>
           <p className="brand-tag">Conecta. Crea. Crece.</p>
         </div>
 
         <nav className="ft-col nav" aria-label="Enlaces rápidos">
           <h4 className="ft-title">Navegación</h4>
           <ul>
-            <li><a href="/">Inicio</a></li>
-            <li><a href="/marketplace">Marketplace</a></li>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/profile">Perfil</a></li>
+            <li><Link to="/">Inicio</Link></li>
+            <li><Link to="/marketplace">Marketplace</Link></li>
+            <li><Link to="/dashboard">Dashboard</Link></li>
+            <li><Link to="/profile">Perfil</Link></li>
           </ul>
         </nav>
 
         <nav className="ft-col resources" aria-label="Recursos">
           <h4 className="ft-title">Recursos</h4>
           <ul>
-            <li><a href="/docs">Docs</a></li>
-            <li><a href="/pricing">Precios</a></li>
-            <li><a href="/support">Soporte</a></li>
-            <li><a href="/status">Status</a></li>
+            <li><Link to="/docs">Docs</Link></li>
+            <li><Link to="/pricing">Precios</Link></li>
+            <li><Link to="/support">Soporte</Link></li>
+            <li><Link to="/status">Status</Link></li>
           </ul>
         </nav>
 
@@ -59,9 +60,9 @@ export default function Footer() {
       <div className="footer-legal">
         <p>© {year} Brand Connect</p>
         <ul className="legal-links" aria-label="Legales">
-          <li><a href="/privacy">Privacidad</a></li>
-          <li><a href="/terms">Términos</a></li>
-          <li><a href="/cookies">Cookies</a></li>
+          <li><Link to="/privacy">Privacidad</Link></li>
+          <li><Link to="/terms">Términos</Link></li>
+          <li><Link to="/cookies">Cookies</Link></li>
         </ul>
       </div>
     </footer>

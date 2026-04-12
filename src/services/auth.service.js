@@ -1,38 +1,22 @@
-// src/services/auth.service.js
-import axios from "axios";
-
-const API_URL = "http://localhost:3000";
-
+// src/services/auth.service.js (mock sin backend)
 export const register = async (userData) => {
-  try {
-    const res = await axios.post(`${API_URL}/register`, userData, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.data;
-  } catch (err) {
-    console.error("Error register:", err.response?.data || err.message);
-    throw err;
-  }
+  console.log("Simulando registro:", userData);
+  // devolvemos un usuario simulado
+  return { id: 1, name: userData.name, email: userData.email };
 };
 
 export const login = async (userData) => {
-  try {
-    const res = await axios.post(`${API_URL}/login`, userData, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.data;
-  } catch (err) {
-    console.error("Error login:", err.response?.data || err.message);
-    throw err;
-  }
+  console.log("Simulando login:", userData);
+  // devolvemos un usuario simulado
+  return { id: 1, name: "Usuario Demo", email: userData.email };
 };
 
 export const getMFAQR = async (email) => {
-  const res = await axios.get(`${API_URL}/mfa/setup?email=${email}`);
-  return res.data;
+  console.log("Simulando MFA QR para:", email);
+  return { qrCode: "MOCK_QR_CODE" };
 };
 
 export const verifyMFA = async ({ email, token }) => {
-  const res = await axios.post(`${API_URL}/mfa/verify`, { email, token });
-  return res.data;
+  console.log("Simulando verificación MFA:", email, token);
+  return { verified: true };
 };

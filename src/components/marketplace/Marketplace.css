@@ -2,15 +2,15 @@
    Marketplace.css - Brand Connect Ultra Boosted
 ========================= */
 
-/* Variables Brand Connect (si ya existen globalmente, puedes omitir este bloque) */
+/* Variables Brand Connect */
 :root {
-  --bc-bg: #0D1117;        /* Azul noche profundo */
-  --bc-surface: #161B22;   /* Gris carbón */
-  --bc-primary: #3B82F6;   /* Azul cobalto */
-  --bc-text: #FFFFFF;      /* Blanco puro */
-  --bc-muted: #8B95A1;     /* Gris medio */
-  --bc-border: #E5E7EB;    /* Gris claro */
-  --bc-success: #10B981;   /* Verde grisáceo */
+  --bc-bg: #0D1117;
+  --bc-surface: #161B22;
+  --bc-primary: #3B82F6;
+  --bc-text: #FFFFFF;
+  --bc-muted: #8B95A1;
+  --bc-border: #E5E7EB;
+  --bc-success: #10B981;
 
   --radius: 16px;
   --radius-sm: 12px;
@@ -24,10 +24,12 @@
   min-height: 100vh;
   background: linear-gradient(180deg, var(--bc-bg) 0%, #0a0e14 100%);
   color: var(--bc-text);
-  padding-top: 76px; /* espacio para navbar fixed */
+  padding-top: 76px;
 }
 
-/* ========== HERO ========== */
+/* =================================
+   HERO
+================================= */
 .mk-hero {
   position: relative;
   padding: 3.5rem 1.25rem 2.2rem;
@@ -44,22 +46,15 @@
 
 .mk-hero h1 {
   font-size: 2.1rem;
-  letter-spacing: 0.6px;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
   text-shadow: 0 0 12px rgba(59,130,246,0.25);
 }
 
 .mk-hero p {
   color: var(--bc-muted);
-  margin: 0 0 1.1rem 0;
+  margin: 0;
 }
 
-.mk-hero-cta {
-  display: flex;
-  gap: 0.75rem;
-}
-
-/* Glow decorativo */
 .mk-hero-glow {
   position: absolute;
   right: -120px;
@@ -71,36 +66,25 @@
   pointer-events: none;
 }
 
-/* ========== FILTROS ========== */
+/* =================================
+   FILTROS
+================================= */
 .mk-filters {
   max-width: 1200px;
   margin: 1.2rem auto 0.6rem;
   padding: 0 1.25rem;
   display: grid;
-  grid-template-columns: 1fr auto;
   gap: 1rem;
-  align-items: end;
+  grid-template-columns: 1fr auto;
 }
 
 .mk-search input {
   width: 100%;
-  background: rgba(22,27,34,0.7);
-  color: var(--bc-text);
-  border: 1px solid rgba(229,231,235,0.08);
-  border-radius: var(--radius);
   padding: 0.85rem 1rem;
-  outline: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-}
-
-.mk-search input::placeholder {
-  color: var(--bc-muted);
-}
-
-.mk-search input:focus {
-  border-color: rgba(59,130,246,0.6);
-  box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
-  background: rgba(22,27,34,0.9);
+  border-radius: var(--radius);
+  background: rgba(22,27,34,0.7);
+  border: 1px solid rgba(229,231,235,0.08);
+  color: var(--bc-text);
 }
 
 .mk-selects {
@@ -108,37 +92,26 @@
   gap: 0.75rem;
 }
 
-.select {
-  display: grid;
-  gap: 0.35rem;
-}
-
 .select label {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--bc-muted);
 }
 
 .select select {
   background: rgba(22,27,34,0.7);
   color: var(--bc-text);
-  border: 1px solid rgba(229,231,235,0.08);
   border-radius: var(--radius);
-  padding: 0.7rem 0.9rem;
-  outline: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-}
-.select select:focus {
-  border-color: rgba(59,130,246,0.6);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
-  background: rgba(22,27,34,0.9);
+  padding: 0.7rem;
+  border: 1px solid rgba(229,231,235,0.08);
 }
 
-/* ========== GRID & CARDS ========== */
+/* =================================
+   GRID & CARDS
+================================= */
 .mk-grid {
   max-width: 1200px;
-  margin: 0.8rem auto 2.4rem;
+  margin: 0 auto 2.5rem;
   padding: 0 1.25rem;
-
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 1rem;
@@ -147,39 +120,36 @@
 .mk-card {
   grid-column: span 4;
   background: linear-gradient(180deg, rgba(22,27,34,0.8), rgba(13,17,23,0.95));
-  border: 1px solid rgba(229,231,235,0.06);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-soft);
-  transform: translateY(0);
-  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
-  animation: cardIn 0.6s ease-out both;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: cardIn 0.6s ease both;
 }
 
 .mk-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-strong);
-  border-color: rgba(59,130,246,0.35);
 }
 
-/* Media/Thumb */
+/* Media */
 .mk-card-media {
   position: relative;
   height: 160px;
   background: linear-gradient(135deg, #0f1420, #0b1018);
-  border-bottom: 1px solid rgba(229,231,235,0.06);
 }
 
 .mk-thumb {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(120px 120px at 20% 30%, rgba(59,130,246,0.2), transparent),
-    radial-gradient(140px 140px at 80% 70%, rgba(16,185,129,0.18), transparent);
-  filter: blur(0.2px);
+    radial-gradient(120px 120px at 20% 30%, rgba(59,130,246,0.25), transparent),
+    radial-gradient(160px 160px at 80% 70%, rgba(16,185,129,0.25), transparent);
 }
 
-/* Badges */
+/* =================================
+   BADGES (SOLUCIÓN DE SOLAPAMIENTO)
+================================= */
 .badge {
   position: absolute;
   top: 10px;
@@ -188,142 +158,112 @@
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(229,231,235,0.18);
+  z-index: 2;
 }
+
+/* Trending */
 .badge-primary {
   background: rgba(59,130,246,0.18);
   color: var(--bc-primary);
-  border-color: rgba(59,130,246,0.35);
-}
-.badge-success {
-  background: rgba(16,185,129,0.16);
-  color: var(--bc-success);
-  border-color: rgba(16,185,129,0.35);
-  left: unset; right: 10px;
-}
-.badge-muted {
-  background: rgba(139,149,161,0.16);
-  color: var(--bc-muted);
-  border-color: rgba(139,149,161,0.35);
 }
 
-/* Body */
+/* Disponible */
+.badge-success {
+  right: 10px;
+  left: unset;
+  background: rgba(16,185,129,0.16);
+  color: var(--bc-success);
+}
+
+/* Limitado / Agotado */
+.badge-muted {
+  right: 10px;
+  left: unset;
+  top: 38px;
+  background: rgba(139,149,161,0.16);
+  color: var(--bc-muted);
+}
+
+/* =================================
+   BODY
+================================= */
 .mk-card-body {
   padding: 1rem;
 }
 
 .mk-card-title {
-  margin: 0 0 0.35rem 0;
   font-size: 1.05rem;
-  letter-spacing: 0.2px;
+  margin-bottom: 0.3rem;
 }
 
 .mk-card-meta {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   color: var(--bc-muted);
   margin-bottom: 0.8rem;
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--bc-muted);
-  background: rgba(139,149,161,0.12);
-  border: 1px solid rgba(229,231,235,0.08);
-  padding: 0.15rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-}
-
 .price {
-  color: var(--bc-text);
   font-weight: 800;
+  color: var(--bc-text);
 }
 
-/* Acciones */
-.mk-card-actions {
-  display: flex;
-  gap: 0.6rem;
-}
-
-/* Botones */
-.btn {
-  border: 1px solid transparent;
+/* =================================
+   BOTÓN AGREGAR AL CARRITO
+================================= */
+.add-to-cart-btn {
+  width: 100%;
+  padding: 0.65rem 1rem;
   border-radius: var(--radius-sm);
-  padding: 0.55rem 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-  will-change: transform;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn-primary {
   background: linear-gradient(135deg, var(--bc-primary), #4f46e5);
   color: #fff;
-  box-shadow: 0 10px 20px rgba(59,130,246,0.25);
-}
-.btn-primary:hover {
-  box-shadow: 0 14px 28px rgba(59,130,246,0.35);
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--bc-primary);
-  border-color: rgba(59,130,246,0.45);
-}
-.btn-outline:hover {
-  background: rgba(59,130,246,0.1);
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(59,130,246,0.3);
+  transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s;
 }
 
-.btn-ghost {
-  background: rgba(22,27,34,0.65);
-  color: var(--bc-text);
-  border-color: rgba(229,231,235,0.08);
-}
-.btn-ghost:hover {
-  background: rgba(22,27,34,0.85);
+.add-to-cart-btn:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 16px 36px rgba(59,130,246,0.45);
+  filter: brightness(1.1);
 }
 
-/* ========== Animaciones ========== */
+/* Feedback visual */
+@keyframes addPulse {
+  from { box-shadow: 0 0 0 0 rgba(59,130,246,0.6); }
+  to { box-shadow: 0 0 0 24px rgba(59,130,246,0); }
+}
+
+.add-to-cart-btn:active {
+  transform: scale(0.96);
+  animation: addPulse 0.45s ease-out;
+}
+
+/* =================================
+   ANIMACIONES
+================================= */
 @keyframes heroIn {
-  0% { opacity: 0; transform: translateY(-10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-@keyframes cardIn {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ========== Responsive ========== */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =================================
+   RESPONSIVE
+================================= */
 @media (max-width: 1024px) {
   .mk-card { grid-column: span 6; }
 }
 
 @media (max-width: 640px) {
-  .mk-hero { padding: 2.2rem 1rem 1.4rem; }
-  .mk-hero h1 { font-size: 1.6rem; }
-  .mk-hero-cta { flex-wrap: wrap; }
-
-  .mk-filters {
-    grid-template-columns: 1fr;
-  }
-
-  .mk-selects {
-    justify-content: space-between;
-  }
-
-  .mk-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
+  .mk-grid { grid-template-columns: repeat(6, 1fr); }
   .mk-card { grid-column: span 6; }
 }

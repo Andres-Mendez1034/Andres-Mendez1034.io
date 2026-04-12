@@ -1,0 +1,186 @@
+/* ========================
+   Support.css
+   Página de Soporte
+   Paleta unificada con Footer
+   CSS totalmente aislado
+======================== */
+
+/* ========================
+   CONTENEDOR PRINCIPAL
+======================== */
+
+.support-page {
+  max-width: 620px;
+  margin: 3rem auto;
+  padding: 3.5rem 2.25rem;
+
+  background: linear-gradient(135deg, #0f172a, #020617);
+  border-radius: 24px;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px #1e293b;
+}
+
+/* ========================
+   TÍTULO Y TEXTO
+======================== */
+
+.support-page h1 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.support-page > p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #9ca3af;
+  margin-bottom: 2rem;
+}
+
+/* ========================
+   MENSAJE DE ÉXITO
+======================== */
+
+.support-page .support-success {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+
+  border-radius: 10px;
+  border: 1px solid rgba(0, 180, 216, 0.35);
+
+  background: rgba(0, 180, 216, 0.15);
+  color: #90E0EF;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ========================
+   FORMULARIO
+======================== */
+
+.support-page .support-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================
+   GRUPO DE CAMPO
+======================== */
+
+.support-page .form-group {
+  margin-bottom: 1.25rem;
+}
+
+/* Label */
+.support-page .form-group label {
+  display: block;
+  margin-bottom: 0.35rem;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  color: #cbd5f5;
+}
+
+/* Inputs y textarea */
+.support-page .form-group input,
+.support-page .form-group textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+
+  font-size: 0.9rem;
+  border-radius: 8px;
+  border: 1px solid #334155;
+
+  background-color: #020617;
+  color: #ffffff;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Placeholder */
+.support-page .form-group input::placeholder,
+.support-page .form-group textarea::placeholder {
+  color: #64748b;
+}
+
+/* Focus */
+.support-page .form-group input:focus,
+.support-page .form-group textarea:focus {
+  outline: none;
+  border-color: #00B4D8;
+  box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.35);
+}
+
+/* Textarea */
+.support-page .form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ========================
+   BOTÓN
+======================== */
+
+.support-page .support-btn {
+  align-self: flex-start;
+  margin-top: 0.75rem;
+
+  padding: 0.7rem 1.6rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  background: linear-gradient(135deg, #0077B6, #00B4D8);
+  color: #ffffff;
+
+  box-shadow: 0 10px 26px rgba(0, 119, 182, 0.55);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.25s ease;
+}
+
+/* Hover */
+.support-page .support-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0, 119, 182, 0.75);
+}
+
+/* Disabled */
+.support-page .support-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
+
+@media (max-width: 600px) {
+  .support-page {
+    padding: 3rem 1.5rem;
+    border-radius: 18px;
+  }
+
+  .support-page .support-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -1,0 +1,188 @@
+/* ========================
+   Pricing.css
+   Página de Planes de Precios
+   Paleta unificada con Footer
+======================== */
+
+/* ========================
+   CONTENEDOR PRINCIPAL
+======================== */
+
+.pricing-page {
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 3.5rem 2.5rem;
+
+  background: linear-gradient(135deg, #0f172a, #020617);
+  border-radius: 28px;
+
+  box-shadow:
+    0 22px 55px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px #1e293b;
+}
+
+/* ========================
+   TÍTULO Y DESCRIPCIÓN
+======================== */
+
+.pricing-page h1 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.pricing-page > p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #9ca3af;
+  margin-bottom: 3rem;
+  max-width: 600px;
+}
+
+/* ========================
+   GRID DE PLANES
+======================== */
+
+.pricing-page .plans-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+/* ========================
+   TARJETA DE PLAN
+======================== */
+
+.pricing-page .plan-card {
+  background: linear-gradient(135deg, #020617, #0f172a);
+  border-radius: 20px;
+  padding: 2.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  border: 1px solid #1e293b;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Hover */
+.pricing-page .plan-card:hover {
+  transform: translateY(-6px);
+  border-color: #00B4D8;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.6);
+}
+
+/* ========================
+   CONTENIDO DE PLAN
+======================== */
+
+.pricing-page .plan-card h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.pricing-page .plan-price {
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: #90E0EF;
+}
+
+/* ========================
+   FEATURES
+======================== */
+
+.pricing-page .plan-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pricing-page .plan-card ul li {
+  font-size: 0.9rem;
+  color: #cbd5f5;
+  padding-left: 1.2rem;
+  position: relative;
+}
+
+/* Check */
+.pricing-page .plan-card ul li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  color: #00B4D8;
+  font-weight: 900;
+}
+
+/* ========================
+   BOTÓN
+======================== */
+
+.pricing-page .btn-select {
+  margin-top: auto;
+
+  padding: 0.7rem 1.4rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  background: linear-gradient(135deg, #0077B6, #00B4D8);
+  color: #ffffff;
+
+  box-shadow: 0 10px 26px rgba(0, 119, 182, 0.55);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.25s ease;
+}
+
+/* Hover */
+.pricing-page .btn-select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0, 119, 182, 0.75);
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
+
+@media (max-width: 768px) {
+  .pricing-page {
+    padding: 3rem 1.5rem;
+    border-radius: 22px;
+  }
+
+  .pricing-page h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-page {
+    margin: 2rem 1rem;
+    padding: 2.5rem 1.25rem;
+  }
+
+  .pricing-page h1 {
+    font-size: 1.8rem;
+  }
+
+  .pricing-page .btn-select {
+    width: 100%;
+    text-align: center;
+  }
+}

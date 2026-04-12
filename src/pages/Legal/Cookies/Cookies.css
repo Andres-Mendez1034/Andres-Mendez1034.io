@@ -1,0 +1,123 @@
+/* ========================
+   Cookies.css
+   Política de Cookies
+   Paleta unificada con Footer
+======================== */
+
+/* ========================
+   CONTENEDOR PRINCIPAL
+======================== */
+
+.cookies-page {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 3.5rem 2.75rem;
+
+  background: linear-gradient(135deg, #0f172a, #020617);
+  border-radius: 28px;
+
+  box-shadow:
+    0 22px 55px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px #1e293b;
+}
+
+/* ========================
+   TÍTULO PRINCIPAL
+======================== */
+
+.cookies-page h1 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+/* ========================
+   PÁRRAFOS
+======================== */
+
+.cookies-page p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #9ca3af;
+  margin-bottom: 2rem;
+  max-width: 760px;
+}
+
+/* ========================
+   SUBTÍTULOS
+======================== */
+
+.cookies-page h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #90E0EF;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ========================
+   LISTA DE COOKIES
+======================== */
+
+.cookies-page ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Ítems */
+.cookies-page ul li {
+  position: relative;
+  padding-left: 1.5rem;
+
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #cbd5f5;
+}
+
+/* Bullet personalizado */
+.cookies-page ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #00B4D8;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Énfasis */
+.cookies-page ul li strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
+
+@media (max-width: 768px) {
+  .cookies-page {
+    padding: 3rem 2rem;
+    border-radius: 22px;
+  }
+
+  .cookies-page h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cookies-page {
+    margin: 2rem 1rem;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .cookies-page h1 {
+    font-size: 1.8rem;
+  }
+}
