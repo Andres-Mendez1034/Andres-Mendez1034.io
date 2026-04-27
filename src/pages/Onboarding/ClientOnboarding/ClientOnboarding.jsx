@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import "./ClientOnboarding.css";
+import axios from "axios";
+import { AuthContext } from "../../../context/AuthContext";
 
 export default function ClientOnboarding() {
+  const { user } = useContext(AuthContext);
+
   const [form, setForm] = useState({
     businessName: "",
     ownerName: "",
@@ -39,13 +43,36 @@ export default function ClientOnboarding() {
     "Promociones y descuentos",
   ];
 
-  const handleSubmit = () => {
-    console.log("CLIENT ONBOARDING DATA:", form);
+  // 🔥 SUBMIT REAL A BACKEND
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        user_id: user?.id, // 🔑 CLAVE
+        business_name: form.businessName,
+        owner_name: form.ownerName,
+        business_type: form.businessType,
+        location: form.location,
+        awareness_level: form.awareness,
+        main_goal: form.goal,
+      };
+
+      console.log("SENDING CLIENT:", payload);
+
+      await axios.post(
+        "http://localhost:3000/profiles/client",
+        payload
+      );
+
+      alert("Perfil de cliente creado correctamente");
+
+    } catch (err) {
+      console.error(err);
+      alert("Error al crear perfil de cliente");
+    }
   };
 
   return (
     <div className="onboarding-page">
-      
       <div className="onboarding">
         <h2>Configura tu negocio</h2>
 
@@ -96,7 +123,7 @@ export default function ClientOnboarding() {
           <h3>Ubicación</h3>
 
           {locations.map((loc) => (
-            <label key={loc} className="tag">
+            <label key={loc}>
               <input
                 type="radio"
                 name="location"
@@ -116,7 +143,7 @@ export default function ClientOnboarding() {
           <h3>¿Cuánta gente conoce tu negocio?</h3>
 
           {awarenessLevels.map((level) => (
-            <label key={level} className="tag">
+            <label key={level}>
               <input
                 type="radio"
                 name="awareness"
@@ -136,7 +163,7 @@ export default function ClientOnboarding() {
           <h3>¿Qué quieres lograr?</h3>
 
           {goals.map((g) => (
-            <label key={g} className="tag">
+            <label key={g}>
               <input
                 type="radio"
                 name="goal"

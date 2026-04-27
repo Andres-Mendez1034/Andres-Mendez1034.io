@@ -1,0 +1,74 @@
+.mfa-container {
+  min-height: 100vh;          /* ocupa toda la pantalla */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;    /* centra vertical */
+  align-items: center;        /* centra horizontal */
+  text-align: center;
+
+  gap: 14px;
+
+  padding: 20px;
+  transform: translateY(-40px); /* 🔥 ajuste fino para que no quede muy abajo */
+}
+
+/* TITULO */
+.mfa-container h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+/* QR */
+.mfa-container img {
+  width: 220px;
+  height: 220px;
+  margin-top: 10px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* INPUT */
+.mfa-input {
+  padding: 12px;
+  font-size: 16px;
+  text-align: center;
+
+  width: 200px;
+
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+
+  transition: border 0.2s ease;
+}
+
+.mfa-input:focus {
+  border: 1px solid #111;
+}
+
+/* BOTÓN */
+.mfa-button {
+  margin-top: 10px;
+  padding: 12px 20px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #111;
+  color: white;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.mfa-button:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+/* ERROR */
+.error {
+  color: #ff3b3b;
+  margin-top: 10px;
+  font-size: 14px;
+}

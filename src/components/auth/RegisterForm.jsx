@@ -5,7 +5,8 @@ import "./Register.css";
 export default function RegisterForm({ onSuccess }) {
   const { register } = useContext(AuthContext);
 
-  const [role, setRole] = useState("influencer"); // 👈 NUEVO
+  const [role, setRole] = useState("influencer");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -14,56 +15,58 @@ export default function RegisterForm({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ----------------------
-  // password score
-  // ----------------------
-  const getPasswordScore = (pwd) => {
-    let score = 0;
-    if (pwd.length >= 8) score++;
-    if (/[A-Z]/.test(pwd)) score++;
-    if (/[a-z]/.test(pwd)) score++;
-    if (/\d/.test(pwd)) score++;
-    if (/[^A-Za-z0-9]/.test(pwd)) score++;
-    return Math.min(score, 4);
-  };
-
-  const score = getPasswordScore(password);
-
-  // ----------------------
-  // validate
-  // ----------------------
   const validate = () => {
-    if (!email || !password || !confirmPassword)
+    if (!name || !email || !password || !confirmPassword)
       return "Completa todos los campos.";
-    if (!/^\S+@\S+\.\S+$/.test(email)) return "Correo inválido.";
+
+    if (!/^\S+@\S+\.\S+$/.test(email))
+      return "Correo inválido.";
+
     if (password.length < 8)
       return "Mínimo 8 caracteres.";
+
     if (password !== confirmPassword)
       return "No coinciden las contraseñas.";
+
     if (!acceptTerms)
       return "Debes aceptar términos.";
+
     return "";
   };
 
-  // ----------------------
-  // submit
-  // ----------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     const msg = validate();
-    if (msg) return setError(msg);
+    if (msg) {
+      setError(msg);
+      return;
+    }
 
     try {
       setLoading(true);
 
-      await register(email, password);
+      const res = await register(email, password, name, role);
 
-      // 👉 DECISIÓN DE FLUJO SEGÚN ROL
+      // 🔥 FIX CRÍTICO: soporta diferentes estructuras de respuesta
+      const mfaRequired =
+        res?.mfaRequired ??
+        res?.data?.mfaRequired ??
+        false;
+
+      console.log("🔐 MFA FLAG DETECTED:", mfaRequired);
+      console.log("📦 REGISTER RESPONSE:", res);
+
+      if (mfaRequired) {
+        onSuccess?.("mfa");
+        return;
+      }
+
       onSuccess?.(role);
 
     } catch (err) {
+      console.error("REGISTER ERROR:", err);
       setError("Error al crear cuenta");
     } finally {
       setLoading(false);
@@ -76,13 +79,10 @@ export default function RegisterForm({ onSuccess }) {
 
         <header className="auth-header">
           <span className="auth-badge">Registro</span>
-          <h2 className="auth-title">Elige tu tipo de cuenta</h2>
-          <p className="auth-subtitle">
-            Influencer o Cliente
-          </p>
+          <h2 className="auth-title">Crea tu cuenta</h2>
         </header>
 
-        {/* 🔥 SELECT ROL */}
+        {/* ROLE */}
         <div className="form-field">
           <label>Tipo de cuenta</label>
           <select
@@ -97,7 +97,19 @@ export default function RegisterForm({ onSuccess }) {
 
         <form className="auth-form" onSubmit={handleSubmit}>
 
-          {/* Email */}
+          {/* NAME */}
+          <div className="form-field">
+            <label>Nombre</label>
+            <input
+              type="text"
+              className="input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* EMAIL */}
           <div className="form-field">
             <label>Correo electrónico</label>
             <input
@@ -109,10 +121,9 @@ export default function RegisterForm({ onSuccess }) {
             />
           </div>
 
-          {/* Password */}
+          {/* PASSWORD */}
           <div className="form-field">
             <label>Contraseña</label>
-
             <input
               type={showPwd ? "text" : "password"}
               className="input"
@@ -120,19 +131,14 @@ export default function RegisterForm({ onSuccess }) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-
-            <button
-              type="button"
-              onClick={() => setShowPwd(!showPwd)}
-            >
+            <button type="button" onClick={() => setShowPwd(!showPwd)}>
               {showPwd ? "Ocultar" : "Mostrar"}
             </button>
           </div>
 
-          {/* Confirm */}
+          {/* CONFIRM */}
           <div className="form-field">
             <label>Confirmar contraseña</label>
-
             <input
               type={showPwd ? "text" : "password"}
               className="input"
@@ -142,7 +148,7 @@ export default function RegisterForm({ onSuccess }) {
             />
           </div>
 
-          {/* Terms */}
+          {/* TERMS */}
           <div className="form-field">
             <label>
               <input
@@ -154,12 +160,11 @@ export default function RegisterForm({ onSuccess }) {
             </label>
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={loading}
-          >
+          {/* ERROR */}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          {/* SUBMIT */}
+          <button type="submit" disabled={loading}>
             {loading ? "Creando..." : "Continuar"}
           </button>
 

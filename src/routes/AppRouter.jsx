@@ -3,9 +3,11 @@ import { Routes, Route } from "react-router-dom";
 
 import Layout from "../layout/Layout";
 
+// ONBOARDING
 import InfluOnboarding from "../pages/Onboarding/InfluOnboarding/Onboarding";
 import ClientOnboarding from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
 
+// CORE
 import Home from "../pages/Home/Home";
 import MarketplacePage from "../pages/Marketplace/MarketplacePage";
 import Profile from "../pages/Profile/Profile";
@@ -14,10 +16,15 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import CartPage from "../pages/Cart/CartPage";
 
+// MFA
+import MFASetup from "../components/auth/MFASetup";
+
+// INFO
 import Pricing from "../pages/Pricing/Pricing";
 import Support from "../pages/Support/Support";
 import Status from "../pages/Status/Status";
 
+// LEGAL
 import Privacy from "../pages/Legal/Privacy/Privacy";
 import Terms from "../pages/Legal/Terms/Terms";
 import Cookies from "../pages/Legal/Cookies/Cookies";
@@ -27,6 +34,7 @@ export default function AppRouter() {
     <Routes>
       <Route element={<Layout />}>
 
+
         {/* CORE */}
         <Route path="/" element={<Home />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
@@ -35,6 +43,9 @@ export default function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/cart" element={<CartPage />} />
+
+        {/* MFA */}
+        <Route path="/mfa" element={<MFASetup />} />
 
         {/* ONBOARDING */}
         <Route path="/onboarding/influencer" element={<InfluOnboarding />} />

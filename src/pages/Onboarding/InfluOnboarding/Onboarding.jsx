@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import "./Onboarding.css";
+import { AuthContext } from "../../../context/AuthContext";
+import axios from "axios";
 
 export default function OnboardingPage() {
+  const { user } = useContext(AuthContext);
+
   const [form, setForm] = useState({
     fullName: "",
     idNumber: "",
-    category: "",
+    tiktokUrl: "",
     tags: [],
     location: "",
   });
@@ -23,6 +27,9 @@ export default function OnboardingPage() {
 
   const locations = ["Suba", "Kennedy", "Engativá", "Chapinero"];
 
+  // -------------------------
+  // TAGS TOGGLE
+  // -------------------------
   const handleTagToggle = (tag) => {
     setForm((prev) => {
       const exists = prev.tags.includes(tag);
@@ -35,15 +42,40 @@ export default function OnboardingPage() {
     });
   };
 
-  const handleSubmit = () => {
-    console.log("ONBOARDING DATA:", form);
+  // -------------------------
+  // SUBMIT
+  // -------------------------
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        user_id: user?.id,
+        full_name: form.fullName,
+        id_number: form.idNumber,
+        location: form.location,
+        tiktok_url: form.tiktokUrl, // 🔥 NUEVO
+        tags: form.tags,
+      };
+
+      console.log("PAYLOAD:", payload);
+
+      await axios.post(
+        "http://localhost:3000/profiles/influencer",
+        payload
+      );
+
+      alert("Perfil de influencer creado correctamente");
+
+    } catch (err) {
+      console.error("ERROR:", err);
+      alert("Error al crear perfil");
+    }
   };
 
   return (
     <div className="onboarding">
-      <h2>Completa tu perfil</h2>
+      <h2>Completa tu perfil de Influencer</h2>
 
-      {/* 🔹 DATOS PERSONALES */}
+      {/* ---------------- PERSONAL ---------------- */}
       <section className="block">
         <h3>Datos personales</h3>
 
@@ -66,32 +98,27 @@ export default function OnboardingPage() {
         />
       </section>
 
-      {/* 🔹 CATEGORÍA */}
+      {/* ---------------- TIKTOK ---------------- */}
       <section className="block">
-        <h3>¿A qué te dedicas?</h3>
+        <h3>TikTok principal</h3>
 
-        <select
-          value={form.category}
+        <input
+          type="url"
+          placeholder="https://www.tiktok.com/@usuario"
+          value={form.tiktokUrl}
           onChange={(e) =>
-            setForm({ ...form, category: e.target.value })
+            setForm({ ...form, tiktokUrl: e.target.value })
           }
-        >
-          <option value="">Selecciona una opción</option>
-          <option value="influencer">Influencer</option>
-          <option value="marca">Marca</option>
-          <option value="agencia">Agencia</option>
-          <option value="negocio">Negocio local</option>
-        </select>
+        />
       </section>
 
-      {/* 🔹 INTERESES / PAUTA */}
+      {/* ---------------- TAGS ---------------- */}
       <section className="block">
-        <h3>¿Dónde quieres pautar?</h3>
-        <p>Selecciona los tipos de negocio</p>
+        <h3>¿En qué te enfocas?</h3>
 
         <div className="tags">
           {categories.map((tag) => (
-            <label key={tag} className="tag">
+            <label key={tag}>
               <input
                 type="checkbox"
                 checked={form.tags.includes(tag)}
@@ -103,30 +130,28 @@ export default function OnboardingPage() {
         </div>
       </section>
 
-      {/* 🔹 LOCALIDAD */}
+      {/* ---------------- LOCATION ---------------- */}
       <section className="block">
-        <h3>Selecciona tu localidad</h3>
+        <h3>Localidad</h3>
 
-        <div className="locations">
-          {locations.map((loc) => (
-            <label key={loc} className="tag">
-              <input
-                type="radio"
-                name="location"
-                value={loc}
-                checked={form.location === loc}
-                onChange={(e) =>
-                  setForm({ ...form, location: e.target.value })
-                }
-              />
-              {loc}
-            </label>
-          ))}
-        </div>
+        {locations.map((loc) => (
+          <label key={loc}>
+            <input
+              type="radio"
+              name="location"
+              value={loc}
+              checked={form.location === loc}
+              onChange={(e) =>
+                setForm({ ...form, location: e.target.value })
+              }
+            />
+            {loc}
+          </label>
+        ))}
       </section>
 
-      {/* 🔹 SUBMIT */}
-      <button className="submit-btn" onClick={handleSubmit}>
+      {/* ---------------- SUBMIT ---------------- */}
+      <button onClick={handleSubmit}>
         Finalizar
       </button>
     </div>

@@ -1,60 +1,120 @@
-// src/components/auth/MFASetup.jsx
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { getMFAQR, verifyMFA as verifyMFAService } from "../../services/auth.service";
-import "./Login.css";
+import { useNavigate } from "react-router-dom";
+import "./MFASetup.css";
 
-export default function MFASetup({ email }) {
-  const { verifyMFA } = useContext(AuthContext);
+export default function MFASetup() {
+  const { verifyMFA, user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [qr, setQr] = useState("");
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
-  const [verified, setVerified] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Generar QR al montar el componente
+  /* =========================================================
+     GENERAR QR DESDE REGISTER
+  ========================================================= */
   useEffect(() => {
-    const fetchQR = async () => {
-      try {
-        const data = await getMFAQR(email); // ✅ función correcta
-        setQr(data.qr);
-      } catch (err) {
-        setError("Error al generar QR de MFA");
-      }
-    };
-    fetchQR();
-  }, [email]);
+    if (!user) return;
 
+    console.log("👤 USER EN MFA:", user);
+
+    if (!user?.otpauth_url) {
+      setError("No hay QR disponible (otpauth_url faltante)");
+      setLoading(false);
+      return;
+    }
+
+    const qrUrl =
+      "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
+      encodeURIComponent(user.otpauth_url);
+
+    setQr(qrUrl);
+    setLoading(false);
+  }, [user]);
+
+  /* =========================================================
+     VERIFY MFA + REDIRECT
+  ========================================================= */
   const handleVerify = async (e) => {
     e.preventDefault();
     setError("");
 
+    const cleanToken = token.replace(/\D/g, "").trim();
+
+    if (cleanToken.length !== 6) {
+      setError("El código debe tener 6 dígitos");
+      return;
+    }
+
     try {
-      const data = await verifyMFA(token); // token se verifica en AuthContext
-      if (data.success) setVerified(true);
-      else setError("Código MFA incorrecto");
+      console.log("🚀 ENVIANDO:", {
+        email: user?.email,
+        token: cleanToken,
+        role: user?.role,
+      });
+
+      const res = await verifyMFA({
+        email: user?.email,
+        token: cleanToken,
+      });
+
+      console.log("🔐 VERIFY RESPONSE:", res);
+
+      if (res?.success) {
+        // 🔥 REDIRECCIÓN SEGÚN ROL
+        if (user?.role === "influencer") {
+          navigate("/onboarding/influencer");
+        } else {
+          navigate("/onboarding/client");
+        }
+        return;
+      }
+
+      setError("Código incorrecto");
+
     } catch (err) {
+      console.error("❌ VERIFY ERROR:", err);
       setError("Error verificando MFA");
     }
   };
 
-  if (verified) return <p>MFA configurado correctamente 🎉</p>;
-
+  /* =========================================================
+     UI
+  ========================================================= */
   return (
     <div className="mfa-container">
-      <h2>Configura tu MFA</h2>
+      <h2>🔐 Configura tu MFA</h2>
+
       {error && <p className="error">{error}</p>}
-      {qr && <img src={qr} alt="QR MFA" />}
-      <form onSubmit={handleVerify}>
-        <input
-          type="text"
-          placeholder="Código de la app MFA"
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
-          required
-        />
-        <button type="submit">Verificar</button>
-      </form>
+
+      {loading && <p>Cargando QR...</p>}
+
+      {!loading && qr && (
+        <>
+          <p>Escanea este código con Google Authenticator</p>
+          <img src={qr} alt="QR MFA" />
+        </>
+      )}
+
+      {!loading && (
+        <form onSubmit={handleVerify}>
+          <input
+            className="mfa-input"
+            value={token}
+            onChange={(e) =>
+              setToken(e.target.value.replace(/\D/g, "")) // solo números
+            }
+            placeholder="123456"
+            maxLength={6}
+          />
+
+          <button className="mfa-button" type="submit">
+            Verificar
+          </button>
+        </form>
+      )}
     </div>
   );
 }

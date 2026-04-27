@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useState } from "react";
 import {
   login as loginService,
@@ -9,84 +8,136 @@ import {
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);          // Datos del usuario parcial o completo
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Usuario fully logged in
-  const [mfaRequired, setMfaRequired] = useState(false);         // Paso MFA pendiente
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
 
-  // =========================
-  // Registrar usuario
-  // =========================
-  const register = async (email, password) => {
+  /* =========================================================
+     REGISTER (🔥 GUARDA EL QR)
+  ========================================================= */
+  const register = async (email, password, name, role) => {
     try {
-      const res = await registerService({ email, password });
+      const data = await registerService({
+        email,
+        password,
+        name,
+        role,
+      });
 
-      if (res.mfaRequired) {
-        // Usuario parcialmente registrado → MFA pendiente
-        setUser(res.user);
+      console.log("🧠 REGISTER RESPONSE:", data);
+
+      const safeUser = data?.user || null;
+
+      // 🔥 CLAVE: guardar también el otpauth_url
+      const userWithQR = {
+        ...safeUser,
+        otpauth_url: data?.otpauth_url,
+      };
+
+      setUser(userWithQR);
+      setIsAuthenticated(false);
+
+      if (data?.mfaRequired) {
         setMfaRequired(true);
-        setIsAuthenticated(false);
-      } else {
-        // Registro completo (sin MFA)
-        setUser(res.user);
-        setMfaRequired(false);
-        setIsAuthenticated(true);
+
+        return {
+          success: true,
+          mfaRequired: true,
+          user: userWithQR,
+        };
       }
 
-      return res;
+      setMfaRequired(false);
+      setIsAuthenticated(true);
+
+      return {
+        success: true,
+        mfaRequired: false,
+        user: userWithQR,
+      };
+
     } catch (err) {
-      console.error("Error register:", err.response?.data || err.message);
-      throw err;
+      console.error("❌ REGISTER ERROR FULL:", err);
+      throw err?.response?.data || err;
     }
   };
 
-  // =========================
-  // Login usuario
-  // =========================
+  /* =========================================================
+     LOGIN
+  ========================================================= */
   const handleLogin = async (email, password) => {
     try {
-      const res = await loginService({ email, password });
+      const data = await loginService({ email, password });
 
-      if (res.mfaRequired) {
-        setUser(res.user);
+      console.log("🧠 LOGIN RESPONSE:", data);
+
+      const safeUser = data?.user || null;
+
+      setUser(safeUser);
+
+      if (data?.mfaRequired) {
         setMfaRequired(true);
         setIsAuthenticated(false);
-      } else {
-        setUser(res.user);
-        setMfaRequired(false);
-        setIsAuthenticated(true);
+
+        return {
+          success: true,
+          mfaRequired: true,
+          user: safeUser,
+        };
       }
 
-      return res;
+      setMfaRequired(false);
+      setIsAuthenticated(true);
+
+      return {
+        success: true,
+        mfaRequired: false,
+        user: safeUser,
+      };
+
     } catch (err) {
-      console.error("Error login:", err.response?.data || err.message);
-      throw err;
+      console.error("❌ LOGIN ERROR FULL:", err);
+      throw err?.response?.data || err;
     }
   };
 
-  // =========================
-  // Verificar MFA
-  // =========================
-  const verifyMFA = async (token) => {
-    if (!user?.username) throw new Error("Usuario no definido");
+  /* =========================================================
+     VERIFY MFA
+  ========================================================= */
+  const verifyMFA = async ({ email, token }) => {
+    if (!email) throw new Error("Email requerido");
 
     try {
-      const res = await verifyMFAService({ email: user.username, token });
+      console.log("📤 VERIFY MFA (CONTEXT):", {
+        email,
+        token,
+        type: typeof token,
+      });
 
-      if (res.success) {
+      const data = await verifyMFAService({
+        email,
+        token: token.toString().trim(), // ✅ SIEMPRE STRING LIMPIO
+      });
+
+      console.log("🧠 MFA RESPONSE:", data);
+
+      if (data?.success) {
         setIsAuthenticated(true);
         setMfaRequired(false);
+        setUser(data.user || user);
       }
 
-      return res;
+      return data;
+
     } catch (err) {
-      console.error("Error verifying MFA:", err.response?.data || err.message);
-      throw err;
+      console.error("❌ MFA ERROR FULL:", err);
+      throw err?.response?.data || err;
     }
   };
 
-  // =========================
-  // Logout
-  // =========================
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);

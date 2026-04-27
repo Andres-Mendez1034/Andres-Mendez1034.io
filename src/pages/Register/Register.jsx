@@ -6,12 +6,22 @@ import "../../components/auth/Register.css";
 export default function Register() {
   const navigate = useNavigate();
 
-  const handleRegisterSuccess = (userType) => {
-    if (userType === "client") {
-      navigate("/onboarding/client");
-    } else {
-      navigate("/onboarding/influencer");
+  // 🔥 ESTE ES EL FLUJO CORRECTO
+  const handleRegisterSuccess = (state) => {
+    // 1. MFA FLOW (CRÍTICO)
+    if (state === "mfa") {
+      navigate("/mfa");
+      return;
     }
+
+    // 2. ONBOARDING CLIENTE
+    if (state === "client") {
+      navigate("/onboarding/client");
+      return;
+    }
+
+    // 3. ONBOARDING INFLUENCER
+    navigate("/onboarding/influencer");
   };
 
   return (

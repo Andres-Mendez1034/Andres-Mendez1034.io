@@ -1,46 +1,94 @@
-// src/components/auth/MFAVerify.jsx
-import React, { useState } from "react";
-import { verifyMFA } from "../../services/auth.service";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-export default function MFAVerify({ onSuccess }) {
+export default function MFAVerify() {
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
 
+  const { verifyMFA, user } = useContext(AuthContext); // 👈 IMPORTANTE: user
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
-      const res = await verifyMFA(token); // Llama al backend
-      if (res.success) {
-        setError("");
-        alert("¡MFA verificado! Login exitoso.");
-        if (onSuccess) onSuccess(); // Callback opcional después del login
-      } else {
-        setError("Código MFA incorrecto. Intenta de nuevo.");
+      // 🧪 DEBUG (puedes quitar luego)
+      console.log("🚀 ENVIANDO:", {
+        email: user?.email,
+        token,
+        type: typeof token,
+      });
+
+      const res = await verifyMFA({
+        email: user.email,           // ✅ email correcto
+        token: token.trim(),         // ✅ string limpio
+      });
+
+      console.log("🔐 MFA RESPONSE:", res);
+
+      if (res?.success) {
+        alert("MFA verificado correctamente");
+        navigate("/dashboard");
+        return;
       }
+
+      setError("Código incorrecto");
+
     } catch (err) {
-      console.error(err);
-      setError("Error al verificar MFA. Intenta de nuevo.");
+      console.error("❌ MFA VERIFY ERROR:", err);
+      setError("Error al verificar MFA");
     }
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Verificación MFA</h2>
-      <p>Ingresa el código de tu app de autenticación:</p>
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: "50px",
+        fontFamily: "Arial",
+      }}
+    >
+      <h2>🔐 Verificación MFA</h2>
+
+      <p>Ingresa el código de 6 dígitos de tu app (Google Authenticator)</p>
+
       <form onSubmit={handleSubmit}>
         <input
-          type="text"
           value={token}
           onChange={(e) => setToken(e.target.value)}
           placeholder="123456"
-          style={{ padding: "8px", fontSize: "16px", width: "120px", textAlign: "center" }}
+          maxLength={6}
+          style={{
+            padding: "10px",
+            fontSize: "16px",
+            width: "160px",
+            textAlign: "center",
+            letterSpacing: "4px",
+            marginTop: "10px",
+          }}
         />
+
         <br />
-        <button type="submit" style={{ marginTop: "10px", padding: "8px 16px" }}>
+
+        <button
+          type="submit"
+          style={{
+            marginTop: "15px",
+            padding: "10px 20px",
+            cursor: "pointer",
+          }}
+        >
           Verificar
         </button>
       </form>
-      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+
+      {error && (
+        <p style={{ color: "red", marginTop: "10px" }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }
