@@ -5,7 +5,8 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
 
-  base: '/Andres-Mendez1034.io/',
+  // 🔥 IMPORTANTE: dominio personalizado
+  base: '/',
 
   resolve: {
     alias: {

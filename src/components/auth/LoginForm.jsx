@@ -5,7 +5,7 @@ import MFAVerify from "./MFAVerify";
 import "./Login.css";
 
 export default function LoginForm() {
-  const { handleLogin, mfaRequired, user } = useContext(AuthContext);
+  const { handleLogin, mfaRequired, user } = useContext(AuthContext) || {};
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,19 +15,28 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("CLICK LOGIN"); // 👈 debug
+
     setError("");
+
     try {
       setLoading(true);
+
+      if (!handleLogin) {
+        throw new Error("AuthContext no está conectado");
+      }
+
       await handleLogin({ email, password });
-      // Si mfaRequired es true, MFAVerify se mostrará automáticamente
+
     } catch (err) {
+      console.log("LOGIN ERROR:", err); // 👈 debug real
       setError(err?.message || "Error al iniciar sesión. Intenta nuevamente.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Si MFA es requerido, mostramos el componente de verificación
+  // Si MFA es requerido, mostramos verificación
   if (mfaRequired && user) {
     return <MFAVerify user={user} />;
   }
@@ -48,6 +57,7 @@ export default function LoginForm() {
         )}
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
+          
           {/* Email */}
           <div className="form-field">
             <label htmlFor="email">Correo electrónico</label>
@@ -88,7 +98,7 @@ export default function LoginForm() {
             </div>
           </div>
 
-          {/* Botones */}
+          {/* Botón */}
           <div className="auth-actions">
             <button
               type="submit"
@@ -99,6 +109,7 @@ export default function LoginForm() {
               {loading ? "Iniciando..." : "Iniciar sesión"}
             </button>
           </div>
+
         </form>
       </div>
     </div>
