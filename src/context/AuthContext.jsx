@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import {
   login as loginService,
   register as registerService,
@@ -7,13 +7,48 @@ import {
 
 export const AuthContext = createContext();
 
+const USER_KEY = "bc_user";
+const TOKEN_KEY = "bc_token";
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [mfaRequired, setMfaRequired] = useState(false);
 
   /* =========================================================
-     REGISTER (🔥 GUARDA EL QR)
+     🔁 REHIDRATACIÓN (cuando carga la app)
+  ========================================================= */
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem(USER_KEY);
+      const storedToken = localStorage.getItem(TOKEN_KEY);
+
+      if (storedUser && storedToken) {
+        setUser(JSON.parse(storedUser));
+        setIsAuthenticated(true);
+      }
+    } catch (err) {
+      console.error("❌ Error rehidratando auth:", err);
+      localStorage.removeItem(USER_KEY);
+      localStorage.removeItem(TOKEN_KEY);
+    }
+  }, []);
+
+  /* =========================================================
+     💾 HELPERS
+  ========================================================= */
+  const saveSession = (userData, token) => {
+    localStorage.setItem(USER_KEY, JSON.stringify(userData));
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+  };
+
+  const clearSession = () => {
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+  };
+
+  /* =========================================================
+     REGISTER
   ========================================================= */
   const register = async (email, password, name, role) => {
     try {
@@ -28,17 +63,16 @@ export const AuthProvider = ({ children }) => {
 
       const safeUser = data?.user || null;
 
-      // 🔥 CLAVE: guardar también el otpauth_url
       const userWithQR = {
         ...safeUser,
         otpauth_url: data?.otpauth_url,
       };
 
       setUser(userWithQR);
-      setIsAuthenticated(false);
 
       if (data?.mfaRequired) {
         setMfaRequired(true);
+        setIsAuthenticated(false);
 
         return {
           success: true,
@@ -49,6 +83,8 @@ export const AuthProvider = ({ children }) => {
 
       setMfaRequired(false);
       setIsAuthenticated(true);
+
+      saveSession(userWithQR, data?.token);
 
       return {
         success: true,
@@ -89,6 +125,8 @@ export const AuthProvider = ({ children }) => {
       setMfaRequired(false);
       setIsAuthenticated(true);
 
+      saveSession(safeUser, data?.token);
+
       return {
         success: true,
         mfaRequired: false,
@@ -116,15 +154,19 @@ export const AuthProvider = ({ children }) => {
 
       const data = await verifyMFAService({
         email,
-        token: token.toString().trim(), // ✅ SIEMPRE STRING LIMPIO
+        token: token.toString().trim(),
       });
 
       console.log("🧠 MFA RESPONSE:", data);
 
       if (data?.success) {
+        const safeUser = data.user || user;
+
+        setUser(safeUser);
         setIsAuthenticated(true);
         setMfaRequired(false);
-        setUser(data.user || user);
+
+        saveSession(safeUser, data?.token);
       }
 
       return data;
@@ -142,6 +184,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     setMfaRequired(false);
+    clearSession();
   };
 
   return (

@@ -6,7 +6,7 @@ import cartIcon from "../../assets/cart.png";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { user, logout } = useContext(AuthContext);
+  const { user, isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const toggleMenu = () => setOpen((prev) => !prev);
@@ -29,6 +29,7 @@ export default function Navbar() {
           <NavLink to="/" className="logo" onClick={closeMenu}>
             Brand Connect
           </NavLink>
+
           <span className="navbar-greeting">
             Conecta. Crea. Crece.
           </span>
@@ -42,46 +43,55 @@ export default function Navbar() {
             </NavLink>
           </li>
 
-          <li>
-            <NavLink to="/marketplace" className={linkClass}>
-              Marketplace
-            </NavLink>
-          </li>
+          {/* SOLO LOGUEADO */}
+          {isAuthenticated && (
+            <>
+              <li>
+                <NavLink to="/marketplace" className={linkClass}>
+                  Marketplace
+                </NavLink>
+              </li>
 
-          <li>
-            <NavLink to="/profile" className={linkClass}>
-              Profile
-            </NavLink>
-          </li>
+              <li>
+                <NavLink to="/profile" className={linkClass}>
+                  Profile
+                </NavLink>
+              </li>
 
-          {/* 💬 CHATBOT COMO PÁGINA */}
-          <li>
-            <NavLink to="/chatbot" className={linkClass}>
-              💬 Asistente IA
-            </NavLink>
-          </li>
+              <li>
+                <NavLink to="/chatbot" className={linkClass}>
+                  💬 Asistente IA
+                </NavLink>
+              </li>
 
-          {/* CART */}
-          <li className="cart">
-            <NavLink to="/cart" onClick={closeMenu}>
-              <img src={cartIcon} alt="Carrito" className="cart-icon" />
-            </NavLink>
-          </li>
+              <li className="cart">
+                <NavLink to="/cart" onClick={closeMenu}>
+                  <img src={cartIcon} alt="Carrito" className="cart-icon" />
+                </NavLink>
+              </li>
 
-          {/* AUTH */}
-          {user ? (
-            <li>
-              <button onClick={handleLogout} className="logout-btn">
-                Cerrar sesión
-              </button>
-            </li>
-          ) : (
+              {/* SALUDO */}
+              <li className="navbar-user">
+                👋 Hola, {user?.name || "Usuario"}
+              </li>
+
+              <li>
+                <button onClick={handleLogout} className="logout-btn">
+                  Cerrar sesión
+                </button>
+              </li>
+            </>
+          )}
+
+          {/* NO LOGUEADO */}
+          {!isAuthenticated && (
             <>
               <li>
                 <NavLink to="/login" className={linkClass}>
                   Login
                 </NavLink>
               </li>
+
               <li>
                 <NavLink to="/register" className={linkClass}>
                   Register
@@ -113,47 +123,53 @@ export default function Navbar() {
             </NavLink>
           </li>
 
-          <li>
-            <NavLink to="/marketplace" onClick={closeMenu} className={linkClass}>
-              Marketplace
-            </NavLink>
-          </li>
+          {isAuthenticated && (
+            <>
+              <li>
+                <NavLink to="/marketplace" onClick={closeMenu} className={linkClass}>
+                  Marketplace
+                </NavLink>
+              </li>
 
-          <li>
-            <NavLink to="/profile" onClick={closeMenu} className={linkClass}>
-              Profile
-            </NavLink>
-          </li>
+              <li>
+                <NavLink to="/profile" onClick={closeMenu} className={linkClass}>
+                  Profile
+                </NavLink>
+              </li>
 
-          {/* 💬 CHATBOT */}
-          <li>
-            <NavLink to="/chatbot" onClick={closeMenu} className={linkClass}>
-              💬 Asistente IA
-            </NavLink>
-          </li>
+              <li>
+                <NavLink to="/chatbot" onClick={closeMenu} className={linkClass}>
+                  💬 Asistente IA
+                </NavLink>
+              </li>
 
-          {/* CART */}
-          <li>
-            <NavLink to="/cart" onClick={closeMenu}>
-              <img src={cartIcon} alt="Carrito" className="cart-icon" />
-              Carrito
-            </NavLink>
-          </li>
+              <li>
+                <NavLink to="/cart" onClick={closeMenu}>
+                  <img src={cartIcon} alt="Carrito" className="cart-icon" />
+                  Carrito
+                </NavLink>
+              </li>
 
-          {/* AUTH */}
-          {user ? (
-            <li>
-              <button onClick={handleLogout} className="logout-btn">
-                Cerrar sesión
-              </button>
-            </li>
-          ) : (
+              <li className="navbar-user">
+                👋 Hola, {user?.name || "Usuario"}
+              </li>
+
+              <li>
+                <button onClick={handleLogout} className="logout-btn">
+                  Cerrar sesión
+                </button>
+              </li>
+            </>
+          )}
+
+          {!isAuthenticated && (
             <>
               <li>
                 <NavLink to="/login" onClick={closeMenu} className={linkClass}>
                   Login
                 </NavLink>
               </li>
+
               <li>
                 <NavLink to="/register" onClick={closeMenu} className={linkClass}>
                   Register

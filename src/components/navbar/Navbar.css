@@ -1,38 +1,41 @@
 /* =========================
-   Navbar.css - Brand Connect Ultra Boosted
+   Navbar.css - Brand Connect ULTRA PRO
 ========================= */
 
 :root {
   --bc-bg: #0D1117;
   --bc-surface: #161B22;
   --bc-primary: #3B82F6;
+  --bc-primary-glow: rgba(59,130,246,0.35);
   --bc-text: #FFFFFF;
   --bc-muted: #8B95A1;
   --bc-border: rgba(229,231,235,0.12);
   --bc-danger: #EF4444;
 
-  --blur: 14px;
+  --blur: 16px;
   --radius: 14px;
 }
 
 /* =========================
-   NAVBAR BASE
+   NAVBAR BASE (CON MÁS PROFUNDIDAD)
 ========================= */
 
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
-  background: linear-gradient(135deg, var(--bc-bg), #0b0f14);
+  background: linear-gradient(135deg, var(--bc-bg), #0a0f14);
   backdrop-filter: blur(var(--blur));
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.8),
+    0 0 20px rgba(59,130,246,0.08);
   z-index: 100;
   border-bottom: 1px solid var(--bc-border);
-  transition: background 0.35s ease, opacity 0.35s ease;
+  transition: all 0.35s ease;
 }
 
 .navbar.open {
-  background: linear-gradient(135deg, var(--bc-bg), #0a0e12);
+  background: linear-gradient(135deg, var(--bc-bg), #090d12);
 }
 
 /* =========================
@@ -50,70 +53,81 @@
 }
 
 /* =========================
-   LEFT (LOGO + CLAIM)
+   LEFT
 ========================= */
 
 .navbar .left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.8rem;
 }
 
+/* LOGO ULTRA */
 .logo {
   font-size: 1.35rem;
   font-weight: 900;
-  letter-spacing: 1.8px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--bc-text);
   text-decoration: none;
-  transition: color 0.25s ease, text-shadow 0.25s ease;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(to right, var(--bc-primary), #6366f1);
+  transition: width 0.3s ease;
 }
 
 .logo:hover {
   color: var(--bc-primary);
-  text-shadow: 0 0 10px rgba(59,130,246,0.5);
+  text-shadow: 0 0 12px var(--bc-primary-glow);
+}
+
+.logo:hover::after {
+  width: 100%;
 }
 
 .navbar-greeting {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--bc-muted);
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 /* =========================
-   DESKTOP MENU
+   MENU DESKTOP
 ========================= */
 
 .desktop-menu {
   display: flex;
   gap: 1.6rem;
   list-style: none;
-  margin: 0;
-  padding: 0;
 }
 
-.desktop-menu li {
-  display: flex;
-  align-items: center;
-}
-
-/* Links */
+/* LINKS MEJORADOS */
 .desktop-menu a {
   color: var(--bc-text);
   font-weight: 600;
   text-decoration: none;
   padding: 0.4rem 0;
   position: relative;
-  transition: color 0.25s ease, text-shadow 0.25s ease;
+  transition: all 0.25s ease;
 }
 
-/* Active & Hover */
-.desktop-menu a.active,
-.desktop-menu a:hover {
+/* HOVER + ACTIVE */
+.desktop-menu a:hover,
+.desktop-menu a.active {
   color: var(--bc-primary);
-  text-shadow: 0 0 6px rgba(59,130,246,0.5);
+  text-shadow: 0 0 8px var(--bc-primary-glow);
 }
 
+/* UNDERLINE ANIMADO PRO */
 .desktop-menu a::after {
   content: "";
   position: absolute;
@@ -121,39 +135,54 @@
   left: 0;
   width: 0%;
   height: 3px;
-  background: linear-gradient(to right, var(--bc-primary), #6366f1);
   border-radius: 999px;
+  background: linear-gradient(to right, var(--bc-primary), #6366f1);
   transition: width 0.3s ease;
 }
 
-.desktop-menu a.active::after,
-.desktop-menu a:hover::after {
+.desktop-menu a:hover::after,
+.desktop-menu a.active::after {
   width: 100%;
 }
 
 /* =========================
-   CART
+   CART (MEJOR UX)
 ========================= */
-
-.cart {
-  display: flex;
-  align-items: center;
-}
 
 .cart-icon {
   width: 22px;
   height: 22px;
   filter: brightness(0.95);
-  transition: transform 0.25s ease, filter 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .cart-icon:hover {
-  transform: scale(1.1);
-  filter: brightness(1.2);
+  transform: scale(1.15) rotate(5deg);
+  filter: brightness(1.3);
 }
 
 /* =========================
-   LOGOUT BUTTON
+   USER BADGE (NUEVO PRO)
+========================= */
+
+.navbar-user {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bc-text);
+  background: rgba(59,130,246,0.12);
+  border: 1px solid var(--bc-border);
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  transition: 0.3s;
+}
+
+.navbar-user:hover {
+  background: rgba(59,130,246,0.22);
+  box-shadow: 0 0 10px var(--bc-primary-glow);
+}
+
+/* =========================
+   LOGOUT PRO
 ========================= */
 
 .logout-btn {
@@ -165,16 +194,17 @@
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .logout-btn:hover {
-  background: rgba(239,68,68,0.22);
-  box-shadow: 0 0 10px rgba(239,68,68,0.4);
+  background: rgba(239,68,68,0.25);
+  box-shadow: 0 0 12px rgba(239,68,68,0.5);
+  transform: scale(1.05);
 }
 
 /* =========================
-   MENU TOGGLE (HAMBURGUESA)
+   HAMBURGER (SMOOTH)
 ========================= */
 
 .menu-toggle {
@@ -182,9 +212,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem;
-  gap: 0.3rem;
   flex-direction: column;
+  gap: 0.3rem;
 }
 
 .menu-toggle span {
@@ -192,7 +221,7 @@
   height: 2px;
   background: var(--bc-text);
   border-radius: 4px;
-  transition: all 0.4s ease;
+  transition: all 0.35s ease;
 }
 
 .menu-toggle.open span:nth-child(1) {
@@ -206,36 +235,36 @@
 }
 
 /* =========================
-   MOBILE MENU
+   MOBILE MENU PRO
 ========================= */
 
 .mobile-menu {
   list-style: none;
-  padding: 1rem 0;
+  padding: 1rem 0 1.4rem;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.9rem;
+  gap: 1rem;
   background: linear-gradient(135deg, var(--bc-surface), #121820);
   border-top: 1px solid var(--bc-border);
+  animation: fadeIn 0.3s ease;
 }
 
+/* LINKS MOBILE */
 .mobile-menu a {
   color: var(--bc-text);
   text-decoration: none;
   font-size: 1.05rem;
   font-weight: 600;
+  padding: 0.4rem 0;
+  transition: all 0.25s ease;
 }
 
-.mobile-menu a.active,
-.mobile-menu a:hover {
+.mobile-menu a:hover,
+.mobile-menu a.active {
   color: var(--bc-primary);
-  text-shadow: 0 0 6px rgba(59,130,246,0.5);
-}
-
-.mobile-menu .logout-btn {
-  margin-top: 0.5rem;
+  text-shadow: 0 0 8px var(--bc-primary-glow);
 }
 
 /* =========================
@@ -253,5 +282,20 @@
 
   .navbar-greeting {
     display: none;
+  }
+}
+
+/* =========================
+   ANIMACIONES
+========================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
