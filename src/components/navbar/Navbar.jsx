@@ -1,60 +1,99 @@
-import React, { useState, useContext } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import './Navbar.css';
-import cartIcon from '../../assets/cart.png';
+import React, { useState, useContext } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import "./Navbar.css";
+import cartIcon from "../../assets/cart.png";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const toggleMenu = () => setOpen(prev => !prev);
+  const toggleMenu = () => setOpen((prev) => !prev);
   const closeMenu = () => setOpen(false);
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
+    closeMenu();
   };
 
+  const linkClass = ({ isActive }) => (isActive ? "active" : "");
+
   return (
-    <nav className={`navbar${open ? ' open' : ''}`}>
+    <nav className={`navbar${open ? " open" : ""}`}>
       <div className="container">
+
+        {/* LEFT */}
         <div className="left">
           <NavLink to="/" className="logo" onClick={closeMenu}>
             Brand Connect
           </NavLink>
-          <span className="navbar-greeting">Conecta. Crea. Crece.</span>
+          <span className="navbar-greeting">
+            Conecta. Crea. Crece.
+          </span>
         </div>
 
-        {/* Menú de escritorio */}
+        {/* DESKTOP MENU */}
         <ul className="desktop-menu">
-          <li><NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
-          <li><NavLink to="/marketplace" className={({ isActive }) => isActive ? 'active' : ''}>Marketplace</NavLink></li>
-          <li><NavLink to="/profile" className={({ isActive }) => isActive ? 'active' : ''}>Profile</NavLink></li>
-          <li><NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>Dashboard</NavLink></li>
+          <li>
+            <NavLink to="/" end className={linkClass}>
+              Home
+            </NavLink>
+          </li>
 
-          {/* Carrito siempre visible */}
+          <li>
+            <NavLink to="/marketplace" className={linkClass}>
+              Marketplace
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink to="/profile" className={linkClass}>
+              Profile
+            </NavLink>
+          </li>
+
+          {/* 💬 CHATBOT COMO PÁGINA */}
+          <li>
+            <NavLink to="/chatbot" className={linkClass}>
+              💬 Asistente IA
+            </NavLink>
+          </li>
+
+          {/* CART */}
           <li className="cart">
             <NavLink to="/cart" onClick={closeMenu}>
               <img src={cartIcon} alt="Carrito" className="cart-icon" />
             </NavLink>
           </li>
 
-          {/* Botones de login/logout según usuario */}
+          {/* AUTH */}
           {user ? (
-            <li><button onClick={handleLogout} className="logout-btn">Cerrar sesión</button></li>
+            <li>
+              <button onClick={handleLogout} className="logout-btn">
+                Cerrar sesión
+              </button>
+            </li>
           ) : (
             <>
-              <li><NavLink to="/login" className={({ isActive }) => isActive ? 'active' : ''}>Login</NavLink></li>
-              <li><NavLink to="/register" className={({ isActive }) => isActive ? 'active' : ''}>Register</NavLink></li>
+              <li>
+                <NavLink to="/login" className={linkClass}>
+                  Login
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/register" className={linkClass}>
+                  Register
+                </NavLink>
+              </li>
             </>
           )}
         </ul>
 
-        {/* Botón hamburguesa */}
+        {/* HAMBURGER */}
         <button
-          className={`menu-toggle${open ? ' open' : ''}`}
+          className={`menu-toggle${open ? " open" : ""}`}
           aria-label="Abrir/cerrar menú"
           aria-expanded={open}
           onClick={toggleMenu}
@@ -65,15 +104,35 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Menú móvil */}
+      {/* MOBILE MENU */}
       {open && (
         <ul className="mobile-menu">
-          <li><NavLink to="/" end onClick={closeMenu} className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
-          <li><NavLink to="/marketplace" onClick={closeMenu} className={({ isActive }) => isActive ? 'active' : ''}>Marketplace</NavLink></li>
-          <li><NavLink to="/profile" onClick={closeMenu} className={({ isActive }) => isActive ? 'active' : ''}>Profile</NavLink></li>
-          <li><NavLink to="/dashboard" onClick={closeMenu} className={({ isActive }) => isActive ? 'active' : ''}>Dashboard</NavLink></li>
+          <li>
+            <NavLink to="/" end onClick={closeMenu} className={linkClass}>
+              Home
+            </NavLink>
+          </li>
 
-          {/* Carrito siempre visible */}
+          <li>
+            <NavLink to="/marketplace" onClick={closeMenu} className={linkClass}>
+              Marketplace
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink to="/profile" onClick={closeMenu} className={linkClass}>
+              Profile
+            </NavLink>
+          </li>
+
+          {/* 💬 CHATBOT */}
+          <li>
+            <NavLink to="/chatbot" onClick={closeMenu} className={linkClass}>
+              💬 Asistente IA
+            </NavLink>
+          </li>
+
+          {/* CART */}
           <li>
             <NavLink to="/cart" onClick={closeMenu}>
               <img src={cartIcon} alt="Carrito" className="cart-icon" />
@@ -81,12 +140,25 @@ export default function Navbar() {
             </NavLink>
           </li>
 
+          {/* AUTH */}
           {user ? (
-            <li><button onClick={handleLogout} className="logout-btn">Cerrar sesión</button></li>
+            <li>
+              <button onClick={handleLogout} className="logout-btn">
+                Cerrar sesión
+              </button>
+            </li>
           ) : (
             <>
-              <li><NavLink to="/login" onClick={closeMenu} className={({ isActive }) => isActive ? 'active' : ''}>Login</NavLink></li>
-              <li><NavLink to="/register" onClick={closeMenu} className={({ isActive }) => isActive ? 'active' : ''}>Register</NavLink></li>
+              <li>
+                <NavLink to="/login" onClick={closeMenu} className={linkClass}>
+                  Login
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/register" onClick={closeMenu} className={linkClass}>
+                  Register
+                </NavLink>
+              </li>
             </>
           )}
         </ul>
