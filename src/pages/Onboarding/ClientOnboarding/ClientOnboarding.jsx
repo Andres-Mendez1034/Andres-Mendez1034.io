@@ -1,11 +1,14 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import "./ClientOnboarding.css";
 import axios from "axios";
 import { AuthContext } from "../../../context/AuthContext";
 
 export default function ClientOnboarding() {
-  const { user } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
 
+  /* =========================================================
+     🔁 PRELOAD (modo edición si ya existe perfil)
+  ========================================================= */
   const [form, setForm] = useState({
     businessName: "",
     ownerName: "",
@@ -14,6 +17,19 @@ export default function ClientOnboarding() {
     awareness: "",
     goal: "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        businessName: user.businessName || "",
+        ownerName: user.ownerName || "",
+        businessType: user.businessType || "",
+        location: user.location || "",
+        awareness: user.awareness || "",
+        goal: user.goal || "",
+      });
+    }
+  }, [user]);
 
   const locations = ["Suba", "Kennedy", "Engativá", "Chapinero"];
 
@@ -43,11 +59,13 @@ export default function ClientOnboarding() {
     "Promociones y descuentos",
   ];
 
-  // 🔥 SUBMIT REAL A BACKEND
+  /* =========================================================
+     SUBMIT (CREAR + EDITAR + SYNC GLOBAL)
+  ========================================================= */
   const handleSubmit = async () => {
     try {
       const payload = {
-        user_id: user?.id, // 🔑 CLAVE
+        user_id: user?.id,
         business_name: form.businessName,
         owner_name: form.ownerName,
         business_type: form.businessType,
@@ -56,25 +74,41 @@ export default function ClientOnboarding() {
         main_goal: form.goal,
       };
 
-      console.log("SENDING CLIENT:", payload);
-
-      await axios.post(
+      const { data } = await axios.post(
         "http://localhost:3000/profiles/client",
         payload
       );
 
-      alert("Perfil de cliente creado correctamente");
+      // 🔥 sincronizar con contexto global
+      updateUser({
+        businessName: form.businessName,
+        ownerName: form.ownerName,
+        businessType: form.businessType,
+        location: form.location,
+        awareness: form.awareness,
+        goal: form.goal,
+        profileCompleted: true,
+      });
+
+      alert("Perfil de cliente guardado correctamente");
+
+      return data;
 
     } catch (err) {
-      console.error(err);
-      alert("Error al crear perfil de cliente");
+      console.error("CLIENT ONBOARDING ERROR:", err);
+      alert("Error al guardar perfil de cliente");
     }
   };
 
   return (
     <div className="onboarding-page">
       <div className="onboarding">
-        <h2>Configura tu negocio</h2>
+
+        <h2>
+          {user?.profileCompleted
+            ? "Editar configuración del negocio"
+            : "Configura tu negocio"}
+        </h2>
 
         {/* DATOS */}
         <section className="block">
@@ -180,8 +214,9 @@ export default function ClientOnboarding() {
 
         {/* SUBMIT */}
         <button className="submit-btn" onClick={handleSubmit}>
-          Finalizar configuración
+          {user?.profileCompleted ? "Guardar cambios" : "Finalizar configuración"}
         </button>
+
       </div>
     </div>
   );

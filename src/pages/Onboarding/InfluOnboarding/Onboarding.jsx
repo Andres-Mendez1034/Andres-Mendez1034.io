@@ -1,11 +1,14 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import "./Onboarding.css";
 import { AuthContext } from "../../../context/AuthContext";
 import axios from "axios";
 
 export default function OnboardingPage() {
-  const { user } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
 
+  /* =========================================================
+     🔁 FORM STATE (modo creación / edición)
+  ========================================================= */
   const [form, setForm] = useState({
     fullName: "",
     idNumber: "",
@@ -13,6 +16,21 @@ export default function OnboardingPage() {
     tags: [],
     location: "",
   });
+
+  /* =========================================================
+     🔁 CARGAR DATOS EXISTENTES (EDICIÓN REAL)
+  ========================================================= */
+  useEffect(() => {
+    if (user?.role !== "influencer") return;
+
+    setForm({
+      fullName: user?.fullName || "",
+      idNumber: user?.idNumber || "",
+      tiktokUrl: user?.tiktokUrl || "",
+      tags: user?.tags || [],
+      location: user?.location || "",
+    });
+  }, [user]);
 
   const categories = [
     "Comida",
@@ -27,12 +45,13 @@ export default function OnboardingPage() {
 
   const locations = ["Suba", "Kennedy", "Engativá", "Chapinero"];
 
-  // -------------------------
-  // TAGS TOGGLE
-  // -------------------------
+  /* =========================================================
+     TAGS TOGGLE
+  ========================================================= */
   const handleTagToggle = (tag) => {
     setForm((prev) => {
       const exists = prev.tags.includes(tag);
+
       return {
         ...prev,
         tags: exists
@@ -42,9 +61,9 @@ export default function OnboardingPage() {
     });
   };
 
-  // -------------------------
-  // SUBMIT
-  // -------------------------
+  /* =========================================================
+     SUBMIT (BACKEND + SYNC GLOBAL USER)
+  ========================================================= */
   const handleSubmit = async () => {
     try {
       const payload = {
@@ -52,28 +71,44 @@ export default function OnboardingPage() {
         full_name: form.fullName,
         id_number: form.idNumber,
         location: form.location,
-        tiktok_url: form.tiktokUrl, // 🔥 NUEVO
+        tiktok_url: form.tiktokUrl,
         tags: form.tags,
       };
 
-      console.log("PAYLOAD:", payload);
-
-      await axios.post(
+      const { data } = await axios.post(
         "http://localhost:3000/profiles/influencer",
         payload
       );
 
-      alert("Perfil de influencer creado correctamente");
+      /* =========================================================
+         🔥 SINCRONIZAR USER GLOBAL (CLAVE DEL SISTEMA)
+      ========================================================= */
+      updateUser({
+        fullName: form.fullName,
+        idNumber: form.idNumber,
+        tiktokUrl: form.tiktokUrl,
+        location: form.location,
+        tags: form.tags,
+        profileCompleted: true,
+      });
+
+      alert("Perfil de influencer guardado correctamente");
+
+      return data;
 
     } catch (err) {
-      console.error("ERROR:", err);
-      alert("Error al crear perfil");
+      console.error("ERROR ONBOARDING:", err);
+      alert("Error al guardar perfil");
     }
   };
 
   return (
     <div className="onboarding">
-      <h2>Completa tu perfil de Influencer</h2>
+      <h2>
+        {user?.profileCompleted
+          ? "Editar perfil de Influencer"
+          : "Completa tu perfil de Influencer"}
+      </h2>
 
       {/* ---------------- PERSONAL ---------------- */}
       <section className="block">
@@ -152,7 +187,7 @@ export default function OnboardingPage() {
 
       {/* ---------------- SUBMIT ---------------- */}
       <button onClick={handleSubmit}>
-        Finalizar
+        {user?.profileCompleted ? "Guardar cambios" : "Finalizar"}
       </button>
     </div>
   );

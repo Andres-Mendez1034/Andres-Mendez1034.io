@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [mfaRequired, setMfaRequired] = useState(false);
 
   /* =========================================================
-     🔁 REHIDRATACIÓN (cuando carga la app)
+     🔁 REHIDRATACIÓN
   ========================================================= */
   useEffect(() => {
     try {
@@ -24,7 +24,9 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem(TOKEN_KEY);
 
       if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+
+        setUser(parsedUser);
         setIsAuthenticated(true);
       }
     } catch (err) {
@@ -35,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   /* =========================================================
-     💾 HELPERS
+     💾 SESSION HELPERS
   ========================================================= */
   const saveSession = (userData, token) => {
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
@@ -45,6 +47,19 @@ export const AuthProvider = ({ children }) => {
   const clearSession = () => {
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(TOKEN_KEY);
+  };
+
+  /* =========================================================
+     🔥 UPDATE USER GLOBAL (ONBOARDING + EDIT PROFILE)
+  ========================================================= */
+  const updateUser = (updatedData) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...updatedData };
+
+      saveSession(merged, localStorage.getItem(TOKEN_KEY));
+
+      return merged;
+    });
   };
 
   /* =========================================================
@@ -59,55 +74,11 @@ export const AuthProvider = ({ children }) => {
         role,
       });
 
-      console.log("🧠 REGISTER RESPONSE:", data);
-
-      const safeUser = data?.user || null;
-
-      const userWithQR = {
-        ...safeUser,
+      const safeUser = {
+        ...data?.user,
+        role, // 🔥 FIX IMPORTANTE: garantizar rol consistente
         otpauth_url: data?.otpauth_url,
       };
-
-      setUser(userWithQR);
-
-      if (data?.mfaRequired) {
-        setMfaRequired(true);
-        setIsAuthenticated(false);
-
-        return {
-          success: true,
-          mfaRequired: true,
-          user: userWithQR,
-        };
-      }
-
-      setMfaRequired(false);
-      setIsAuthenticated(true);
-
-      saveSession(userWithQR, data?.token);
-
-      return {
-        success: true,
-        mfaRequired: false,
-        user: userWithQR,
-      };
-
-    } catch (err) {
-      console.error("❌ REGISTER ERROR FULL:", err);
-      throw err?.response?.data || err;
-    }
-  };
-
-  /* =========================================================
-     LOGIN
-  ========================================================= */
-  const handleLogin = async (email, password) => {
-    try {
-      const data = await loginService({ email, password });
-
-      console.log("🧠 LOGIN RESPONSE:", data);
-
-      const safeUser = data?.user || null;
 
       setUser(safeUser);
 
@@ -134,7 +105,49 @@ export const AuthProvider = ({ children }) => {
       };
 
     } catch (err) {
-      console.error("❌ LOGIN ERROR FULL:", err);
+      console.error("❌ REGISTER ERROR:", err);
+      throw err?.response?.data || err;
+    }
+  };
+
+  /* =========================================================
+     LOGIN
+  ========================================================= */
+  const handleLogin = async (email, password) => {
+    try {
+      const data = await loginService({ email, password });
+
+      const safeUser = {
+        ...data?.user,
+        role: data?.user?.role || "client", // 🔥 fallback seguro
+      };
+
+      setUser(safeUser);
+
+      if (data?.mfaRequired) {
+        setMfaRequired(true);
+        setIsAuthenticated(false);
+
+        return {
+          success: true,
+          mfaRequired: true,
+          user: safeUser,
+        };
+      }
+
+      setMfaRequired(false);
+      setIsAuthenticated(true);
+
+      saveSession(safeUser, data?.token);
+
+      return {
+        success: true,
+        mfaRequired: false,
+        user: safeUser,
+      };
+
+    } catch (err) {
+      console.error("❌ LOGIN ERROR:", err);
       throw err?.response?.data || err;
     }
   };
@@ -146,21 +159,16 @@ export const AuthProvider = ({ children }) => {
     if (!email) throw new Error("Email requerido");
 
     try {
-      console.log("📤 VERIFY MFA (CONTEXT):", {
-        email,
-        token,
-        type: typeof token,
-      });
-
       const data = await verifyMFAService({
         email,
         token: token.toString().trim(),
       });
 
-      console.log("🧠 MFA RESPONSE:", data);
-
       if (data?.success) {
-        const safeUser = data.user || user;
+        const safeUser = {
+          ...data.user,
+          role: data.user?.role || user?.role,
+        };
 
         setUser(safeUser);
         setIsAuthenticated(true);
@@ -172,7 +180,7 @@ export const AuthProvider = ({ children }) => {
       return data;
 
     } catch (err) {
-      console.error("❌ MFA ERROR FULL:", err);
+      console.error("❌ MFA ERROR:", err);
       throw err?.response?.data || err;
     }
   };
@@ -193,10 +201,14 @@ export const AuthProvider = ({ children }) => {
         user,
         isAuthenticated,
         mfaRequired,
+
         register,
         handleLogin,
         verifyMFA,
         logout,
+
+        // 🔥 CLAVE DEL SISTEMA (ONBOARDING + PROFILE SYNC)
+        updateUser,
       }}
     >
       {children}

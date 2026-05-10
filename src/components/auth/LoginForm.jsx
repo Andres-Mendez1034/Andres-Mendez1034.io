@@ -15,7 +15,8 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("CLICK LOGIN"); // 👈 debug
+
+    console.log("CLICK LOGIN");
 
     setError("");
 
@@ -26,11 +27,14 @@ export default function LoginForm() {
         throw new Error("AuthContext no está conectado");
       }
 
-      await handleLogin({ email, password });
+      // ✅ FIX CLAVE AQUÍ
+      await handleLogin(email, password);
 
     } catch (err) {
-      console.log("LOGIN ERROR:", err); // 👈 debug real
-      setError(err?.message || "Error al iniciar sesión. Intenta nuevamente.");
+      console.log("LOGIN ERROR:", err);
+      setError(
+        err?.message || "Error al iniciar sesión. Intenta nuevamente."
+      );
     } finally {
       setLoading(false);
     }
@@ -46,7 +50,9 @@ export default function LoginForm() {
       <div className="auth-card" role="region" aria-labelledby="login-title">
         <header className="auth-header">
           <span className="auth-badge">Inicia sesión</span>
-          <h2 id="login-title" className="auth-title">Bienvenido de nuevo</h2>
+          <h2 id="login-title" className="auth-title">
+            Bienvenido de nuevo
+          </h2>
           <p className="auth-subtitle">Introduce tus credenciales</p>
         </header>
 
@@ -91,7 +97,9 @@ export default function LoginForm() {
                 type="button"
                 className="password-toggle"
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                aria-label={
+                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
               >
                 {showPassword ? "Ocultar" : "Mostrar"}
               </button>

@@ -30,7 +30,7 @@ export default function MFAVerify() {
 
       if (res?.success) {
         alert("MFA verificado correctamente");
-        navigate("/dashboard");
+        navigate("/profile");
         return;
       }
 

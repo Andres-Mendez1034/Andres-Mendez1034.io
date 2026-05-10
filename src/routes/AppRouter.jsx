@@ -28,14 +28,9 @@ import Privacy from "../pages/Legal/Privacy/Privacy";
 import Terms from "../pages/Legal/Terms/Terms";
 import Cookies from "../pages/Legal/Cookies/Cookies";
 
-// 💬 CHATBOT PAGE (NUEVO)
-import ChatbotPage from "../pages/Chatbot/ChatbotPage";
-
 export default function AppRouter() {
   return (
     <Routes>
-
-      {/* RUTAS CON LAYOUT */}
       <Route element={<Layout />}>
         
         {/* CORE */}
@@ -63,11 +58,7 @@ export default function AppRouter() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/cookies" element={<Cookies />} />
 
-        {/* 💬 CHATBOT */}
-        <Route path="/chatbot" element={<ChatbotPage />} />
-
       </Route>
-
     </Routes>
   );
 }
