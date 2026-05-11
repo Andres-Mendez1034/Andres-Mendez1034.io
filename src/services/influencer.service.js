@@ -1,9 +1,30 @@
-// Servicio del marketplace (simulado)
-export async function fetchInfluencers() {
-  await new Promise(r => setTimeout(r, 500));
-  return [
-    { id: 1, name: 'Ana Tech', niche: 'Tecnología', followers: 124000, price: 200 },
-    { id: 2, name: 'Fit Carlos', niche: 'Fitness', followers: 98000, price: 150 },
-    { id: 3, name: 'Foodie Lu', niche: 'Gastronomía', followers: 54000, price: 120 },
-  ];
+import axios from "axios";
+
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+/* =========================================================
+   🟣 CREATE CREATOR PROFILE (FIXED)
+   - SOLO JSON (NO FORM DATA)
+========================================================= */
+export async function createCreatorProfile(data) {
+  try {
+    console.log("SENDING DATA:", data);
+
+    const res = await axios.post(
+      `${API_URL}/profiles/creator`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    return res.data?.profile;
+
+  } catch (error) {
+    console.error("Error creating creator profile:", error);
+    throw error;
+  }
 }

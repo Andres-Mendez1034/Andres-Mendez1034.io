@@ -1,54 +1,100 @@
-// src/hooks/useMarketplace.js
-import { useState, useEffect } from 'react';
-import { useFetch } from './useFetch';
-import { fetchInfluencers } from '../services/influencer.service';
+import { useState, useEffect, useContext, useMemo } from "react";
+import { useFetch } from "./useFetch";
+import { fetchInfluencers } from "../services/influencer.service";
+import { AuthContext } from "../context/AuthContext";
 
 export function useMarketplace() {
-  // Datos del marketplace (influencers)
-  const { data, loading, error } = useFetch(fetchInfluencers, []);
+  const { user } = useContext(AuthContext);
 
-  // Estado del carrito
+  const {
+    data: influencers,
+    loading,
+    error,
+  } = useFetch(fetchInfluencers, []);
+
+  /* =========================================================
+     CART STATE
+  ========================================================= */
   const [cartItems, setCartItems] = useState(() => {
-    // intenta cargar carrito del localStorage si existe
-    const stored = localStorage.getItem('cartItems');
+    const stored = localStorage.getItem("cartItems");
     return stored ? JSON.parse(stored) : [];
   });
 
-  // Guardar carrito en localStorage cada vez que cambie
   useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Función para agregar un item
+  /* =========================================================
+     🔥 ONBOARDING LOGIC CORREGIDO (CRÍTICO)
+  ========================================================= */
+  const needsOnboarding = useMemo(() => {
+    if (!user) return false;
+
+    if (user.has_profile) return false;
+
+    switch (user.role) {
+      case "creator":
+      case "influencer":
+      case "client":
+        return true;
+
+      default:
+        return false;
+    }
+  }, [user]);
+
+  /* =========================================================
+     CART ACTIONS
+  ========================================================= */
   const addItem = (item) => {
-    setCartItems(prev => {
-      const exists = prev.find(i => i.id === item.id);
+    if (needsOnboarding) {
+      console.warn("Usuario necesita completar onboarding");
+      return;
+    }
+
+    setCartItems((prev) => {
+      const exists = prev.find((i) => i.id === item.id);
+
       if (exists) {
-        // si ya existe, aumentar cantidad
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
-      } else {
-        return [...prev, { ...item, quantity: 1 }];
+        return prev.map((i) =>
+          i.id === item.id
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
+        );
       }
+
+      return [...prev, { ...item, quantity: 1 }];
     });
   };
 
-  // Función para eliminar un item
   const removeItem = (id) => {
-    setCartItems(prev => prev.filter(i => i.id !== id));
+    setCartItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  // Función para vaciar el carrito
   const clearCart = () => {
     setCartItems([]);
   };
 
+  /* =========================================================
+     DATA NORMALIZADA
+  ========================================================= */
+  const activeInfluencers = useMemo(() => {
+    return influencers || [];
+  }, [influencers]);
+
+  /* =========================================================
+     RETURN
+  ========================================================= */
   return {
-    data: data || [],
+    influencers: activeInfluencers,
     loading,
     error,
+
     cartItems,
     addItem,
     removeItem,
-    clearCart
+    clearCart,
+
+    needsOnboarding,
   };
 }

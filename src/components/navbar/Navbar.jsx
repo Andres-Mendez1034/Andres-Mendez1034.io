@@ -37,13 +37,13 @@ export default function Navbar() {
 
         {/* DESKTOP MENU */}
         <ul className="desktop-menu">
+
           <li>
             <NavLink to="/" end className={linkClass}>
               Home
             </NavLink>
           </li>
 
-          {/* SOLO LOGUEADO */}
           {isAuthenticated && (
             <>
               <li>
@@ -64,13 +64,18 @@ export default function Navbar() {
                 </NavLink>
               </li>
 
+              <li>
+                <NavLink to="/onboarding/creator" className={linkClass}>
+                  Crear perfil
+                </NavLink>
+              </li>
+
               <li className="cart">
                 <NavLink to="/cart" onClick={closeMenu}>
                   <img src={cartIcon} alt="Carrito" className="cart-icon" />
                 </NavLink>
               </li>
 
-              {/* SALUDO */}
               <li className="navbar-user">
                 👋 Hola, {user?.name || "Usuario"}
               </li>
@@ -83,7 +88,6 @@ export default function Navbar() {
             </>
           )}
 
-          {/* NO LOGUEADO */}
           {!isAuthenticated && (
             <>
               <li>
@@ -117,6 +121,7 @@ export default function Navbar() {
       {/* MOBILE MENU */}
       {open && (
         <ul className="mobile-menu">
+
           <li>
             <NavLink to="/" end onClick={closeMenu} className={linkClass}>
               Home
@@ -140,6 +145,12 @@ export default function Navbar() {
               <li>
                 <NavLink to="/chatbot" onClick={closeMenu} className={linkClass}>
                   💬 Asistente IA
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink to="/onboarding/creator" onClick={closeMenu} className={linkClass}>
+                  Crear perfil
                 </NavLink>
               </li>
 

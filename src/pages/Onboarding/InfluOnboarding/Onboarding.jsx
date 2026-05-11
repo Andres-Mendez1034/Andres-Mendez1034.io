@@ -76,7 +76,7 @@ export default function OnboardingPage() {
       };
 
       const { data } = await axios.post(
-        "http://localhost:3000/profiles/influencer",
+        "http://localhost:3000/api/profiles/influencer",
         payload
       );
 

@@ -1,26 +1,36 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import axios from "axios";
+
 import {
   login as loginService,
   register as registerService,
   verifyMFA as verifyMFAService,
 } from "../services/auth.service";
 
-import axios from "axios";
+/* =========================================================
+   CONTEXT
+========================================================= */
+export const AuthContext = createContext(null);
 
-export const AuthContext = createContext();
-
+/* =========================================================
+   STORAGE KEYS
+========================================================= */
 const USER_KEY = "bc_user";
 const TOKEN_KEY = "bc_token";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
+/* =========================================================
+   PROVIDER
+========================================================= */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [mfaRequired, setMfaRequired] = useState(false);
 
   /* =========================================================
-     🔁 REHIDRATACIÓN
+     REHIDRATACIÓN
   ========================================================= */
   useEffect(() => {
     try {
@@ -28,18 +38,26 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem(TOKEN_KEY);
 
       if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+
+        setUser({
+          ...parsed,
+          role: parsed?.role || "client",
+          has_profile: parsed?.has_profile ?? false,
+          profile_status: parsed?.profile_status ?? "none",
+        });
+
         setIsAuthenticated(true);
       }
     } catch (err) {
-      console.error("❌ Error rehidratando auth:", err);
+      console.error("Auth rehydrate error:", err);
       localStorage.removeItem(USER_KEY);
       localStorage.removeItem(TOKEN_KEY);
     }
   }, []);
 
   /* =========================================================
-     💾 SESSION HELPERS
+     SESSION HELPERS
   ========================================================= */
   const saveSession = (userData, token) => {
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
@@ -52,37 +70,53 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* =========================================================
-     🔥 REFRESH USER (PAYMENTS / STRIPE SYNC)
+     REFRESH USER
   ========================================================= */
   const refreshUser = async () => {
     try {
       const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) return null;
 
-      if (!token) return;
-
-      const response = await axios.get(`${API_URL}/auth/me`, {
+      const res = await axios.get(`${API_URL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const updatedUser = response.data.user;
+      const updatedUser = res.data?.user;
 
-      setUser(updatedUser);
-      saveSession(updatedUser, token);
+      if (updatedUser) {
+        const normalized = {
+          ...updatedUser,
+          role: updatedUser?.role || "client",
+          has_profile: updatedUser?.has_profile ?? false,
+          profile_status: updatedUser?.profile_status ?? "none",
+        };
+
+        setUser(normalized);
+        saveSession(normalized, token);
+      }
 
       return updatedUser;
     } catch (err) {
-      console.error("❌ Error refreshing user:", err);
+      console.error("Refresh user error:", err);
+      return null;
     }
   };
 
   /* =========================================================
-     🔥 UPDATE USER LOCAL (PROFILE / ONBOARDING)
+     UPDATE USER LOCAL
   ========================================================= */
   const updateUser = (updatedData) => {
     setUser((prev) => {
-      const merged = { ...prev, ...updatedData };
+      const merged = {
+        ...prev,
+        ...updatedData,
+        has_profile: updatedData?.has_profile ?? prev?.has_profile ?? false,
+        profile_status:
+          updatedData?.profile_status ?? prev?.profile_status ?? "none",
+      };
+
       saveSession(merged, localStorage.getItem(TOKEN_KEY));
       return merged;
     });
@@ -102,8 +136,10 @@ export const AuthProvider = ({ children }) => {
 
       const safeUser = {
         ...data?.user,
-        role,
-        otpauth_url: data?.otpauth_url,
+        role: data?.user?.role || role || "client",
+        has_profile: data?.user?.has_profile ?? false,
+        profile_status: data?.user?.profile_status ?? "none",
+        otpauth_url: data?.otpauth_url || null,
       };
 
       setUser(safeUser);
@@ -121,6 +157,7 @@ export const AuthProvider = ({ children }) => {
 
       setMfaRequired(false);
       setIsAuthenticated(true);
+
       saveSession(safeUser, data?.token);
 
       return {
@@ -129,7 +166,7 @@ export const AuthProvider = ({ children }) => {
         user: safeUser,
       };
     } catch (err) {
-      console.error("❌ REGISTER ERROR:", err);
+      console.error("REGISTER ERROR:", err);
       throw err?.response?.data || err;
     }
   };
@@ -144,6 +181,8 @@ export const AuthProvider = ({ children }) => {
       const safeUser = {
         ...data?.user,
         role: data?.user?.role || "client",
+        has_profile: data?.user?.has_profile ?? false,
+        profile_status: data?.user?.profile_status ?? "none",
       };
 
       setUser(safeUser);
@@ -161,6 +200,7 @@ export const AuthProvider = ({ children }) => {
 
       setMfaRequired(false);
       setIsAuthenticated(true);
+
       saveSession(safeUser, data?.token);
 
       return {
@@ -169,27 +209,28 @@ export const AuthProvider = ({ children }) => {
         user: safeUser,
       };
     } catch (err) {
-      console.error("❌ LOGIN ERROR:", err);
+      console.error("LOGIN ERROR:", err);
       throw err?.response?.data || err;
     }
   };
 
   /* =========================================================
-     VERIFY MFA
+     MFA VERIFY
   ========================================================= */
   const verifyMFA = async ({ email, token }) => {
-    if (!email) throw new Error("Email requerido");
-
     try {
       const data = await verifyMFAService({
         email,
-        token: token.toString().trim(),
+        token: token?.toString().trim(),
       });
 
       if (data?.success) {
         const safeUser = {
           ...data.user,
-          role: data.user?.role || user?.role,
+          role: data.user?.role || user?.role || "client",
+          has_profile: data.user?.has_profile ?? user?.has_profile ?? false,
+          profile_status:
+            data.user?.profile_status ?? user?.profile_status ?? "none",
         };
 
         setUser(safeUser);
@@ -201,7 +242,7 @@ export const AuthProvider = ({ children }) => {
 
       return data;
     } catch (err) {
-      console.error("❌ MFA ERROR:", err);
+      console.error("MFA ERROR:", err);
       throw err?.response?.data || err;
     }
   };
@@ -216,6 +257,9 @@ export const AuthProvider = ({ children }) => {
     clearSession();
   };
 
+  /* =========================================================
+     CONTEXT VALUE
+  ========================================================= */
   return (
     <AuthContext.Provider
       value={{
@@ -229,12 +273,23 @@ export const AuthProvider = ({ children }) => {
         logout,
 
         updateUser,
-
-        // 🔥 NUEVO: SYNC DESPUÉS DE STRIPE
         refreshUser,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
+};
+
+/* =========================================================
+   HOOK
+========================================================= */
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+
+  return context;
 };

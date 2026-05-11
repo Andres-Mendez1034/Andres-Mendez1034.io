@@ -8,7 +8,7 @@ export default function Profile() {
   const navigate = useNavigate();
 
   /* =========================================================
-     🔥 REDIRECCIÓN A ONBOARDING SEGÚN ROL
+     🔥 REDIRECCIÓN CORRECTA SEGÚN ROL (FIX REAL)
   ========================================================= */
   const goToEditProfile = () => {
     if (!user?.role) {
@@ -16,17 +16,45 @@ export default function Profile() {
       return;
     }
 
-    if (user.role === "influencer") {
-      navigate("/onboarding/influencer");
-    } else if (user.role === "client") {
-      navigate("/onboarding/client");
+    switch (user.role) {
+      case "creator":
+        navigate("/onboarding/creator");
+        break;
+
+      case "influencer":
+        navigate("/onboarding/influencer");
+        break;
+
+      case "client":
+        navigate("/onboarding/client");
+        break;
+
+      default:
+        navigate("/profile");
+        break;
     }
   };
 
   /* =========================================================
-     🔥 INFO DINÁMICA SEGÚN ROL
+     INFO DINÁMICA SEGÚN ROL
   ========================================================= */
   const renderRoleSpecificData = () => {
+    if (user?.role === "creator") {
+      return (
+        <>
+          <div className="field">
+            <label>Marca</label>
+            <span>{user?.brandName || "No definido"}</span>
+          </div>
+
+          <div className="field">
+            <label>Nicho</label>
+            <span>{user?.niche || "No definido"}</span>
+          </div>
+        </>
+      );
+    }
+
     if (user?.role === "influencer") {
       return (
         <>
@@ -100,7 +128,6 @@ export default function Profile() {
       {/* CONTENIDO */}
       <section className="profile-content">
 
-        {/* CARD PRINCIPAL */}
         <article className="profile-card">
 
           <h3>Información personal</h3>
@@ -127,12 +154,10 @@ export default function Profile() {
               <span>{user?.location || "No definida"}</span>
             </div>
 
-            {/* 🔥 DATA DINÁMICA POR ROL */}
             {renderRoleSpecificData()}
 
           </div>
 
-          {/* ACCIÓN ÚNICA */}
           <div className="profile-actions">
             <button className="btn btn-primary" onClick={goToEditProfile}>
               Completar / Editar perfil
@@ -141,7 +166,6 @@ export default function Profile() {
 
         </article>
 
-        {/* PREFERENCIAS (mock por ahora) */}
         <article className="profile-card muted">
 
           <h3>Preferencias</h3>

@@ -1,9 +1,12 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useContext } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Layout from "../layout/Layout";
+import { AuthContext } from "../context/AuthContext";
 
+// ==========================
 // CORE
+// ==========================
 import Home from "../pages/Home/Home";
 import MarketplacePage from "../pages/Marketplace/MarketplacePage";
 import Profile from "../pages/Profile/Profile";
@@ -11,53 +14,112 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import CartPage from "../pages/Cart/CartPage";
 
-// ONBOARDING
-import InfluOnboarding from "../pages/Onboarding/InfluOnboarding/Onboarding";
+// ==========================
+// ONBOARDING (solo rutas, sin guards)
+// ==========================
+import CreatorOnboarding from "../pages/Onboarding/CreatorOnboarding/CreatorOnboarding";
 import ClientOnboarding from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
 
+// ==========================
 // MFA
+// ==========================
 import MFASetup from "../components/auth/MFASetup";
 
+// ==========================
 // INFO
+// ==========================
 import Pricing from "../pages/Pricing/Pricing";
 import Support from "../pages/Support/Support";
 import Status from "../pages/Status/Status";
 
+// ==========================
 // LEGAL
+// ==========================
 import Privacy from "../pages/Legal/Privacy/Privacy";
 import Terms from "../pages/Legal/Terms/Terms";
 import Cookies from "../pages/Legal/Cookies/Cookies";
 
+// ==========================
 // CHATBOT
+// ==========================
 import ChatbotPage from "../pages/Chatbot/ChatbotPage";
 
+// ==========================
 // PAYMENTS
+// ==========================
 import Billing from "../pages/Billing/Billing";
 import Success from "../pages/Success/Success";
 import Cancel from "../pages/Cancel/Cancel";
 
+/* =========================================================
+   PRIVATE ROUTE SIMPLE (SOLO LOGIN)
+========================================================= */
+const PrivateRoute = ({ children }) => {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+/* =========================================================
+   ROUTER LIMPIO
+========================================================= */
 export default function AppRouter() {
   return (
     <Routes>
       <Route element={<Layout />}>
 
-        {/* CORE */}
+        {/* PUBLIC */}
         <Route path="/" element={<Home />} />
-        <Route path="/marketplace" element={<MarketplacePage />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/cart" element={<CartPage />} />
 
-        {/* ONBOARDING */}
+        {/* MARKETPLACE */}
         <Route
-          path="/onboarding/influencer"
-          element={<InfluOnboarding />}
+          path="/marketplace"
+          element={
+            <PrivateRoute>
+              <MarketplacePage />
+            </PrivateRoute>
+          }
+        />
+
+        {/* PROFILE */}
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+
+        {/* CART */}
+        <Route
+          path="/cart"
+          element={
+            <PrivateRoute>
+              <CartPage />
+            </PrivateRoute>
+          }
+        />
+
+        {/* ONBOARDING (SIN REGLAS, SOLO ACCESO) */}
+        <Route
+          path="/onboarding/creator"
+          element={
+            <PrivateRoute>
+              <CreatorOnboarding />
+            </PrivateRoute>
+          }
         />
 
         <Route
           path="/onboarding/client"
-          element={<ClientOnboarding />}
+          element={
+            <PrivateRoute>
+              <ClientOnboarding />
+            </PrivateRoute>
+          }
         />
 
         {/* MFA */}
@@ -77,17 +139,17 @@ export default function AppRouter() {
         <Route path="/chatbot" element={<ChatbotPage />} />
 
         {/* PAYMENTS */}
-        <Route path="/billing" element={<Billing />} />
-
         <Route
-          path="/payment/success"
-          element={<Success />}
+          path="/billing"
+          element={
+            <PrivateRoute>
+              <Billing />
+            </PrivateRoute>
+          }
         />
 
-        <Route
-          path="/payment/cancel"
-          element={<Cancel />}
-        />
+        <Route path="/payment/success" element={<Success />} />
+        <Route path="/payment/cancel" element={<Cancel />} />
 
       </Route>
     </Routes>

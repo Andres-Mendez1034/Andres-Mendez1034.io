@@ -1,59 +1,136 @@
-import React, { useState } from "react";
-import { items } from "../../data/items";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMarketplace } from "../../hooks/useMarketplace";
+import { AuthContext } from "../../context/AuthContext";
 import "./Marketplace.css";
 
 export default function Marketplace() {
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+
+  const {
+    influencers,
+    loading,
+    error,
+    addItem,
+    needsOnboarding,
+  } = useMarketplace();
+
   const [category, setCategory] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
   const [sort, setSort] = useState("trending");
   const [query, setQuery] = useState("");
 
-  const { addItem } = useMarketplace();
+  const locations = ["Suba", "Kennedy", "Engativá", "Chapinero"];
 
-  const filtered = items
-    .filter(i =>
-      category === "all"
-        ? true
-        : i.tag.toLowerCase() === category.toLowerCase()
-    )
-    .filter(i =>
-      statusFilter === "all"
-        ? true
-        : i.status === statusFilter
-    )
-    .filter(i =>
-      locationFilter === "all"
-        ? true
-        : i.location === locationFilter
-    )
-    .filter(i =>
-      i.title.toLowerCase().includes(query.toLowerCase())
+  /* =========================================================
+     FILTERED DATA
+  ========================================================= */
+  const filtered = (influencers || [])
+    .filter((i) => {
+      if (category === "all") return true;
+      return (i.tag || "").toLowerCase() === category.toLowerCase();
+    })
+    .filter((i) => {
+      if (statusFilter === "all") return true;
+      return i.status === statusFilter;
+    })
+    .filter((i) => {
+      if (locationFilter === "all") return true;
+      return i.location === locationFilter;
+    })
+    .filter((i) =>
+      (i.title || "").toLowerCase().includes(query.toLowerCase())
     )
     .sort((a, b) => {
-      if (sort === "price-asc") {
-        return Number(a.price.replace("$", "")) - Number(b.price.replace("$", ""));
-      }
-      if (sort === "price-desc") {
-        return Number(b.price.replace("$", "")) - Number(a.price.replace("$", ""));
-      }
+      const priceA = Number(a.price) || 0;
+      const priceB = Number(b.price) || 0;
+
+      if (sort === "price-asc") return priceA - priceB;
+      if (sort === "price-desc") return priceB - priceA;
+
       if (sort === "trending") {
         return (b.trending ? 1 : 0) - (a.trending ? 1 : 0);
       }
+
       return 0;
     });
 
-  const locations = ["Suba", "Kennedy", "Engativá", "Chapinero"];
+  /* =========================================================
+     LOADING / ERROR
+  ========================================================= */
+  if (loading) {
+    return (
+      <div className="marketplace">
+        <p>Cargando marketplace...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="marketplace">
+        <p>Error: {error}</p>
+      </div>
+    );
+  }
+
+  /* =========================================================
+     ONBOARDING HANDLER (FIX REAL)
+  ========================================================= */
+  const handleGoOnboarding = () => {
+    if (!user?.role) {
+      navigate("/profile");
+      return;
+    }
+
+    switch (user.role) {
+      case "creator":
+        navigate("/onboarding/creator");
+        break;
+
+      case "influencer":
+        navigate("/onboarding/influencer");
+        break;
+
+      case "client":
+        navigate("/onboarding/client");
+        break;
+
+      default:
+        navigate("/profile");
+        break;
+    }
+  };
 
   return (
     <div className="marketplace">
+
+      {/* =========================================================
+         🟣 ONBOARDING BANNER (FIXED)
+      ========================================================= */}
+      {needsOnboarding && (
+        <div className="mk-onboarding-banner">
+          <h3>Completa tu perfil</h3>
+          <p>
+            Necesitas terminar tu onboarding para interactuar en el marketplace.
+          </p>
+
+          <button
+            onClick={handleGoOnboarding}
+            className="btn-primary"
+          >
+            Crear perfil
+          </button>
+        </div>
+      )}
 
       {/* HERO */}
       <section className="mk-hero">
         <div className="mk-hero-content">
           <h1>Marketplace de Influencers</h1>
-          <p>Explora y conecta con los mejores influencers colombianos</p>
+          <p>Explora y conecta con los mejores creadores</p>
         </div>
       </section>
 
@@ -71,7 +148,6 @@ export default function Marketplace() {
 
         <div className="mk-selects">
 
-          {/* CATEGORÍA */}
           <div className="select">
             <label>Categoría</label>
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -85,7 +161,6 @@ export default function Marketplace() {
             </select>
           </div>
 
-          {/* ESTADO */}
           <div className="select">
             <label>Estado</label>
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
@@ -96,7 +171,6 @@ export default function Marketplace() {
             </select>
           </div>
 
-          {/* 📍 LOCALIDAD (NUEVO) */}
           <div className="select">
             <label>Localidad</label>
             <select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)}>
@@ -109,7 +183,6 @@ export default function Marketplace() {
             </select>
           </div>
 
-          {/* ORDEN */}
           <div className="select">
             <label>Ordenar</label>
             <select value={sort} onChange={(e) => setSort(e.target.value)}>
@@ -128,7 +201,7 @@ export default function Marketplace() {
           <div key={i.id} className="mk-card">
 
             <div className="mk-card-media">
-              <div className="mk-thumb"></div>
+              <div className="mk-thumb" />
 
               {i.trending && (
                 <span className="badge badge-primary">🔥 Trending</span>
@@ -152,8 +225,8 @@ export default function Marketplace() {
 
               <div className="mk-card-meta">
                 <span className="chip">{i.tag}</span>
-                <span className="chip">{i.location}</span> {/* 👈 NUEVO */}
-                <span className="price">{i.price}</span>
+                <span className="chip">{i.location}</span>
+                <span className="price">${i.price}</span>
               </div>
 
               {i.status !== "soldout" && (
@@ -163,7 +236,7 @@ export default function Marketplace() {
                     addItem({
                       id: i.id,
                       name: i.title,
-                      price: Number(i.price.replace("$", "")),
+                      price: Number(i.price) || 0,
                       image: i.image || "",
                       quantity: 1,
                     })
