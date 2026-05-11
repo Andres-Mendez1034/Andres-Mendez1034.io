@@ -1,188 +1,166 @@
-/* ========================
-   Pricing.css
-   Página de Planes de Precios
-   Paleta unificada con Footer
-======================== */
+/* =========================
+   PRICING - BRAND CONNECT
+========================= */
 
-/* ========================
-   CONTENEDOR PRINCIPAL
-======================== */
-
-.pricing-page {
-  max-width: 1100px;
-  margin: 3rem auto;
-  padding: 3.5rem 2.5rem;
-
-  background: linear-gradient(135deg, #0f172a, #020617);
-  border-radius: 28px;
-
-  box-shadow:
-    0 22px 55px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px #1e293b;
+:root {
+  --bc-bg: #0D1117;
+  --bc-surface: #161B22;
+  --bc-primary: #3B82F6;
+  --bc-primary-glow: rgba(59,130,246,0.35);
+  --bc-text: #FFFFFF;
+  --bc-muted: #8B95A1;
+  --bc-border: rgba(229,231,235,0.12);
 }
 
-/* ========================
-   TÍTULO Y DESCRIPCIÓN
-======================== */
-
-.pricing-page h1 {
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
+/* CONTENEDOR PRINCIPAL */
+.pricing-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0D1117, #0A0F14);
+  padding: 4rem 1.5rem;
+  color: var(--bc-text);
 }
 
-.pricing-page > p {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #9ca3af;
+/* HEADER */
+.pricing-header {
+  text-align: center;
   margin-bottom: 3rem;
-  max-width: 600px;
 }
 
-/* ========================
-   GRID DE PLANES
-======================== */
-
-.pricing-page .plans-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
-}
-
-/* ========================
-   TARJETA DE PLAN
-======================== */
-
-.pricing-page .plan-card {
-  background: linear-gradient(135deg, #020617, #0f172a);
-  border-radius: 20px;
-  padding: 2.2rem 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-
-  border: 1px solid #1e293b;
-
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
-}
-
-/* Hover */
-.pricing-page .plan-card:hover {
-  transform: translateY(-6px);
-  border-color: #00B4D8;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.6);
-}
-
-/* ========================
-   CONTENIDO DE PLAN
-======================== */
-
-.pricing-page .plan-card h2 {
-  font-size: 1.3rem;
+.pricing-header h1 {
+  font-size: 2.5rem;
   font-weight: 800;
-  color: #ffffff;
+  letter-spacing: -0.5px;
 }
 
-.pricing-page .plan-price {
-  font-size: 2.1rem;
-  font-weight: 900;
-  color: #90E0EF;
+.pricing-header p {
+  color: var(--bc-muted);
+  margin-top: 0.7rem;
 }
 
-/* ========================
-   FEATURES
-======================== */
+/* GRID */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: auto;
+}
 
-.pricing-page .plan-card ul {
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 1.5rem;
+/* CARD */
+.pricing-card {
+  background: linear-gradient(135deg, #161B22, #11161d);
+  border: 1px solid var(--bc-border);
+  border-radius: 20px;
+  padding: 1.6rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.pricing-page .plan-card ul li {
-  font-size: 0.9rem;
-  color: #cbd5f5;
-  padding-left: 1.2rem;
+  justify-content: space-between;
+  transition: all 0.3s ease;
   position: relative;
 }
 
-/* Check */
-.pricing-page .plan-card ul li::before {
-  content: "✔";
-  position: absolute;
-  left: 0;
-  color: #00B4D8;
-  font-weight: 900;
+/* HOVER */
+.pricing-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.8),
+    0 0 20px rgba(59,130,246,0.08);
 }
 
-/* ========================
-   BOTÓN
-======================== */
+/* PLAN DESTACADO */
+.pricing-card.highlight {
+  border: 1px solid var(--bc-primary);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--bc-primary-glow);
+}
 
-.pricing-page .btn-select {
-  margin-top: auto;
+/* TÍTULO */
+.pricing-card h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
 
-  padding: 0.7rem 1.4rem;
+/* PRECIO */
+.price {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  color: var(--bc-primary);
+}
+
+/* DESCRIPCIÓN */
+.description {
+  font-size: 0.85rem;
+  color: var(--bc-muted);
+  margin-top: 0.6rem;
+}
+
+/* FEATURES */
+.features {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* ICONO CHECK */
+.check-icon {
+  color: #22c55e;
+}
+
+/* BOTÓN */
+.pricing-btn {
+  margin-top: 1.6rem;
+  width: 100%;
+  padding: 0.7rem;
   border-radius: 12px;
+  font-weight: 600;
   border: none;
   cursor: pointer;
-
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-
-  background: linear-gradient(135deg, #0077B6, #00B4D8);
-  color: #ffffff;
-
-  box-shadow: 0 10px 26px rgba(0, 119, 182, 0.55);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    opacity 0.25s ease;
+  transition: all 0.25s ease;
 }
 
-/* Hover */
-.pricing-page .btn-select:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(0, 119, 182, 0.75);
+/* BOTÓN NORMAL */
+.pricing-btn.normal {
+  background: rgba(255,255,255,0.05);
+  color: var(--bc-text);
 }
 
-/* ========================
-   RESPONSIVE
-======================== */
+.pricing-btn.normal:hover {
+  background: rgba(255,255,255,0.1);
+}
 
-@media (max-width: 768px) {
-  .pricing-page {
-    padding: 3rem 1.5rem;
-    border-radius: 22px;
+/* BOTÓN DESTACADO */
+.pricing-btn.highlight {
+  background: linear-gradient(135deg, var(--bc-primary), #6366f1);
+  color: white;
+}
+
+.pricing-btn.highlight:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--bc-primary-glow);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
   }
 
-  .pricing-page h1 {
+  .pricing-header h1 {
     font-size: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .pricing-page {
-    margin: 2rem 1rem;
-    padding: 2.5rem 1.25rem;
-  }
-
-  .pricing-page h1 {
-    font-size: 1.8rem;
-  }
-
-  .pricing-page .btn-select {
-    width: 100%;
-    text-align: center;
   }
 }

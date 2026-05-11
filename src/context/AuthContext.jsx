@@ -5,10 +5,14 @@ import {
   verifyMFA as verifyMFAService,
 } from "../services/auth.service";
 
+import axios from "axios";
+
 export const AuthContext = createContext();
 
 const USER_KEY = "bc_user";
 const TOKEN_KEY = "bc_token";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -24,9 +28,7 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem(TOKEN_KEY);
 
       if (storedUser && storedToken) {
-        const parsedUser = JSON.parse(storedUser);
-
-        setUser(parsedUser);
+        setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
       }
     } catch (err) {
@@ -50,14 +52,38 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* =========================================================
-     🔥 UPDATE USER GLOBAL (ONBOARDING + EDIT PROFILE)
+     🔥 REFRESH USER (PAYMENTS / STRIPE SYNC)
+  ========================================================= */
+  const refreshUser = async () => {
+    try {
+      const token = localStorage.getItem(TOKEN_KEY);
+
+      if (!token) return;
+
+      const response = await axios.get(`${API_URL}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const updatedUser = response.data.user;
+
+      setUser(updatedUser);
+      saveSession(updatedUser, token);
+
+      return updatedUser;
+    } catch (err) {
+      console.error("❌ Error refreshing user:", err);
+    }
+  };
+
+  /* =========================================================
+     🔥 UPDATE USER LOCAL (PROFILE / ONBOARDING)
   ========================================================= */
   const updateUser = (updatedData) => {
     setUser((prev) => {
       const merged = { ...prev, ...updatedData };
-
       saveSession(merged, localStorage.getItem(TOKEN_KEY));
-
       return merged;
     });
   };
@@ -76,7 +102,7 @@ export const AuthProvider = ({ children }) => {
 
       const safeUser = {
         ...data?.user,
-        role, // 🔥 FIX IMPORTANTE: garantizar rol consistente
+        role,
         otpauth_url: data?.otpauth_url,
       };
 
@@ -95,7 +121,6 @@ export const AuthProvider = ({ children }) => {
 
       setMfaRequired(false);
       setIsAuthenticated(true);
-
       saveSession(safeUser, data?.token);
 
       return {
@@ -103,7 +128,6 @@ export const AuthProvider = ({ children }) => {
         mfaRequired: false,
         user: safeUser,
       };
-
     } catch (err) {
       console.error("❌ REGISTER ERROR:", err);
       throw err?.response?.data || err;
@@ -119,7 +143,7 @@ export const AuthProvider = ({ children }) => {
 
       const safeUser = {
         ...data?.user,
-        role: data?.user?.role || "client", // 🔥 fallback seguro
+        role: data?.user?.role || "client",
       };
 
       setUser(safeUser);
@@ -137,7 +161,6 @@ export const AuthProvider = ({ children }) => {
 
       setMfaRequired(false);
       setIsAuthenticated(true);
-
       saveSession(safeUser, data?.token);
 
       return {
@@ -145,7 +168,6 @@ export const AuthProvider = ({ children }) => {
         mfaRequired: false,
         user: safeUser,
       };
-
     } catch (err) {
       console.error("❌ LOGIN ERROR:", err);
       throw err?.response?.data || err;
@@ -178,7 +200,6 @@ export const AuthProvider = ({ children }) => {
       }
 
       return data;
-
     } catch (err) {
       console.error("❌ MFA ERROR:", err);
       throw err?.response?.data || err;
@@ -207,8 +228,10 @@ export const AuthProvider = ({ children }) => {
         verifyMFA,
         logout,
 
-        // 🔥 CLAVE DEL SISTEMA (ONBOARDING + PROFILE SYNC)
         updateUser,
+
+        // 🔥 NUEVO: SYNC DESPUÉS DE STRIPE
+        refreshUser,
       }}
     >
       {children}

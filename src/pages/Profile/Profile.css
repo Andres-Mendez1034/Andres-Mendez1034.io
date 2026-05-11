@@ -1,205 +1,159 @@
-/* =========================
-   Profile.css - Brand Connect Ultra Boosted
-========================= */
-
 :root {
-  --bc-bg: #0D1117;
-  --bc-surface: #161B22;
+  --bc-bg: #F9FAFB;
+  --bc-surface: #1E293B; /* 👈 oscuro suave (clave) */
   --bc-primary: #3B82F6;
-  --bc-text: #FFFFFF;
-  --bc-muted: #8B95A1;
-  --bc-border: #E5E7EB;
+  --bc-text: #FFFFFF; /* 👈 texto blanco */
+  --bc-muted: #94A3B8;
+  --bc-border: rgba(255,255,255,0.08);
   --bc-success: #10B981;
-
-  --radius: 16px;
-  --radius-sm: 12px;
-  --shadow-soft: 0 10px 24px rgba(0,0,0,0.35);
-  --shadow-strong: 0 18px 40px rgba(0,0,0,0.55);
 }
 
-/* Página base */
+/* PAGE */
 .profile-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--bc-bg), #0a0e14);
-  color: var(--bc-text);
-  padding-top: 76px;
+  background: var(--bc-bg);
+  padding: 5rem 2rem 2rem;
 }
 
-/* ========== HERO ========== */
-.profile-hero {
-  position: relative;
-  padding: 2.2rem 1.25rem 1.4rem;
-  background: linear-gradient(135deg, rgba(22,27,34,0.85), rgba(13,17,23,0.9));
-  border-bottom: 1px solid rgba(229,231,235,0.06);
-  overflow: hidden;
-}
-
-.profile-hero-content {
+/* CONTENEDOR */
+.profile-wrapper {
+  width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  animation: profileIn 0.6s ease-out both;
 }
 
-.profile-hero h2 {
-  margin: 0;
-  font-size: 1.6rem;
-}
-
-.profile-hero p {
-  margin: 0.2rem 0 0;
-  color: var(--bc-muted);
+/* HERO */
+.profile-hero {
+  margin-bottom: 1.5rem;
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: var(--bc-surface);
+  border: 1px solid var(--bc-border);
+  color: var(--bc-text);
 }
 
 /* Avatar */
 .avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--bc-primary), #4f46e5);
-  box-shadow: 0 14px 28px rgba(59,130,246,0.35);
-  font-weight: 900;
-  letter-spacing: 1px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--bc-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
-/* Glow */
-.profile-hero-glow {
-  position: absolute;
-  right: -120px;
-  top: -80px;
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(closest-side, rgba(59,130,246,0.22), transparent 70%);
-  filter: blur(20px);
-  pointer-events: none;
+/* HEADER TEXT */
+.profile-head h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--bc-text);
 }
 
-/* ========== CONTENIDO ========== */
+.profile-head p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--bc-muted);
+}
+
+/* CONTENT */
 .profile-content {
-  max-width: 1000px;
-  margin: 1.4rem auto 2.4rem;
-  padding: 0 1.25rem;
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 1rem;
 }
 
-/* Cards */
+/* CARDS */
 .profile-card {
-  background: linear-gradient(180deg, rgba(22,27,34,0.82), rgba(13,17,23,0.95));
-  border: 1px solid rgba(229,231,235,0.06);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-  padding: 1.1rem;
-  animation: cardIn 0.5s ease-out both;
+  background: var(--bc-surface);
+  border-radius: 14px;
+  padding: 1.4rem;
+  border: 1px solid var(--bc-border);
+  color: var(--bc-text);
 }
 
-.profile-card.muted {
-  background: rgba(22,27,34,0.6);
-}
-
+/* TITLES */
 .profile-card h3 {
-  margin: 0 0 0.8rem 0;
-  font-size: 1.05rem;
+  font-size: 16px;
+  margin-bottom: 1rem;
+  color: var(--bc-text);
 }
 
-/* Grid info */
+/* GRID */
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+/* FIELD */
+.field {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
 }
 
 .field label {
-  display: block;
-  font-size: 0.8rem;
+  font-size: 11px;
   color: var(--bc-muted);
-  margin-bottom: 0.15rem;
 }
 
 .field span {
+  font-weight: 500;
+  color: var(--bc-text);
+}
+
+/* BUTTON */
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1.2rem;
   font-weight: 600;
+  cursor: pointer;
 }
 
-/* Acciones */
+.btn-primary {
+  background: var(--bc-primary);
+  color: white;
+}
+
+/* ACTIONS */
 .profile-actions {
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+  margin-top: 1.2rem;
 }
 
-/* Lista preferencias */
+/* LIST */
 .profile-list {
   list-style: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
+
 .profile-list li {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.45rem 0;
-  border-bottom: 1px solid rgba(229,231,235,0.06);
-}
-.profile-list li:last-child {
-  border-bottom: none;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: var(--bc-text);
 }
 
-/* Chips */
+/* CHIP */
 .chip {
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  border: 1px solid rgba(229,231,235,0.18);
-  color: var(--bc-muted);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: rgba(255,255,255,0.1);
+  color: var(--bc-text);
 }
+
 .chip.active {
+  background: rgba(16,185,129,0.2);
   color: var(--bc-success);
-  background: rgba(16,185,129,0.12);
-  border-color: rgba(16,185,129,0.35);
 }
 
-/* Botones */
-.btn {
-  border-radius: var(--radius-sm);
-  padding: 0.55rem 0.85rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: transform .2s ease, box-shadow .25s ease, background .25s ease;
-}
-.btn:hover { transform: translateY(-1px); }
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--bc-primary), #4f46e5);
-  color: white;
-  box-shadow: 0 10px 20px rgba(59,130,246,0.28);
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--bc-primary);
-  border: 1px solid rgba(59,130,246,0.4);
-}
-.btn-outline:hover {
-  background: rgba(59,130,246,0.1);
-}
-
-/* Animaciones */
-@keyframes profileIn {
-  0% { opacity: 0; transform: translateY(-8px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-@keyframes cardIn {
-  0% { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* Responsive */
+/* RESPONSIVE */
 @media (max-width: 900px) {
   .profile-content {
     grid-template-columns: 1fr;

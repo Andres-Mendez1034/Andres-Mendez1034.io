@@ -28,11 +28,19 @@ import Privacy from "../pages/Legal/Privacy/Privacy";
 import Terms from "../pages/Legal/Terms/Terms";
 import Cookies from "../pages/Legal/Cookies/Cookies";
 
+// CHATBOT
+import ChatbotPage from "../pages/Chatbot/ChatbotPage";
+
+// PAYMENTS
+import Billing from "../pages/Billing/Billing";
+import Success from "../pages/Success/Success";
+import Cancel from "../pages/Cancel/Cancel";
+
 export default function AppRouter() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        
+
         {/* CORE */}
         <Route path="/" element={<Home />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
@@ -42,8 +50,15 @@ export default function AppRouter() {
         <Route path="/cart" element={<CartPage />} />
 
         {/* ONBOARDING */}
-        <Route path="/onboarding/influencer" element={<InfluOnboarding />} />
-        <Route path="/onboarding/client" element={<ClientOnboarding />} />
+        <Route
+          path="/onboarding/influencer"
+          element={<InfluOnboarding />}
+        />
+
+        <Route
+          path="/onboarding/client"
+          element={<ClientOnboarding />}
+        />
 
         {/* MFA */}
         <Route path="/mfa" element={<MFASetup />} />
@@ -57,6 +72,22 @@ export default function AppRouter() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/cookies" element={<Cookies />} />
+
+        {/* CHATBOT */}
+        <Route path="/chatbot" element={<ChatbotPage />} />
+
+        {/* PAYMENTS */}
+        <Route path="/billing" element={<Billing />} />
+
+        <Route
+          path="/payment/success"
+          element={<Success />}
+        />
+
+        <Route
+          path="/payment/cancel"
+          element={<Cancel />}
+        />
 
       </Route>
     </Routes>

@@ -1,0 +1,68 @@
+:root {
+  --primary: #3B82F6;
+  --primary-light: #60A5FA;
+  --text: #FFFFFF;
+  --border: rgba(255,255,255,0.08);
+}
+
+/* BUTTON BASE */
+.checkout-btn {
+  width: 100%;
+  padding: 0.85rem 1.2rem;
+  border-radius: 12px;
+  border: none;
+
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 10px 20px rgba(59,130,246,0.3);
+}
+
+/* HOVER */
+.checkout-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(59,130,246,0.5);
+}
+
+/* ACTIVE */
+.checkout-btn:active:not(:disabled) {
+  transform: scale(0.97);
+  box-shadow: 0 5px 10px rgba(59,130,246,0.3);
+}
+
+/* DISABLED */
+.checkout-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+/* LOADING STATE (opcional mejora visual) */
+.checkout-btn:disabled::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.6);
+  border-top: 2px solid white;
+  animation: spin 0.8s linear infinite;
+}
+
+/* SPINNER */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

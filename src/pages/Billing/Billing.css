@@ -1,0 +1,111 @@
+:root {
+  --bg: #F9FAFB;
+  --surface: #1E293B;
+  --primary: #3B82F6;
+  --text: #FFFFFF;
+  --muted: #94A3B8;
+  --border: rgba(255,255,255,0.08);
+  --success: #10B981;
+}
+
+/* PAGE */
+.billing-page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 5rem 2rem 2rem; /* 👈 respeta navbar */
+}
+
+/* CONTAINER */
+.billing-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* TITLE */
+.billing-container h1 {
+  margin-bottom: 1.5rem;
+  font-size: 24px;
+  color: #0F172A;
+}
+
+/* CARD */
+.billing-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: 0.2s ease;
+}
+
+.billing-card:hover {
+  transform: translateY(-2px);
+}
+
+/* CARD TITLE */
+.billing-card h2 {
+  margin-bottom: 1rem;
+  font-size: 18px;
+}
+
+/* TEXT */
+.billing-card p {
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* LABEL STRONG */
+.billing-card strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* PLAN STATUS (opcional futuro) */
+.plan-active {
+  color: var(--success);
+}
+
+/* BUTTON WRAPPER (por si quieres controlar spacing) */
+.billing-card button {
+  margin-top: 1rem;
+}
+
+/* SI QUIERES SOBREESCRIBIR EL BOTÓN */
+.billing-card .checkout-btn {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), #60A5FA);
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.billing-card .checkout-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(59,130,246,0.4);
+}
+
+/* DIVIDER OPCIONAL */
+.billing-card + .billing-card {
+  margin-top: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .billing-container {
+    padding: 0;
+  }
+
+  .billing-container h1 {
+    font-size: 20px;
+  }
+
+  .billing-card {
+    padding: 1.2rem;
+  }
+}

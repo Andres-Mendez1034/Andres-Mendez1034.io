@@ -1,0 +1,83 @@
+/* =========================
+   CANCEL PAGE - BRAND CONNECT
+========================= */
+
+.cancel-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #0D1117, #0A0F14);
+  padding: 2rem;
+  color: #ffffff;
+}
+
+/* CONTENEDOR */
+.cancel-container {
+  background: linear-gradient(135deg, #161B22, #11161d);
+  border: 1px solid rgba(229,231,235,0.12);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* TITULO */
+.cancel-container h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #ef4444;
+}
+
+/* TEXTO */
+.cancel-container p {
+  font-size: 0.95rem;
+  color: #8B95A1;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+/* ACCIONES */
+.cancel-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* BOTÓN PRICING */
+.cancel-btn {
+  background: linear-gradient(135deg, #3B82F6, #6366f1);
+  color: white;
+  padding: 0.75rem 1.2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.cancel-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(59,130,246,0.35);
+}
+
+/* BOTÓN HOME */
+.home-btn {
+  background: rgba(255,255,255,0.05);
+  color: #ffffff;
+  padding: 0.75rem 1.2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.home-btn:hover {
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.05);
+}
