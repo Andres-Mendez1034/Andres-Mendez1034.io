@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Layout from "../layout/Layout";
 import { AuthContext } from "../context/AuthContext";
@@ -15,7 +15,7 @@ import Register from "../pages/Register/Register";
 import CartPage from "../pages/Cart/CartPage";
 
 // ==========================
-// ONBOARDING (solo rutas, sin guards)
+// ONBOARDING
 // ==========================
 import CreatorOnboarding from "../pages/Onboarding/CreatorOnboarding/CreatorOnboarding";
 import ClientOnboarding from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
@@ -51,29 +51,80 @@ import Billing from "../pages/Billing/Billing";
 import Success from "../pages/Success/Success";
 import Cancel from "../pages/Cancel/Cancel";
 
+// ==========================
+// 404
+// ==========================
+import NotFound from "../pages/NotFound/NotFound";
+
 /* =========================================================
-   PRIVATE ROUTE SIMPLE (SOLO LOGIN)
+   PRIVATE ROUTE (MEJORADO)
 ========================================================= */
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useContext(AuthContext);
+  const location = useLocation();
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location.pathname }}
+      />
+    );
+  }
+
+  return children;
 };
 
 /* =========================================================
-   ROUTER LIMPIO
+   PUBLIC ONLY ROUTE (OPCIONAL PARA LOGIN/REGISTER)
+========================================================= */
+const PublicOnlyRoute = ({ children }) => {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  return isAuthenticated ? <Navigate to="/" /> : children;
+};
+
+/* =========================================================
+   APP ROUTER
 ========================================================= */
 export default function AppRouter() {
   return (
     <Routes>
+
+      {/* =========================
+          LAYOUT WRAPPER
+      ========================= */}
       <Route element={<Layout />}>
 
-        {/* PUBLIC */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
 
-        {/* MARKETPLACE */}
+        {/* =========================
+            PUBLIC
+        ========================= */}
+        <Route path="/" element={<Home />} />
+
+        <Route
+          path="/login"
+          element={
+            <PublicOnlyRoute>
+              <Login />
+            </PublicOnlyRoute>
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <PublicOnlyRoute>
+              <Register />
+            </PublicOnlyRoute>
+          }
+        />
+
+
+        {/* =========================
+            PROTECTED CORE
+        ========================= */}
         <Route
           path="/marketplace"
           element={
@@ -83,7 +134,6 @@ export default function AppRouter() {
           }
         />
 
-        {/* PROFILE */}
         <Route
           path="/profile"
           element={
@@ -93,7 +143,6 @@ export default function AppRouter() {
           }
         />
 
-        {/* CART */}
         <Route
           path="/cart"
           element={
@@ -103,7 +152,10 @@ export default function AppRouter() {
           }
         />
 
-        {/* ONBOARDING (SIN REGLAS, SOLO ACCESO) */}
+
+        {/* =========================
+            ONBOARDING
+        ========================= */}
         <Route
           path="/onboarding/creator"
           element={
@@ -122,23 +174,45 @@ export default function AppRouter() {
           }
         />
 
-        {/* MFA */}
-        <Route path="/mfa" element={<MFASetup />} />
 
-        {/* INFO */}
+        {/* =========================
+            MFA
+        ========================= */}
+        <Route
+          path="/mfa"
+          element={
+            <PrivateRoute>
+              <MFASetup />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =========================
+            INFO PUBLIC
+        ========================= */}
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/support" element={<Support />} />
         <Route path="/status" element={<Status />} />
 
-        {/* LEGAL */}
+
+        {/* =========================
+            LEGAL
+        ========================= */}
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/cookies" element={<Cookies />} />
 
-        {/* CHATBOT */}
+
+        {/* =========================
+            CHATBOT
+        ========================= */}
         <Route path="/chatbot" element={<ChatbotPage />} />
 
-        {/* PAYMENTS */}
+
+        {/* =========================
+            BILLING / PAYMENTS
+        ========================= */}
         <Route
           path="/billing"
           element={
@@ -152,6 +226,13 @@ export default function AppRouter() {
         <Route path="/payment/cancel" element={<Cancel />} />
 
       </Route>
+
+
+      {/* =========================
+          404 FALLBACK
+      ========================= */}
+      <Route path="*" element={<NotFound />} />
+
     </Routes>
   );
 }

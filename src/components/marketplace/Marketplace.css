@@ -1,269 +1,379 @@
-/* =========================
-   Marketplace.css - Brand Connect Ultra Boosted
-========================= */
+/* =========================================================
+   MARKETPLACE PAGE
+========================================================= */
 
-/* Variables Brand Connect */
-:root {
-  --bc-bg: #0D1117;
-  --bc-surface: #161B22;
-  --bc-primary: #3B82F6;
-  --bc-text: #FFFFFF;
-  --bc-muted: #8B95A1;
-  --bc-border: #E5E7EB;
-  --bc-success: #10B981;
-
-  --radius: 16px;
-  --radius-sm: 12px;
-  --blur: 14px;
-  --shadow-strong: 0 18px 40px rgba(0,0,0,0.55);
-  --shadow-soft: 0 10px 24px rgba(0,0,0,0.35);
-}
-
-/* Wrapper general */
 .marketplace {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--bc-bg) 0%, #0a0e14 100%);
-  color: var(--bc-text);
-  padding-top: 76px;
+  background: #0a111f;
+  color: #ffffff;
+  padding-bottom: 60px;
+  font-family: "Inter", sans-serif;
 }
 
-/* =================================
-   HERO
-================================= */
-.mk-hero {
-  position: relative;
-  padding: 3.5rem 1.25rem 2.2rem;
-  background: linear-gradient(135deg, rgba(22,27,34,0.85), rgba(13,17,23,0.9));
-  border-bottom: 1px solid rgba(229,231,235,0.06);
-  overflow: hidden;
+/* =========================================================
+   ONBOARDING BANNER
+========================================================= */
+
+.mk-onboarding-banner {
+  width: min(1200px, 92%);
+  margin: 30px auto 10px;
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  border-radius: 22px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 15px 40px rgba(74, 114, 255, 0.25);
 }
 
-.mk-hero-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  animation: heroIn 0.8s ease-out both;
-}
-
-.mk-hero h1 {
-  font-size: 2.1rem;
-  margin: 0 0 0.5rem;
-  text-shadow: 0 0 12px rgba(59,130,246,0.25);
-}
-
-.mk-hero p {
-  color: var(--bc-muted);
+.mk-onboarding-banner h3 {
+  font-size: 1.7rem;
+  font-weight: 700;
   margin: 0;
 }
 
-.mk-hero-glow {
-  position: absolute;
-  right: -120px;
-  top: -80px;
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(closest-side, rgba(59,130,246,0.25), transparent 70%);
-  filter: blur(18px);
-  pointer-events: none;
+.mk-onboarding-banner p {
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  max-width: 700px;
+  line-height: 1.6;
 }
 
-/* =================================
-   FILTROS
-================================= */
+.btn-primary {
+  margin-top: 10px;
+  width: fit-content;
+  border: none;
+  background: #ffffff;
+  color: #111827;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.mk-hero {
+  width: 100%;
+  padding: 90px 20px 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mk-hero-content {
+  width: min(1200px, 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(74, 114, 255, 0.15),
+    rgba(123, 92, 255, 0.15)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 30px;
+  padding: 70px 50px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+}
+
+.mk-hero-content h1 {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  margin-bottom: 14px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.mk-hero-content p {
+  color: #b8c1d9;
+  font-size: 1.1rem;
+}
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
 .mk-filters {
-  max-width: 1200px;
-  margin: 1.2rem auto 0.6rem;
-  padding: 0 1.25rem;
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr auto;
+  width: min(1200px, 92%);
+  margin: 0 auto 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .mk-search input {
   width: 100%;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius);
-  background: rgba(22,27,34,0.7);
-  border: 1px solid rgba(229,231,235,0.08);
-  color: var(--bc-text);
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 20px;
+  border-radius: 16px;
+  outline: none;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: 0.25s ease;
+}
+
+.mk-search input::placeholder {
+  color: #94a3b8;
+}
+
+.mk-search input:focus {
+  border-color: #4a72ff;
+  box-shadow: 0 0 0 4px rgba(74, 114, 255, 0.15);
 }
 
 .mk-selects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 18px;
+}
+
+.select {
   display: flex;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .select label {
-  font-size: 0.8rem;
-  color: var(--bc-muted);
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  font-weight: 600;
 }
 
 .select select {
-  background: rgba(22,27,34,0.7);
-  color: var(--bc-text);
-  border-radius: var(--radius);
-  padding: 0.7rem;
-  border: 1px solid rgba(229,231,235,0.08);
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: 0.25s ease;
+  cursor: pointer;
 }
 
-/* =================================
-   GRID & CARDS
-================================= */
-.mk-grid {
-  max-width: 1200px;
-  margin: 0 auto 2.5rem;
-  padding: 0 1.25rem;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1rem;
+.select select:focus {
+  border-color: #4a72ff;
+  box-shadow: 0 0 0 4px rgba(74, 114, 255, 0.12);
 }
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.mk-grid {
+  width: min(1200px, 92%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
 
 .mk-card {
-  grid-column: span 4;
-  background: linear-gradient(180deg, rgba(22,27,34,0.8), rgba(13,17,23,0.95));
-  border-radius: var(--radius);
+  background: #111827;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  animation: cardIn 0.6s ease both;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: 0.3s ease;
+  position: relative;
 }
 
 .mk-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--shadow-strong);
+  border-color: rgba(74, 114, 255, 0.35);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
 }
 
-/* Media */
+/* =========================================================
+   MEDIA
+========================================================= */
+
 .mk-card-media {
   position: relative;
-  height: 160px;
-  background: linear-gradient(135deg, #0f1420, #0b1018);
 }
 
 .mk-thumb {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(120px 120px at 20% 30%, rgba(59,130,246,0.25), transparent),
-    radial-gradient(160px 160px at 80% 70%, rgba(16,185,129,0.25), transparent);
+  width: 100%;
+  height: 230px;
+  background: linear-gradient(
+    135deg,
+    #4a72ff,
+    #7b5cff,
+    #182132
+  );
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
 }
 
-/* =================================
-   BADGES (SOLUCIÓN DE SOLAPAMIENTO)
-================================= */
+/* =========================================================
+   BADGES
+========================================================= */
+
 .badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 0.25rem 0.6rem;
+  top: 14px;
+  left: 14px;
+  padding: 8px 14px;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(229,231,235,0.18);
-  z-index: 2;
+  backdrop-filter: blur(10px);
 }
 
-/* Trending */
 .badge-primary {
-  background: rgba(59,130,246,0.18);
-  color: var(--bc-primary);
+  background: rgba(74, 114, 255, 0.9);
+  color: white;
 }
 
-/* Disponible */
 .badge-success {
-  right: 10px;
-  left: unset;
-  background: rgba(16,185,129,0.16);
-  color: var(--bc-success);
+  background: rgba(22, 163, 74, 0.9);
+  color: white;
 }
 
-/* Limitado / Agotado */
 .badge-muted {
-  right: 10px;
-  left: unset;
-  top: 38px;
-  background: rgba(139,149,161,0.16);
-  color: var(--bc-muted);
+  background: rgba(15, 23, 42, 0.85);
+  color: #cbd5e1;
 }
 
-/* =================================
-   BODY
-================================= */
+/* =========================================================
+   CARD BODY
+========================================================= */
+
 .mk-card-body {
-  padding: 1rem;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .mk-card-title {
-  font-size: 1.05rem;
-  margin-bottom: 0.3rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 .mk-card-meta {
   display: flex;
-  justify-content: space-between;
-  color: var(--bc-muted);
-  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .price {
+  margin-left: auto;
+  font-size: 1.15rem;
   font-weight: 800;
-  color: var(--bc-text);
+  color: #4a72ff;
 }
 
-/* =================================
-   BOTÓN AGREGAR AL CARRITO
-================================= */
+/* =========================================================
+   BUTTON
+========================================================= */
+
 .add-to-cart-btn {
   width: 100%;
-  padding: 0.65rem 1rem;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--bc-primary), #4f46e5);
-  color: #fff;
-  font-weight: 800;
   border: none;
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  color: white;
+  padding: 15px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 10px 22px rgba(59,130,246,0.3);
-  transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s;
+  transition: 0.25s ease;
 }
 
 .add-to-cart-btn:hover {
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 16px 36px rgba(59,130,246,0.45);
-  filter: brightness(1.1);
+  transform: translateY(-2px);
+  opacity: 0.95;
+  box-shadow: 0 10px 25px rgba(74, 114, 255, 0.3);
 }
 
-/* Feedback visual */
-@keyframes addPulse {
-  from { box-shadow: 0 0 0 0 rgba(59,130,246,0.6); }
-  to { box-shadow: 0 0 0 24px rgba(59,130,246,0); }
+/* =========================================================
+   STATES
+========================================================= */
+
+.marketplace p {
+  color: #cbd5e1;
 }
 
-.add-to-cart-btn:active {
-  transform: scale(0.96);
-  animation: addPulse 0.45s ease-out;
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-/* =================================
-   ANIMACIONES
-================================= */
-@keyframes heroIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* =================================
+/* =========================================================
    RESPONSIVE
-================================= */
-@media (max-width: 1024px) {
-  .mk-card { grid-column: span 6; }
+========================================================= */
+
+@media (max-width: 768px) {
+  .mk-hero-content {
+    padding: 50px 28px;
+  }
+
+  .mk-card-body {
+    padding: 20px;
+  }
+
+  .mk-onboarding-banner {
+    padding: 24px;
+  }
+
+  .mk-hero-content h1 {
+    font-size: 2.4rem;
+  }
+
+  .mk-hero-content p {
+    font-size: 1rem;
+  }
 }
 
-@media (max-width: 640px) {
-  .mk-grid { grid-template-columns: repeat(6, 1fr); }
-  .mk-card { grid-column: span 6; }
+@media (max-width: 520px) {
+  .mk-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mk-selects {
+    grid-template-columns: 1fr;
+  }
+
+  .mk-hero {
+    padding-top: 50px;
+  }
+
+  .mk-hero-content {
+    border-radius: 24px;
+  }
 }

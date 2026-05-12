@@ -1,123 +1,181 @@
-/* ========================
-   Privacy.css
-   Política de Privacidad
-   Paleta unificada con Footer
-======================== */
-
-/* ========================
-   CONTENEDOR PRINCIPAL
-======================== */
+/* =========================================================
+   PRIVACY PAGE - BRAND CONNECT
+========================================================= */
 
 .privacy-page {
-  max-width: 900px;
-  margin: 3rem auto;
-  padding: 3.5rem 2.75rem;
+  min-height: 100vh;
+  background: #0a111f;
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
 
-  background: linear-gradient(135deg, #0f172a, #020617);
-  border-radius: 28px;
-
-  box-shadow:
-    0 22px 55px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px #1e293b;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ========================
-   TÍTULO PRINCIPAL
-======================== */
+/* limitar ancho de lectura */
+.privacy-page > * {
+  max-width: 860px;
+  width: 100%;
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
 
 .privacy-page h1 {
-  font-size: 2.4rem;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 900;
-  color: #ffffff;
-  margin-bottom: 1rem;
+  text-align: center;
+  margin-bottom: 20px;
+
+  letter-spacing: -1px;
+
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* ========================
-   PÁRRAFOS
-======================== */
+/* =========================================================
+   PARAGRAPHS
+========================================================= */
 
 .privacy-page p {
-  font-size: 0.95rem;
-  line-height: 1.65;
-  color: #9ca3af;
-  margin-bottom: 2rem;
-  max-width: 760px;
+  color: #94a3b8;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 20px;
 }
 
-/* ========================
-   SUBTÍTULOS
-======================== */
+/* =========================================================
+   SECTION TITLES
+========================================================= */
 
 .privacy-page h2 {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 800;
-  color: #90E0EF;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  color: #ffffff;
+
+  position: relative;
+  padding-left: 14px;
 }
 
-/* ========================
-   LISTAS
-======================== */
+/* accent bar */
+.privacy-page h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 4px;
+  height: 20px;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+}
+
+/* =========================================================
+   LISTS (CARDS STYLE)
+========================================================= */
 
 .privacy-page ul {
   list-style: none;
   padding: 0;
-  margin: 1rem 0 2rem;
+  margin: 0 0 22px 0;
+
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
-/* Ítems */
-.privacy-page ul li {
-  position: relative;
-  padding-left: 1.5rem;
+.privacy-page li {
+  background: rgba(17, 24, 39, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 
-  font-size: 0.9rem;
+  padding: 14px 16px;
+  border-radius: 14px;
+
+  color: #cbd5e1;
   line-height: 1.6;
-  color: #cbd5f5;
+
+  transition: all 0.2s ease;
 }
 
-/* Bullet personalizado */
-.privacy-page ul li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: #00B4D8;
-  font-size: 1.2rem;
-  line-height: 1;
+.privacy-page li:hover {
+  transform: translateY(-2px);
+  border-color: rgba(74, 114, 255, 0.25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
-/* Énfasis */
-.privacy-page strong {
+/* strong highlight */
+.privacy-page li strong,
+.privacy-page p strong {
   color: #ffffff;
-  font-weight: 700;
 }
 
-/* ========================
+/* =========================================================
+   BACKGROUND GLOW (SUBTLE PREMIUM)
+========================================================= */
+
+.privacy-page {
+  position: relative;
+  overflow: hidden;
+}
+
+.privacy-page::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+
+  background: radial-gradient(
+    circle,
+    rgba(74, 114, 255, 0.12),
+    transparent 70%
+  );
+
+  top: -200px;
+  left: -220px;
+  filter: blur(140px);
+  opacity: 0.6;
+}
+
+.privacy-page::after {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+
+  background: radial-gradient(
+    circle,
+    rgba(123, 92, 255, 0.12),
+    transparent 70%
+  );
+
+  bottom: -220px;
+  right: -220px;
+  filter: blur(160px);
+  opacity: 0.5;
+}
+
+/* =========================================================
    RESPONSIVE
-======================== */
+========================================================= */
 
 @media (max-width: 768px) {
   .privacy-page {
-    padding: 3rem 2rem;
-    border-radius: 22px;
+    padding: 60px 16px;
   }
 
-  .privacy-page h1 {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .privacy-page {
-    margin: 2rem 1rem;
-    padding: 2.5rem 1.5rem;
+  .privacy-page p {
+    font-size: 1rem;
   }
 
-  .privacy-page h1 {
-    font-size: 1.8rem;
+  .privacy-page h2 {
+    font-size: 1.2rem;
   }
 }

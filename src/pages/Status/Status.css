@@ -1,149 +1,166 @@
-/* ========================
-   Status.css
-   Página de Estado de Servicios
-   Paleta unificada con Footer
-======================== */
-
-/* ========================
-   CONTENEDOR PRINCIPAL
-======================== */
+/* =========================================================
+   STATUS PAGE
+========================================================= */
 
 .status-page {
-  max-width: 1100px;
-  margin: 3rem auto;
-  padding: 3.5rem 2.5rem;
-
-  background: linear-gradient(135deg, #0f172a, #020617);
-  border-radius: 28px;
-
-  box-shadow:
-    0 22px 55px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px #1e293b;
+  min-height: 100vh;
+  background: #0a111f;
+  color: #ffffff;
+  padding: 80px 20px;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ========================
-   TÍTULO Y DESCRIPCIÓN
-======================== */
+/* =========================================================
+   HEADER
+========================================================= */
 
 .status-page h1 {
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 16px;
+  text-align: center;
+  letter-spacing: -1px;
 }
 
 .status-page > p {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #9ca3af;
-  max-width: 700px;
-  margin-bottom: 3rem;
+  color: #94a3b8;
+  font-size: 1.05rem;
+  max-width: 750px;
+  text-align: center;
+  line-height: 1.7;
+  margin-bottom: 60px;
 }
 
-/* ========================
-   CONTENEDOR DE CARDS
-======================== */
+/* =========================================================
+   STATUS CONTAINER
+========================================================= */
 
-.status-page .status-container {
+.status-container {
+  width: min(1200px, 100%);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
 }
 
-/* ========================
-   CARD DE SERVICIO
-======================== */
+/* =========================================================
+   STATUS CARD
+========================================================= */
 
-.status-page .status-card {
-  background: linear-gradient(135deg, #020617, #0f172a);
-  border-radius: 20px;
-  padding: 1.75rem 1.75rem 2rem;
-
-  border: 1px solid #1e293b;
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
+.status-card {
+  background: #111827;
+  border-radius: 24px;
+  padding: 32px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Hover */
-.status-page .status-card:hover {
+.status-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(74, 114, 255, 0.08),
+    rgba(123, 92, 255, 0.04)
+  );
+  opacity: 0;
+  transition: 0.3s ease;
+}
+
+.status-card:hover::before {
+  opacity: 1;
+}
+
+.status-card:hover {
   transform: translateY(-6px);
-  border-color: #00B4D8;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.6);
+  border-color: rgba(74, 114, 255, 0.3);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 
-/* Nombre del servicio */
-.status-page .status-card h2 {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin: 0;
+.status-card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
 }
 
-/* ========================
-   ESTADOS
-======================== */
+/* =========================================================
+   STATUS TEXT
+========================================================= */
 
-.status-page .status-card p {
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
+.status-card p {
+  position: relative;
+  z-index: 1;
   width: fit-content;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
-/* ✅ Operativo */
-.status-page .status-operativo {
-  background: rgba(0, 180, 216, 0.2);
-  color: #90E0EF;
-  border: 1px solid rgba(0, 180, 216, 0.45);
+/* =========================================================
+   STATUS TYPES
+========================================================= */
+
+.status-operativo {
+  background: rgba(22, 163, 74, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.25);
 }
 
-/* 🟡 Mantenimiento */
-.status-page .status-mantenimiento-programado {
-  background: rgba(255, 209, 102, 0.2);
-  color: #FFD166;
-  border: 1px solid rgba(255, 209, 102, 0.45);
+.status-mantenimiento-programado {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.25);
 }
 
-/* 🔴 Caído (por si lo agregas después) */
-.status-page .status-caido {
-  background: rgba(239, 71, 111, 0.2);
-  color: #EF476F;
-  border: 1px solid rgba(239, 71, 111, 0.45);
+/* =========================================================
+   OPTIONAL EXTRA STATES
+========================================================= */
+
+.status-caido,
+.status-error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.25);
 }
 
-/* ========================
+.status-limitado {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+}
+
+/* =========================================================
    RESPONSIVE
-======================== */
+========================================================= */
 
 @media (max-width: 768px) {
   .status-page {
-    padding: 3rem 1.75rem;
-    border-radius: 22px;
+    padding: 60px 18px;
   }
 
-  .status-page h1 {
-    font-size: 2rem;
+  .status-card {
+    padding: 26px 22px;
+  }
+
+  .status-page > p {
+    margin-bottom: 40px;
   }
 }
 
 @media (max-width: 480px) {
-  .status-page {
-    margin: 2rem 1rem;
-    padding: 2.5rem 1.5rem;
+  .status-container {
+    grid-template-columns: 1fr;
   }
 
   .status-page h1 {
-    font-size: 1.8rem;
+    font-size: 2.3rem;
   }
 }
