@@ -113,7 +113,7 @@ src/
     ├── Helpers puros sin React
     └── Utilidades generales
 
-
+```
 
 ## Principios de arquitectura
 
