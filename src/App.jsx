@@ -12,36 +12,41 @@ import "./styles/main.css";
 export default function App() {
   const [chatOpen, setChatOpen] = useState(false);
 
-  // 🔥 DEBUG: ver si cambia el estado del chatbot
+  /* =========================================================
+     DEBUG CHAT STATE
+  ========================================================= */
   useEffect(() => {
-    console.log("💬 chatOpen cambió a:", chatOpen);
+    console.log("💬 [APP] chatOpen:", chatOpen);
   }, [chatOpen]);
 
+  /* =========================================================
+     RENDER
+  ========================================================= */
   return (
     <BrowserRouter>
       <AuthProvider>
 
-        {/* NAVBAR */}
+        {/* ================= NAVBAR ================= */}
         <Navbar
           onOpenChat={() => {
-            console.log("👉 Click en Asistente IA desde Navbar");
+            console.log("👉 [APP] Navbar abrió chat");
             setChatOpen(true);
           }}
         />
 
-        {/* ROUTES */}
+        {/* ================= ROUTER ================= */}
         <AppRouter />
 
-        {/* CHATBOT GLOBAL CONTROLADO */}
+        {/* ================= CHATBOT GLOBAL ================= */}
         <Chatbot
           open={chatOpen}
           onClose={() => {
-            console.log("❌ Cerrando chatbot");
+            console.log("❌ [APP] Chat cerrado");
             setChatOpen(false);
           }}
         />
 
-        {/* FOOTER */}
+        {/* ================= FOOTER ================= */}
         <Footer />
 
       </AuthProvider>

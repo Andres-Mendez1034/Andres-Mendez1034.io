@@ -6,21 +6,38 @@ import "../../components/auth/Register.css";
 export default function Register() {
   const navigate = useNavigate();
 
-  // 🔥 ESTE ES EL FLUJO CORRECTO
-  const handleRegisterSuccess = (state) => {
-    // 1. MFA FLOW (CRÍTICO)
-    if (state === "mfa") {
-      navigate("/mfa");
+  const handleRegisterSuccess = (res) => {
+    const user = res?.user || res;
+
+    console.log("📦 REGISTER SUCCESS:", res);
+
+    // 🔐 MFA SETUP (solo si backend lo indica)
+    const requiresMfaSetup =
+      res?.mfaRequired === true ||
+      user?.otpauth_url;
+
+    if (requiresMfaSetup) {
+      navigate("/mfa-setup");
       return;
     }
 
-    // 2. ONBOARDING CLIENTE
-    if (state === "client") {
+    // =========================
+    // CLIENT
+    // =========================
+    if (user?.role === "client") {
       navigate("/onboarding/client");
       return;
     }
 
-    // 3. ONBOARDING INFLUENCER
+    // =========================
+    // INFLUENCER (DEFAULT)
+    // =========================
+    if (user?.role === "influencer") {
+      navigate("/onboarding/influencer");
+      return;
+    }
+
+    // 🔥 FALLBACK SEGURO
     navigate("/onboarding/influencer");
   };
 

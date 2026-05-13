@@ -13,14 +13,23 @@ export default function MFASetup() {
   const [loading, setLoading] = useState(true);
 
   /* =========================================================
-     GENERAR QR DESDE REGISTER
+     DEBUG USER
   ========================================================= */
   useEffect(() => {
-    if (!user) return;
+    console.log("👤 MFA USER:", user);
+  }, [user]);
 
-    console.log("👤 USER EN MFA:", user);
+  /* =========================================================
+     GENERAR QR
+  ========================================================= */
+  useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
-    if (!user?.otpauth_url) {
+    if (!user.otpauth_url) {
+      console.log("❌ Missing otpauth_url");
       setError("No hay QR disponible (otpauth_url faltante)");
       setLoading(false);
       return;
@@ -35,13 +44,18 @@ export default function MFASetup() {
   }, [user]);
 
   /* =========================================================
-     VERIFY MFA + REDIRECT
+     VERIFY MFA
   ========================================================= */
   const handleVerify = async (e) => {
     e.preventDefault();
     setError("");
 
-    const cleanToken = token.replace(/\D/g, "").trim();
+    if (!user?.email) {
+      setError("Usuario no cargado");
+      return;
+    }
+
+    const cleanToken = token.replace(/\D/g, "");
 
     if (cleanToken.length !== 6) {
       setError("El código debe tener 6 dígitos");
@@ -49,26 +63,31 @@ export default function MFASetup() {
     }
 
     try {
-      console.log("🚀 ENVIANDO:", {
-        email: user?.email,
+      console.log("🚀 VERIFY MFA REQUEST:", {
+        email: user.email,
         token: cleanToken,
-        role: user?.role,
+        role: user.role,
       });
 
       const res = await verifyMFA({
-        email: user?.email,
+        email: user.email,
         token: cleanToken,
       });
 
       console.log("🔐 VERIFY RESPONSE:", res);
 
       if (res?.success) {
-        // 🔥 REDIRECCIÓN SEGÚN ROL
-        if (user?.role === "influencer") {
+        // 🔥 FLUJO FIJO (NO MÁS ERRORES DE RUTAS)
+        const role = user?.role || "influencer";
+
+        if (role === "influencer") {
+          console.log("➡️ NAVIGATE /onboarding/influencer");
           navigate("/onboarding/influencer");
         } else {
+          console.log("➡️ NAVIGATE /onboarding/client");
           navigate("/onboarding/client");
         }
+
         return;
       }
 
@@ -104,7 +123,7 @@ export default function MFASetup() {
             className="mfa-input"
             value={token}
             onChange={(e) =>
-              setToken(e.target.value.replace(/\D/g, "")) // solo números
+              setToken(e.target.value.replace(/\D/g, ""))
             }
             placeholder="123456"
             maxLength={6}

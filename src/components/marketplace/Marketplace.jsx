@@ -13,7 +13,6 @@ export default function Marketplace() {
     loading,
     error,
     addItem,
-    needsOnboarding,
   } = useMarketplace();
 
   const [category, setCategory] = useState("all");
@@ -76,55 +75,8 @@ export default function Marketplace() {
     );
   }
 
-  /* =========================================================
-     ONBOARDING HANDLER (FIX REAL)
-  ========================================================= */
-  const handleGoOnboarding = () => {
-    if (!user?.role) {
-      navigate("/profile");
-      return;
-    }
-
-    switch (user.role) {
-      case "creator":
-        navigate("/onboarding/creator");
-        break;
-
-      case "influencer":
-        navigate("/onboarding/influencer");
-        break;
-
-      case "client":
-        navigate("/onboarding/client");
-        break;
-
-      default:
-        navigate("/profile");
-        break;
-    }
-  };
-
   return (
     <div className="marketplace">
-
-      {/* =========================================================
-         🟣 ONBOARDING BANNER (FIXED)
-      ========================================================= */}
-      {needsOnboarding && (
-        <div className="mk-onboarding-banner">
-          <h3>Completa tu perfil</h3>
-          <p>
-            Necesitas terminar tu onboarding para interactuar en el marketplace.
-          </p>
-
-          <button
-            onClick={handleGoOnboarding}
-            className="btn-primary"
-          >
-            Crear perfil
-          </button>
-        </div>
-      )}
 
       {/* HERO */}
       <section className="mk-hero">

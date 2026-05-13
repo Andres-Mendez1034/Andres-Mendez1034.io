@@ -4,11 +4,8 @@ import { AuthContext } from "../../../context/AuthContext";
 import axios from "axios";
 
 export default function OnboardingPage() {
-  const { user, updateUser } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext) || {};
 
-  /* =========================================================
-     🔁 FORM STATE (modo creación / edición)
-  ========================================================= */
   const [form, setForm] = useState({
     fullName: "",
     idNumber: "",
@@ -17,19 +14,21 @@ export default function OnboardingPage() {
     location: "",
   });
 
-  /* =========================================================
-     🔁 CARGAR DATOS EXISTENTES (EDICIÓN REAL)
-  ========================================================= */
   useEffect(() => {
-    if (user?.role !== "influencer") return;
+    console.log("👤 USER EN CONTEXT:", user);
 
-    setForm({
+    if (!user) return;
+
+    const initialForm = {
       fullName: user?.fullName || "",
       idNumber: user?.idNumber || "",
       tiktokUrl: user?.tiktokUrl || "",
       tags: user?.tags || [],
       location: user?.location || "",
-    });
+    };
+
+    console.log("📦 FORM INIT:", initialForm);
+    setForm(initialForm);
   }, [user]);
 
   const categories = [
@@ -45,72 +44,81 @@ export default function OnboardingPage() {
 
   const locations = ["Suba", "Kennedy", "Engativá", "Chapinero"];
 
-  /* =========================================================
-     TAGS TOGGLE
-  ========================================================= */
   const handleTagToggle = (tag) => {
     setForm((prev) => {
       const exists = prev.tags.includes(tag);
 
-      return {
+      const updated = {
         ...prev,
         tags: exists
           ? prev.tags.filter((t) => t !== tag)
           : [...prev.tags, tag],
       };
+
+      console.log("🏷️ TAGS UPDATED:", updated.tags);
+
+      return updated;
     });
   };
 
-  /* =========================================================
-     SUBMIT (BACKEND + SYNC GLOBAL USER)
-  ========================================================= */
   const handleSubmit = async () => {
     try {
       const payload = {
-        user_id: user?.id,
-        full_name: form.fullName,
-        id_number: form.idNumber,
-        location: form.location,
-        tiktok_url: form.tiktokUrl,
-        tags: form.tags,
+        user_id: Number(user?.id || user?.user_id),
+        full_name: form.fullName?.trim(),
+        id_number: form.idNumber?.trim(),
+        location: form.location || "Chapinero",
+        tiktok_url: form.tiktokUrl?.trim() || null,
+        tags: Array.isArray(form.tags) ? form.tags : [],
+        category: form.tags?.[0] || "general",
       };
+
+      console.log("🚀 PAYLOAD FINAL:", payload);
+
+      if (!payload.user_id) {
+        alert("Usuario no válido");
+        return;
+      }
+
+      console.log("📡 ENVIANDO REQUEST...");
 
       const { data } = await axios.post(
         "http://localhost:3000/api/profiles/influencer",
         payload
       );
 
-      /* =========================================================
-         🔥 SINCRONIZAR USER GLOBAL (CLAVE DEL SISTEMA)
-      ========================================================= */
-      updateUser({
-        fullName: form.fullName,
-        idNumber: form.idNumber,
-        tiktokUrl: form.tiktokUrl,
-        location: form.location,
-        tags: form.tags,
-        profileCompleted: true,
-      });
+      console.log("✅ RESPONSE BACKEND:", data);
 
-      alert("Perfil de influencer guardado correctamente");
+      // 🔥 FIX CRÍTICO: SOLO SI EXISTE updateUser
+      if (typeof updateUser === "function") {
+        updateUser({
+          ...user,
+          fullName: form.fullName,
+          idNumber: form.idNumber,
+          tiktokUrl: form.tiktokUrl,
+          location: form.location,
+          tags: form.tags,
+          profileCompleted: true,
+        });
+
+        console.log("🔄 USER GLOBAL UPDATED");
+      } else {
+        console.warn("⚠️ updateUser no está disponible en AuthContext");
+      }
+
+      alert("Perfil guardado correctamente");
 
       return data;
-
     } catch (err) {
-      console.error("ERROR ONBOARDING:", err);
-      alert("Error al guardar perfil");
+      console.error("❌ ERROR ONBOARDING:", err?.response?.data || err);
+      alert(err?.response?.data?.error || "Error al guardar perfil");
     }
   };
 
   return (
     <div className="onboarding">
-      <h2>
-        {user?.profileCompleted
-          ? "Editar perfil de Influencer"
-          : "Completa tu perfil de Influencer"}
-      </h2>
+      <h2>Completa tu perfil de Influencer</h2>
 
-      {/* ---------------- PERSONAL ---------------- */}
       <section className="block">
         <h3>Datos personales</h3>
 
@@ -133,7 +141,6 @@ export default function OnboardingPage() {
         />
       </section>
 
-      {/* ---------------- TIKTOK ---------------- */}
       <section className="block">
         <h3>TikTok principal</h3>
 
@@ -147,9 +154,8 @@ export default function OnboardingPage() {
         />
       </section>
 
-      {/* ---------------- TAGS ---------------- */}
       <section className="block">
-        <h3>¿En qué te enfocas?</h3>
+        <h3>Tags</h3>
 
         <div className="tags">
           {categories.map((tag) => (
@@ -165,7 +171,6 @@ export default function OnboardingPage() {
         </div>
       </section>
 
-      {/* ---------------- LOCATION ---------------- */}
       <section className="block">
         <h3>Localidad</h3>
 
@@ -185,9 +190,8 @@ export default function OnboardingPage() {
         ))}
       </section>
 
-      {/* ---------------- SUBMIT ---------------- */}
       <button onClick={handleSubmit}>
-        {user?.profileCompleted ? "Guardar cambios" : "Finalizar"}
+        Finalizar
       </button>
     </div>
   );

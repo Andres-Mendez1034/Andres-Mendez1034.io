@@ -49,21 +49,37 @@ export default function RegisterForm({ onSuccess }) {
 
       const res = await register(email, password, name, role);
 
-      // 🔥 FIX CRÍTICO: soporta diferentes estructuras de respuesta
-      const mfaRequired =
-        res?.mfaRequired ??
-        res?.data?.mfaRequired ??
-        false;
-
-      console.log("🔐 MFA FLAG DETECTED:", mfaRequired);
+      // 🔥 DEBUG REAL (importante para no perder flujo otra vez)
       console.log("📦 REGISTER RESPONSE:", res);
 
-      if (mfaRequired) {
-        onSuccess?.("mfa");
+      const user = res?.user || res;
+
+      // 🔐 MFA DETECTION REAL (solo backend manda esto bien)
+      const mfaRequired =
+        res?.mfaRequired === true;
+
+      console.log("🔐 MFA REQUIRED:", mfaRequired);
+
+      // =========================
+      // CASO 1: MFA SETUP
+      // =========================
+      if (mfaRequired || user?.otpauth_url) {
+        onSuccess?.(res);
         return;
       }
 
-      onSuccess?.(role);
+      // =========================
+      // CASO 2: CLIENT
+      // =========================
+      if (user?.role === "client") {
+        onSuccess?.(user);
+        return;
+      }
+
+      // =========================
+      // CASO 3: INFLUENCER
+      // =========================
+      onSuccess?.(user);
 
     } catch (err) {
       console.error("REGISTER ERROR:", err);
