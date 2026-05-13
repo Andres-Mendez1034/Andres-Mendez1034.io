@@ -150,10 +150,21 @@ export default function Marketplace() {
       {/* GRID */}
       <div className="mk-grid">
         {filtered.map((i) => (
-          <div key={i.id} className="mk-card">
+          <div key={i.service_id} className="mk-card"> {/* ← FIX: service_id en vez de id */}
 
             <div className="mk-card-media">
-              <div className="mk-thumb" />
+
+              {/* ← FIX: imagen real en vez de div vacío */}
+              {i.image ? (
+                <img
+                  src={i.image}
+                  alt={i.title}
+                  className="mk-thumb"
+                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                />
+              ) : (
+                <div className="mk-thumb" />
+              )}
 
               {i.trending && (
                 <span className="badge badge-primary">🔥 Trending</span>
@@ -186,7 +197,7 @@ export default function Marketplace() {
                   className="add-to-cart-btn"
                   onClick={() =>
                     addItem({
-                      id: i.id,
+                      id: i.service_id,
                       name: i.title,
                       price: Number(i.price) || 0,
                       image: i.image || "",
