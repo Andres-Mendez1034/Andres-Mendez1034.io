@@ -29,6 +29,8 @@ import ChatbotPage from "../pages/Chatbot/ChatbotPage";
 import Billing from "../pages/Billing/Billing";
 import Success from "../pages/Success/Success";
 import Cancel from "../pages/Cancel/Cancel";
+// CREATOR PROFILE
+import CreatorProfile from "../pages/CreatorProfile/CreatorProfile";
 // 404
 import NotFound from "../pages/NotFound/NotFound";
 
@@ -58,6 +60,9 @@ export default function AppRouter() {
         <Route path="/marketplace" element={<PrivateRoute><MarketplacePage /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/cart" element={<PrivateRoute><CartPage /></PrivateRoute>} />
+
+        {/* CREATOR PROFILE — dinámica por ID */}
+        <Route path="/creator/:id" element={<PrivateRoute><CreatorProfile /></PrivateRoute>} />
 
         {/* ONBOARDING */}
         <Route path="/onboarding/influencer" element={<PrivateRoute><InfluOnboarding /></PrivateRoute>} />

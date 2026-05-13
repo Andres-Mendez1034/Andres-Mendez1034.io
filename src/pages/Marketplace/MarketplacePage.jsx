@@ -14,8 +14,11 @@ export default function MarketplacePage() {
     navigate("/onboarding/creator");
   };
 
-  const canCreateProfile =
-    user?.role === "influencer";
+  const goToCreatorProfile = (id) => {
+    navigate(`/creator/${id}`);
+  };
+
+  const canCreateProfile = user?.role === "influencer";
 
   return (
     <main className="page">
@@ -38,7 +41,10 @@ export default function MarketplacePage() {
       {loading ? (
         <p>Cargando...</p>
       ) : (
-        <Marketplace influencers={influencers} />
+        <Marketplace
+          influencers={influencers}
+          onCardClick={goToCreatorProfile}
+        />
       )}
 
     </main>

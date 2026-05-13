@@ -150,11 +150,15 @@ export default function Marketplace() {
       {/* GRID */}
       <div className="mk-grid">
         {filtered.map((i) => (
-          <div key={i.service_id} className="mk-card"> {/* ← FIX: service_id en vez de id */}
+          <div
+            key={i.service_id}
+            className="mk-card"
+            onClick={() => navigate(`/creator/${i.service_id}`)}
+            style={{ cursor: "pointer" }}
+          >
 
             <div className="mk-card-media">
 
-              {/* ← FIX: imagen real en vez de div vacío */}
               {i.image ? (
                 <img
                   src={i.image}
@@ -195,15 +199,16 @@ export default function Marketplace() {
               {i.status !== "soldout" && (
                 <button
                   className="add-to-cart-btn"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation(); // evita que el click llegue a la card
                     addItem({
                       id: i.service_id,
                       name: i.title,
                       price: Number(i.price) || 0,
                       image: i.image || "",
                       quantity: 1,
-                    })
-                  }
+                    });
+                  }}
                 >
                   Agregar al carrito
                 </button>
