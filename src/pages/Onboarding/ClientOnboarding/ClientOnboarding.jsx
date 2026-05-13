@@ -75,7 +75,7 @@ export default function ClientOnboarding() {
       };
 
       const { data } = await axios.post(
-        "http://localhost:3000/profiles/client",
+        "http://localhost:3000/api/profiles/client",
         payload
       );
 
