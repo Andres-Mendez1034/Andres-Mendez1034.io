@@ -1,16 +1,30 @@
 // src/components/auth/LoginForm.jsx
+
 import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { AuthContext } from "../../context/AuthContext";
+
 import MFAVerify from "./MFAVerify";
+
 import "./Login.css";
 
 export default function LoginForm() {
-  const { handleLogin, mfaRequired, user } = useContext(AuthContext) || {};
+  const {
+    handleLogin,
+    isMfaChallenge,
+    user,
+  } = useContext(AuthContext) || {};
+
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -27,94 +41,160 @@ export default function LoginForm() {
         throw new Error("AuthContext no está conectado");
       }
 
-      // ✅ FIX CLAVE AQUÍ
-      await handleLogin(email, password);
+      // LOGIN
+      const result = await handleLogin(email, password);
+
+      console.log("LOGIN RESULT:", result);
+
+      // ✅ MFA FLOW
+      if (result?.mfaRequired) {
+        console.log("➡ REDIRECT MFA");
+
+        navigate("/mfa-setup");
+
+        return;
+      }
+
+      // ✅ LOGIN NORMAL
+      console.log("➡ REDIRECT HOME");
+
+      navigate("/");
 
     } catch (err) {
       console.log("LOGIN ERROR:", err);
+
       setError(
-        err?.message || "Error al iniciar sesión. Intenta nuevamente."
+        err?.message ||
+        "Error al iniciar sesión. Intenta nuevamente."
       );
+
     } finally {
       setLoading(false);
     }
   };
 
-  // Si MFA es requerido, mostramos verificación
-  if (mfaRequired && user) {
+  // MFA VERIFY COMPONENT
+  if (isMfaChallenge && user) {
     return <MFAVerify user={user} />;
   }
 
   return (
     <div className="auth">
-      <div className="auth-card" role="region" aria-labelledby="login-title">
+      <div
+        className="auth-card"
+        role="region"
+        aria-labelledby="login-title"
+      >
+
         <header className="auth-header">
-          <span className="auth-badge">Inicia sesión</span>
-          <h2 id="login-title" className="auth-title">
+          <span className="auth-badge">
+            Inicia sesión
+          </span>
+
+          <h2
+            id="login-title"
+            className="auth-title"
+          >
             Bienvenido de nuevo
           </h2>
-          <p className="auth-subtitle">Introduce tus credenciales</p>
+
+          <p className="auth-subtitle">
+            Introduce tus credenciales
+          </p>
         </header>
 
         {error && (
-          <div className="form-error" role="alert" aria-live="assertive">
+          <div
+            className="form-error"
+            role="alert"
+            aria-live="assertive"
+          >
             {error}
           </div>
         )}
 
-        <form className="auth-form" onSubmit={handleSubmit} noValidate>
-          
-          {/* Email */}
+        <form
+          className="auth-form"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+
+          {/* EMAIL */}
           <div className="form-field">
-            <label htmlFor="email">Correo electrónico</label>
+            <label htmlFor="email">
+              Correo electrónico
+            </label>
+
             <input
               id="email"
               type="email"
               className="input"
               placeholder="correo@ejemplo.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
               autoComplete="email"
               required
             />
           </div>
 
-          {/* Contraseña */}
+          {/* PASSWORD */}
           <div className="form-field">
-            <label htmlFor="password">Contraseña</label>
+            <label htmlFor="password">
+              Contraseña
+            </label>
+
             <div className="input-wrapper">
               <input
                 id="password"
-                type={showPassword ? "text" : "password"}
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 className="input"
                 placeholder="********"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
                 autoComplete="current-password"
                 required
               />
+
               <button
                 type="button"
                 className="password-toggle"
-                onClick={() => setShowPassword((v) => !v)}
+                onClick={() =>
+                  setShowPassword((v) => !v)
+                }
                 aria-label={
-                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  showPassword
+                    ? "Ocultar contraseña"
+                    : "Mostrar contraseña"
                 }
               >
-                {showPassword ? "Ocultar" : "Mostrar"}
+                {showPassword
+                  ? "Ocultar"
+                  : "Mostrar"}
               </button>
             </div>
           </div>
 
-          {/* Botón */}
+          {/* BUTTON */}
           <div className="auth-actions">
             <button
               type="submit"
               className="btn btn-primary"
               disabled={loading}
-              aria-busy={loading ? "true" : "false"}
+              aria-busy={
+                loading ? "true" : "false"
+              }
             >
-              {loading ? "Iniciando..." : "Iniciar sesión"}
+              {loading
+                ? "Iniciando..."
+                : "Iniciar sesión"}
             </button>
           </div>
 

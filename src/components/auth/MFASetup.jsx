@@ -1,15 +1,19 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+
 import "./MFASetup.css";
 
 export default function MFASetup() {
   const { verifyMFA, user } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
   const [qr, setQr] = useState("");
   const [token, setToken] = useState("");
+
   const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(true);
 
   /* =========================================================
@@ -23,14 +27,18 @@ export default function MFASetup() {
      GENERAR QR
   ========================================================= */
   useEffect(() => {
+
     if (!user) {
       setLoading(false);
       return;
     }
 
+    // ⚠️ Login MFA challenge normalmente NO trae QR
+    // Solo setup/register suele traer otpauth_url
+
     if (!user.otpauth_url) {
-      console.log("❌ Missing otpauth_url");
-      setError("No hay QR disponible (otpauth_url faltante)");
+      console.log("ℹ️ No otpauth_url → MFA LOGIN MODE");
+
       setLoading(false);
       return;
     }
@@ -40,14 +48,38 @@ export default function MFASetup() {
       encodeURIComponent(user.otpauth_url);
 
     setQr(qrUrl);
+
     setLoading(false);
+
   }, [user]);
+
+  /* =========================================================
+     HELPER → ROLE ROUTES
+  ========================================================= */
+  const getOnboardingRoute = (role) => {
+
+    switch (role) {
+
+      case "influencer":
+        return "/onboarding/influencer";
+
+      case "creator":
+        return "/onboarding/creator";
+
+      case "client":
+        return "/onboarding/client";
+
+      default:
+        return "/";
+    }
+  };
 
   /* =========================================================
      VERIFY MFA
   ========================================================= */
   const handleVerify = async (e) => {
     e.preventDefault();
+
     setError("");
 
     if (!user?.email) {
@@ -63,6 +95,7 @@ export default function MFASetup() {
     }
 
     try {
+
       console.log("🚀 VERIFY MFA REQUEST:", {
         email: user.email,
         token: cleanToken,
@@ -77,16 +110,20 @@ export default function MFASetup() {
       console.log("🔐 VERIFY RESPONSE:", res);
 
       if (res?.success) {
-        // 🔥 FLUJO FIJO (NO MÁS ERRORES DE RUTAS)
-        const role = user?.role || "influencer";
 
-        if (role === "influencer") {
-          console.log("➡️ NAVIGATE /onboarding/influencer");
-          navigate("/onboarding/influencer");
-        } else {
-          console.log("➡️ NAVIGATE /onboarding/client");
-          navigate("/onboarding/client");
-        }
+        // ✅ usar role del response primero
+        const role =
+          res?.user?.role ||
+          user?.role ||
+          "client";
+
+        console.log("👤 FINAL ROLE:", role);
+
+        const route = getOnboardingRoute(role);
+
+        console.log("➡️ NAVIGATE:", route);
+
+        navigate(route);
 
         return;
       }
@@ -94,8 +131,13 @@ export default function MFASetup() {
       setError("Código incorrecto");
 
     } catch (err) {
+
       console.error("❌ VERIFY ERROR:", err);
-      setError("Error verificando MFA");
+
+      setError(
+        err?.message ||
+        "Error verificando MFA"
+      );
     }
   };
 
@@ -104,34 +146,64 @@ export default function MFASetup() {
   ========================================================= */
   return (
     <div className="mfa-container">
+
       <h2>🔐 Configura tu MFA</h2>
 
-      {error && <p className="error">{error}</p>}
+      {error && (
+        <p className="error">
+          {error}
+        </p>
+      )}
 
-      {loading && <p>Cargando QR...</p>}
+      {loading && (
+        <p>Cargando MFA...</p>
+      )}
 
+      {/* QR SOLO SI EXISTE */}
       {!loading && qr && (
         <>
-          <p>Escanea este código con Google Authenticator</p>
-          <img src={qr} alt="QR MFA" />
+          <p>
+            Escanea este código con Google
+            Authenticator
+          </p>
+
+          <img
+            src={qr}
+            alt="QR MFA"
+          />
         </>
+      )}
+
+      {/* LOGIN MODE */}
+      {!loading && !qr && (
+        <p>
+          Introduce el código de tu app
+          autenticadora
+        </p>
       )}
 
       {!loading && (
         <form onSubmit={handleVerify}>
+
           <input
             className="mfa-input"
             value={token}
             onChange={(e) =>
-              setToken(e.target.value.replace(/\D/g, ""))
+              setToken(
+                e.target.value.replace(/\D/g, "")
+              )
             }
             placeholder="123456"
             maxLength={6}
           />
 
-          <button className="mfa-button" type="submit">
+          <button
+            className="mfa-button"
+            type="submit"
+          >
             Verificar
           </button>
+
         </form>
       )}
     </div>
