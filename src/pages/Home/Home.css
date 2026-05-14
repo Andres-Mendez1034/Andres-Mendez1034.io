@@ -1,75 +1,89 @@
 /* =========================
-   Home.css - Brand Connect Ultra Boosted
+   Home.css - BRAND SYSTEM FIXED
 ========================= */
 
 :root {
-  --bc-bg: #0D1117;
+  --bc-bg: #0a111f;
   --bc-surface: #161B22;
-  --bc-primary: #3B82F6;
-  --bc-text: #FFFFFF;
-  --bc-muted: #8B95A1;
-  --bc-border: #E5E7EB;
+  --bc-primary: #4a72ff;
+  --bc-secondary: #7b5cff;
+  --bc-text: #ffffff;
+  --bc-muted: #94a3b8;
 }
 
-/* Página base */
+/* =========================
+   BASE PAGE
+========================= */
+
 .home-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--bc-bg), #0a0e14);
+  background: var(--bc-bg);
   color: var(--bc-text);
+
+  display: flex;
+  flex-direction: column;
+
   padding-top: 76px; /* navbar fixed */
 }
 
-/* ===== Setup general de secciones ===== */
-.home-page > section {
+/* =========================
+   GLOBAL SECTION SYSTEM (FIX PRINCIPAL)
+========================= */
+
+/* cada sección respeta el mismo sistema */
+.home-page > * {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 90px 20px;
+  margin: 0;
+
   position: relative;
+  animation: homeFade 0.5s ease-out both;
 }
 
-/* Separación entre bloques principales */
-.home-page > section:not(:first-child) {
-  margin-top: 3.2rem;
+/* evita doble padding con hero */
+.home-page > :first-child {
+  padding-top: 40px; /* hero más compacto */
 }
 
-/* ===== Ajuste Hero ===== */
+/* =========================
+   HERO FIX (navbar compensation limpia)
+========================= */
+
 .home-page .hero {
-  margin-top: -76px; /* compensa navbar fixed */
-  padding-top: calc(76px + 3rem);
+  margin-top: -76px;
+  padding-top: 120px;
 }
 
-/* ===== Features wrapper ===== */
+/* =========================
+   FEATURES WIDTH CONTROL
+========================= */
+
 .home-page .features {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.25rem;
 }
 
-/* Separación extra si agregas más secciones luego */
-.home-section {
-  max-width: 1200px;
-  margin: 0 auto 3.5rem;
-  padding: 0 1.25rem;
-}
+/* =========================
+   OPTIONAL SURFACE VARIANT
+========================= */
 
-/* ===== Fondo alterno para secciones claras (si lo necesitas) ===== */
 .section-muted {
-  background: linear-gradient(
-    180deg,
-    rgba(22,27,34,0.65),
-    rgba(13,17,23,0.85)
-  );
-  border-top: 1px solid rgba(229,231,235,0.06);
-  border-bottom: 1px solid rgba(229,231,235,0.06);
-  padding: 3rem 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ===== Animación de entrada suave ===== */
-.home-page section {
-  animation: homeFade 0.6s ease-out both;
-}
+/* =========================
+   ANIMATION (SOFT SaaS FEEL)
+========================= */
 
 @keyframes homeFade {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -77,13 +91,16 @@
   }
 }
 
-/* ===== Responsive ===== */
+/* =========================
+   RESPONSIVE
+========================= */
+
 @media (max-width: 768px) {
-  .home-page > section:not(:first-child) {
-    margin-top: 2.3rem;
+  .home-page > * {
+    padding: 70px 16px;
   }
 
-  .section-muted {
-    padding: 2.2rem 0;
+  .home-page .hero {
+    padding-top: 100px;
   }
 }

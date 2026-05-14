@@ -1,51 +1,42 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchCreatorById } from "../../services/influencer.service";
+import { useAuth } from "../../hooks/useAuth";
+import CreatorChat from "../../components/chat/CreatorChat";
+import Recommendations from "../../components/recommendations/Recommendations";
 import "./CreatorProfile.css";
 
-/* ─────────────────────────────────────────────────────────
-   NORMALIZER
-   Adapta cualquier forma que devuelva el backend a la
-   estructura que espera el componente.
-   Agrega aquí alias si el backend cambia nombres de campos.
-───────────────────────────────────────────────────────── */
 function normalizeCreator(raw) {
   if (!raw) return null;
 
-  // Socials: el backend puede mandar { instagram_url, tiktok_url, x_url }
-  // o un objeto anidado { socials: { instagram, tiktok, x } }
   const socials = raw.socials ?? {
     instagram: raw.instagram_url ?? raw.instagram ?? null,
-    tiktok:    raw.tiktok_url   ?? raw.tiktok   ?? null,
-    x:         raw.x_url        ?? raw.x         ?? raw.twitter ?? null,
+    tiktok: raw.tiktok_url ?? raw.tiktok ?? null,
+    x: raw.x_url ?? raw.x ?? raw.twitter ?? null,
   };
 
-  // Stats: el backend puede mandarlas planas o anidadas
   const stats = raw.stats ?? {
-    followers:   raw.followers    ?? raw.total_followers ?? null,
-    engagement:  raw.engagement   ?? raw.engagement_rate ?? null,
-    avgLikes:    raw.avg_likes    ?? raw.avgLikes        ?? null,
-    avgComments: raw.avg_comments ?? raw.avgComments     ?? null,
-    reach:       raw.reach        ?? raw.estimated_reach ?? null,
-    platforms:   raw.platforms    ?? [],
+    followers: raw.followers ?? raw.total_followers ?? null,
+    engagement: raw.engagement ?? raw.engagement_rate ?? null,
+    avgLikes: raw.avg_likes ?? raw.avgLikes ?? null,
+    avgComments: raw.avg_comments ?? raw.avgComments ?? null,
+    reach: raw.reach ?? raw.estimated_reach ?? null,
+    platforms: raw.platforms ?? [],
   };
 
   return {
-    id:      raw.id ?? raw.creator_id ?? raw.user_id,
-    name:    raw.name ?? raw.full_name ?? raw.username ?? null,
-    age:     raw.age  ?? null,
-    avatar:  raw.avatar ?? raw.profile_image ?? raw.photo ?? null,
-    bio:     raw.bio ?? raw.description ?? raw.about ?? null,
-    tags:    raw.tags ?? raw.categories ?? (raw.tag ? [raw.tag] : []),
+    id: raw.id ?? raw.creator_id ?? raw.user_id,
+    name: raw.name ?? raw.full_name ?? raw.username ?? null,
+    age: raw.age ?? null,
+    avatar: raw.avatar ?? raw.profile_image ?? raw.photo ?? null,
+    bio: raw.bio ?? raw.description ?? raw.about ?? null,
+    tags: raw.tags ?? raw.categories ?? (raw.tag ? [raw.tag] : []),
     willing: raw.willing ?? raw.services ?? raw.content_types ?? [],
     socials,
     stats,
   };
 }
 
-/* ─────────────────────────────
-   SUB-COMPONENTS
-───────────────────────────── */
 function StatCard({ label, value, unit = "", accent = false }) {
   const formatValue = (val) => {
     if (typeof val === "number" && val >= 1000) {
@@ -69,40 +60,32 @@ function PlatformBar({ name, value }) {
     <div className="cp-platform-row">
       <span className="cp-platform-name">{name}</span>
       <div className="cp-platform-track">
-        <div
-          className="cp-platform-fill"
-          style={{ width: `${value || 0}%` }}
-        />
+        <div className="cp-platform-fill" style={{ width: `${value || 0}%` }} />
       </div>
       <span className="cp-platform-pct">{value || 0}%</span>
     </div>
   );
 }
 
-/* ─────────────────────────────
-   PAGE
-───────────────────────────── */
 export default function CreatorProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const [creator, setCreator]   = useState(null);
-  const [loading, setLoading]   = useState(true);
-  const [error,   setError]     = useState(null);
+  const [creator, setCreator] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!id) return;
-
     let mounted = true;
 
     async function load() {
       try {
         setLoading(true);
         setError(null);
-
-        const raw  = await fetchCreatorById(id);
+        const raw = await fetchCreatorById(id);
         const data = normalizeCreator(raw);
-
         if (mounted) setCreator(data);
       } catch (err) {
         console.error("CreatorProfile error:", err);
@@ -113,11 +96,9 @@ export default function CreatorProfile() {
     }
 
     load();
-
     return () => { mounted = false; };
   }, [id]);
 
-  /* ── LOADING ── */
   if (loading) {
     return (
       <div className="cp-loading">
@@ -127,28 +108,26 @@ export default function CreatorProfile() {
     );
   }
 
-  /* ── ERROR / NOT FOUND ── */
   if (error || !creator) {
     return (
       <div className="cp-error">
         <p>{error ?? "Creador no encontrado"}</p>
         <button onClick={() => navigate("/marketplace")}>
-          ← Volver al marketplace
+          Volver al marketplace
         </button>
       </div>
     );
   }
 
-  /* ── DESTRUCTURE ── */
   const {
     name,
     age,
     avatar,
     bio,
-    tags     = [],
-    willing  = [],
-    socials  = {},
-    stats    = {},
+    tags = [],
+    willing = [],
+    socials = {},
+    stats = {},
   } = creator;
 
   const {
@@ -160,21 +139,17 @@ export default function CreatorProfile() {
     platforms = [],
   } = stats;
 
-  /* ── UI ── */
   return (
     <div className="cp-root">
 
-      {/* BACK */}
       <button className="cp-back" onClick={() => navigate(-1)}>
-        ← Marketplace
+        Marketplace
       </button>
 
-      {/* HERO */}
       <header className="cp-hero">
         <div className="cp-hero-blur" />
 
         <div className="cp-hero-inner">
-
           <div className="cp-avatar-wrap">
             <img
               src={avatar || "/default-avatar.png"}
@@ -186,12 +161,8 @@ export default function CreatorProfile() {
 
           <div className="cp-hero-info">
             <h1 className="cp-name">{name || "Sin nombre"}</h1>
-
             {age && <p className="cp-age">{age} años</p>}
-
-            <p className="cp-bio">
-              {bio || "Sin descripción disponible."}
-            </p>
+            <p className="cp-bio">{bio || "Sin descripción disponible."}</p>
 
             {tags.length > 0 && (
               <ul className="cp-tags">
@@ -203,14 +174,24 @@ export default function CreatorProfile() {
           </div>
 
           <div className="cp-cta-wrap">
-            <button className="cp-chat-btn">Chatear</button>
-            <span className="cp-chat-note">Disponible próximamente</span>
+            <CreatorChat
+              creatorId={creator.id}
+              creatorName={name || "Creador"}
+              creatorAvatar={avatar}
+              currentUser={
+                user
+                  ? {
+                      id: user.id ?? user.uid,
+                      name: user.name ?? user.displayName ?? user.email,
+                      avatar: user.avatar ?? user.photoURL ?? null,
+                    }
+                  : null
+              }
+            />
           </div>
-
         </div>
       </header>
 
-      {/* WILLING */}
       <section className="cp-section">
         <h2 className="cp-section-title">Dispuesto a hacer</h2>
 
@@ -228,7 +209,6 @@ export default function CreatorProfile() {
         )}
       </section>
 
-      {/* SOCIALS */}
       <section className="cp-section">
         <h2 className="cp-section-title">Redes sociales</h2>
 
@@ -275,16 +255,15 @@ export default function CreatorProfile() {
         </div>
       </section>
 
-      {/* DASHBOARD */}
       <section className="cp-section cp-dashboard">
         <h2 className="cp-section-title">Dashboard de rendimiento</h2>
 
         <div className="cp-stats-grid">
-          <StatCard label="Seguidores"         value={followers}   accent />
-          <StatCard label="Engagement"         value={engagement}  unit="%" />
-          <StatCard label="Likes prom."        value={avgLikes} />
-          <StatCard label="Comentarios prom."  value={avgComments} />
-          <StatCard label="Alcance estimado"   value={reach} />
+          <StatCard label="Seguidores" value={followers} accent />
+          <StatCard label="Engagement" value={engagement} unit="%" />
+          <StatCard label="Likes prom." value={avgLikes} />
+          <StatCard label="Comentarios prom." value={avgComments} />
+          <StatCard label="Alcance estimado" value={reach} />
         </div>
 
         <div className="cp-platforms-card">
@@ -298,6 +277,10 @@ export default function CreatorProfile() {
             <p className="cp-muted">No hay plataformas registradas.</p>
           )}
         </div>
+      </section>
+
+      <section className="cp-section">
+        <Recommendations influencerId={creator.id} />
       </section>
 
     </div>

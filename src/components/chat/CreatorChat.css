@@ -1,0 +1,427 @@
+/* ─────────────────────────────────────────────
+   CreatorChat.css — Chat + Negotiation Mode
+───────────────────────────────────────────── */
+
+/* Wrapper flotante */
+.cc-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ── Bubble ─────────────────────────────────── */
+.cc-bubble {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.cc-bubble:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(79,70,229,0.5); }
+.cc-bubble-icon { display: flex; align-items: center; }
+.cc-bubble-icon svg { width: 18px; height: 18px; }
+
+/* ── Badge ──────────────────────────────────── */
+.cc-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  min-width: 18px;
+  text-align: center;
+}
+.cc-badge--header { position: static; }
+
+/* ── Window ─────────────────────────────────── */
+.cc-window {
+  width: 340px;
+  background: #fff;
+  border: 0.5px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 560px;
+  transition: max-height 0.25s ease;
+}
+.cc-window--minimized { max-height: 56px; }
+
+/* ── Header ─────────────────────────────────── */
+.cc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #4f46e5;
+  flex-shrink: 0;
+}
+.cc-header-info { display: flex; align-items: center; gap: 10px; }
+.cc-header-text { display: flex; flex-direction: column; }
+.cc-header-name { font-size: 13px; font-weight: 600; color: #fff; }
+.cc-header-status { font-size: 11px; color: rgba(255,255,255,0.7); }
+.cc-header-actions { display: flex; align-items: center; gap: 4px; }
+
+/* ── Avatar ─────────────────────────────────── */
+.cc-avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-weight: 600;
+}
+.cc-avatar--sm { width: 34px; height: 34px; font-size: 12px; }
+.cc-avatar--xs { width: 26px; height: 26px; font-size: 10px; background: #e2e8f0; color: #475569; }
+.cc-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.cc-status-dot {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #4f46e5;
+  background: #9ca3af;
+}
+.cc-status-dot--online { background: #22c55e; }
+
+/* ── Icon buttons ───────────────────────────── */
+.cc-icon-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.cc-icon-btn svg { width: 16px; height: 16px; }
+.cc-icon-btn:hover { background: rgba(255,255,255,0.15); }
+.cc-icon-btn--close:hover { color: #fca5a5; }
+
+/* Negotiate toggle button in header */
+.cc-neg-toggle {
+  padding: 5px;
+  border-radius: 8px;
+}
+.cc-neg-toggle--active {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* ── Messages ───────────────────────────────── */
+.cc-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scroll-behavior: smooth;
+}
+.cc-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+.cc-empty-icon { font-size: 28px; }
+.cc-empty p { font-size: 13px; color: #94a3b8; margin: 0; }
+
+/* Hint button para negociar desde el empty state */
+.cc-neg-hint {
+  margin-top: 4px;
+  padding: 7px 16px;
+  background: #ede9fe;
+  color: #4f46e5;
+  border: none;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cc-neg-hint:hover { background: #ddd6fe; }
+
+/* Message rows */
+.cc-message {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+.cc-message--mine { justify-content: flex-end; }
+.cc-message--theirs { justify-content: flex-start; }
+
+.cc-bubble-msg {
+  max-width: 78%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.cc-message--mine .cc-bubble-msg {
+  background: #4f46e5;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.cc-message--theirs .cc-bubble-msg {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-bottom-left-radius: 4px;
+}
+/* Offer bubble highlight */
+.cc-bubble-msg--offer {
+  background: #ede9fe !important;
+  color: #3730a3 !important;
+  border: 1px solid #c4b5fd;
+  font-weight: 600;
+}
+
+.cc-sender-name { font-size: 11px; font-weight: 600; color: #64748b; display: block; margin-bottom: 2px; }
+.cc-text { margin: 0; word-break: break-word; }
+.cc-time {
+  font-size: 10px;
+  display: block;
+  margin-top: 3px;
+  text-align: right;
+  opacity: 0.6;
+}
+
+/* ── Footer (chat) ──────────────────────────── */
+.cc-footer {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 8px 10px;
+  border-top: 0.5px solid #f1f5f9;
+  flex-shrink: 0;
+}
+.cc-input {
+  flex: 1;
+  border: 0.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  color: #1e293b;
+  background: #f8fafc;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+.cc-input:focus { border-color: #a5b4fc; }
+
+/* Small negotiate button in footer */
+.cc-footer-neg-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 0.5px solid #e2e8f0;
+  background: #f8fafc;
+  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.cc-footer-neg-btn:hover { background: #ede9fe; }
+
+.cc-send-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+.cc-send-btn svg { width: 15px; height: 15px; }
+.cc-send-btn:disabled { opacity: 0.35; cursor: default; }
+.cc-send-btn:not(:disabled):hover { background: #4338ca; }
+
+/* ─────────────────────────────────────────────
+   NEGOTIATION PANEL
+───────────────────────────────────────────── */
+.neg-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Price section */
+.neg-price-section {
+  background: #f8fafc;
+  border: 0.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.neg-price-label {
+  font-size: 11px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+.neg-price-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.neg-currency {
+  font-size: 22px;
+  font-weight: 400;
+  color: #94a3b8;
+  vertical-align: super;
+  margin-right: 2px;
+}
+
+@keyframes neg-slide-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+@keyframes neg-slide-down {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.neg-anim-up   { animation: neg-slide-up 0.25s ease-out; color: #16a34a; }
+.neg-anim-down { animation: neg-slide-down 0.25s ease-out; color: #dc2626; }
+
+/* Arrow buttons */
+.neg-arrows { display: flex; gap: 8px; }
+.neg-arrow-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  font-size: 18px;
+}
+.neg-arrow-btn:hover { background: #f1f5f9; border-color: #c7d2fe; color: #4f46e5; }
+.neg-arrow-btn:active { transform: scale(0.92); }
+
+/* Step selector */
+.neg-step-row { display: flex; align-items: center; gap: 6px; }
+.neg-step-label { font-size: 11px; color: #94a3b8; }
+.neg-step-select {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 0.5px solid #e2e8f0;
+  background: #fff;
+  color: #1e293b;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Range sliders */
+.neg-ranges {
+  background: #f8fafc;
+  border: 0.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.neg-range-row { display: flex; align-items: center; gap: 8px; }
+.neg-range-label { font-size: 11px; color: #94a3b8; min-width: 24px; }
+.neg-range-row input[type="range"] { flex: 1; accent-color: #4f46e5; }
+.neg-range-val { font-size: 11px; font-weight: 500; color: #475569; min-width: 56px; text-align: right; }
+
+/* Stance card */
+.neg-stance {
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+}
+.neg-stance--low  { background: #f0fdf4; border-color: #86efac; }
+.neg-stance--mid  { background: #fffbeb; border-color: #fcd34d; }
+.neg-stance--high { background: #fef2f2; border-color: #fca5a5; }
+
+.neg-stance-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 4px;
+}
+.neg-stance--low  .neg-stance-title { color: #15803d; }
+.neg-stance--mid  .neg-stance-title { color: #b45309; }
+.neg-stance--high .neg-stance-title { color: #b91c1c; }
+
+.neg-stance-phrase {
+  font-size: 13px;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+.neg-stance--low  .neg-stance-phrase { color: #166534; }
+.neg-stance--mid  .neg-stance-phrase { color: #92400e; }
+.neg-stance--high .neg-stance-phrase { color: #991b1b; }
+
+/* Offer button */
+.neg-offer-btn {
+  padding: 11px 16px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  text-align: center;
+}
+.neg-offer-btn:hover { background: #4338ca; }
+.neg-offer-btn:active { transform: scale(0.97); }
+.neg-offer-btn--sent { background: #16a34a; }
+.neg-offer-btn--sent:hover { background: #15803d; }

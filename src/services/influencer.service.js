@@ -62,3 +62,37 @@ export async function createCreatorProfile(data) {
     );
   }
 }
+
+/* =========================================================
+   GET REVIEWS BY CREATOR
+========================================================= */
+export async function fetchReviewsByCreator(influencerId) {
+  try {
+    const res = await axios.get(`${API_URL}/reviews/creator/${influencerId}`);
+    return res.data?.reviews ?? res.data ?? [];
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    return [];
+  }
+}
+
+/* =========================================================
+   POST REVIEW
+========================================================= */
+export async function postReview(influencerId, { rating, comment }) {
+  try {
+    const res = await axios.post(`${API_URL}/reviews/creator/${influencerId}`, {
+      rating,
+      comment,
+    });
+    return res.data?.review ?? res.data ?? null;
+  } catch (error) {
+    console.error("Error posting review:", error);
+    throw new Error(
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      "Error al enviar la reseña"
+    );
+  }
+}
