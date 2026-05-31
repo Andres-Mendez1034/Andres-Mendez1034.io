@@ -7,18 +7,24 @@ export default function Pricing() {
 
   const handleCheckout = async (plan) => {
     try {
-      // 🔥 solo planes pagos
+      // Gratis → home
       if (plan.price === "$0") {
         window.location.href = "/";
         return;
       }
 
-      const data = await createCheckout({
-        productId: plan.name, // o mapea a ID real luego
-      });
+      // Enterprise → ventas
+      if (plan.price === "Custom") {
+        window.location.href = "/contact-sales";
+        return;
+      }
 
-      // 🚀 redirección a Stripe Checkout
-      window.location.href = data.url;
+      const data = await createCheckout({ planName: plan.planName });
+
+      // Redirigir a Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
 
     } catch (err) {
       console.error("Checkout error:", err);
@@ -29,6 +35,7 @@ export default function Pricing() {
   const plans = [
     {
       name: "Starter",
+      planName: null,
       price: "$0",
       description: "Ideal para probar la plataforma y explorar microinfluencers",
       features: [
@@ -42,6 +49,7 @@ export default function Pricing() {
     },
     {
       name: "Pro",
+      planName: "pro",
       price: "$19",
       description: "Para creadores y negocios en crecimiento",
       features: [
@@ -56,6 +64,7 @@ export default function Pricing() {
     },
     {
       name: "Business",
+      planName: "business",
       price: "$49",
       description: "Para marcas que quieren escalar campañas reales",
       features: [
@@ -70,6 +79,7 @@ export default function Pricing() {
     },
     {
       name: "Enterprise",
+      planName: "enterprise",
       price: "Custom",
       description: "Soluciones a medida para agencias y grandes marcas",
       features: [
@@ -96,17 +106,12 @@ export default function Pricing() {
         {plans.map((plan, index) => (
           <div
             key={index}
-            className={`pricing-card ${
-              plan.highlight ? "highlight" : ""
-            }`}
+            className={`pricing-card ${plan.highlight ? "highlight" : ""}`}
           >
             <div>
               <h2>{plan.name}</h2>
-
               <p className="price">{plan.price}</p>
-
               <p className="description">{plan.description}</p>
-
               <ul className="features">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="feature">
@@ -119,13 +124,10 @@ export default function Pricing() {
 
             <button
               onClick={() => handleCheckout(plan)}
-              className={`pricing-btn ${
-                plan.highlight ? "highlight" : "normal"
-              }`}
+              className={`pricing-btn ${plan.highlight ? "highlight" : "normal"}`}
             >
               {plan.cta}
             </button>
-
           </div>
         ))}
       </div>

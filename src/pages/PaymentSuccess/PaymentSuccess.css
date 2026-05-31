@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.success-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #0a111f;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(74, 114, 255, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(123, 92, 255, 0.10) 0%, transparent 60%);
+
+  padding: 2rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.success-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+
+  padding: 3rem 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+
+  backdrop-filter: blur(20px);
+
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.success-card--in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* =========================
+   ICONO
+========================= */
+
+.success-icon-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1.5rem;
+}
+
+.success-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(74, 114, 255, 0.4);
+  animation: ring-pulse 2s ease infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50%       { transform: scale(1.18); opacity: 0.1; }
+}
+
+.success-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 2rem;
+  background: rgba(74, 114, 255, 0.15);
+  border-radius: 50%;
+  color: #4a72ff;
+  border: 1.5px solid rgba(74, 114, 255, 0.3);
+}
+
+/* =========================
+   TEXT
+========================= */
+
+.success-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+
+  color: #4a72ff;
+  margin: 0 0 0.5rem;
+}
+
+.success-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+
+  margin: 0 0 0.75rem;
+  line-height: 1.15;
+}
+
+.success-sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.95rem;
+  line-height: 1.6;
+
+  margin: 0 0 2rem;
+}
+
+/* =========================
+   PERKS
+========================= */
+
+.success-perks {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2.5rem;
+
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.success-perk {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+
+  color: rgba(255,255,255,0.75);
+  font-size: 0.9rem;
+
+  opacity: 0;
+  animation: fade-up 0.4s ease forwards;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.perk-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7b5cff;
+  flex-shrink: 0;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  color: #ffffff;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 0.85rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+
+  padding: 0.85rem 1.5rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  transition: color 0.2s, border 0.2s;
+}
+
+.btn-ghost:hover {
+  color: rgba(255,255,255,0.7);
+  border-color: rgba(255,255,255,0.2);
+}

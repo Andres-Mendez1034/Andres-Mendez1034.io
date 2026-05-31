@@ -2,25 +2,18 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-/**
- * Helper: obtener token
- */
-const getToken = () => {
-  return localStorage.getItem("token");
-};
+const getToken = () => localStorage.getItem("bc_token");
 
-/**
- * =====================================
- * CREATE CHECKOUT SESSION
- * =====================================
- */
-export async function createCheckout({ productId }) {
+/* =========================================================
+   CREATE SUBSCRIPTION CHECKOUT
+========================================================= */
+export async function createCheckout({ planName }) {
   try {
     const token = getToken();
 
     const response = await axios.post(
-      `${API_URL}/payments/create-checkout`,
-      { productId },
+      `${API_URL}/subscriptions/checkout`,
+      { planName },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -35,11 +28,9 @@ export async function createCheckout({ productId }) {
   }
 }
 
-/**
- * =====================================
- * GET BILLING STATUS
- * =====================================
- */
+/* =========================================================
+   GET BILLING STATUS
+========================================================= */
 export async function getBillingStatus() {
   try {
     const token = getToken();
@@ -47,9 +38,7 @@ export async function getBillingStatus() {
     const response = await axios.get(
       `${API_URL}/payments/billing-status`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
 
@@ -60,11 +49,9 @@ export async function getBillingStatus() {
   }
 }
 
-/**
- * =====================================
- * GET PAYMENT HISTORY
- * =====================================
- */
+/* =========================================================
+   GET PAYMENT HISTORY
+========================================================= */
 export async function getPaymentHistory() {
   try {
     const token = getToken();
@@ -72,9 +59,7 @@ export async function getPaymentHistory() {
     const response = await axios.get(
       `${API_URL}/payments/history`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
 
@@ -85,11 +70,6 @@ export async function getPaymentHistory() {
   }
 }
 
-/**
- * =====================================
- * EXPORT DEFAULT
- * =====================================
- */
 const paymentService = {
   createCheckout,
   getBillingStatus,

@@ -34,7 +34,7 @@ import ChatbotPage from "../pages/Chatbot/ChatbotPage";
 
 // PAYMENTS
 import Billing from "../pages/Billing/Billing";
-import Success from "../pages/Success/Success";
+import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import Cancel from "../pages/Cancel/Cancel";
 
 // CREATOR PROFILE
@@ -44,17 +44,15 @@ import CreatorProfile from "../pages/CreatorProfile/CreatorProfile";
 import NotFound from "../pages/NotFound/NotFound";
 
 
-// 🔐 PRIVATE ROUTE (arreglado con MFA)
+// 🔐 PRIVATE ROUTE
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, authState } = useContext(AuthContext);
   const location = useLocation();
 
-  // 👉 1. Si está en MFA, lo mandas a MFA setup
   if (authState === "MFA_CHALLENGE") {
     return <Navigate to="/mfa-setup" replace />;
   }
 
-  // 👉 2. Si no está autenticado, login
   if (!isAuthenticated) {
     return (
       <Navigate
@@ -65,7 +63,6 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  // 👉 3. OK
   return children;
 };
 
@@ -74,7 +71,6 @@ const PrivateRoute = ({ children }) => {
 const PublicOnlyRoute = ({ children }) => {
   const { isAuthenticated, authState } = useContext(AuthContext);
 
-  // si está en MFA, también lo bloqueamos aquí
   if (authState === "MFA_CHALLENGE") {
     return <Navigate to="/mfa-setup" replace />;
   }
@@ -160,7 +156,8 @@ export default function AppRouter() {
           element={<PrivateRoute><Billing /></PrivateRoute>}
         />
 
-        <Route path="/payment/success" element={<Success />} />
+        {/* ✅ Una sola ruta de éxito — apunta a PaymentSuccess */}
+        <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment/cancel" element={<Cancel />} />
 
         {/* ALIAS */}
