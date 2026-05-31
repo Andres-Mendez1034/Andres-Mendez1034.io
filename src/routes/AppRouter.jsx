@@ -4,21 +4,24 @@ import Layout from "../layout/Layout";
 import { AuthContext } from "../context/AuthContext";
 
 // CORE
-import Home           from "../pages/Home/Home";
+import Home            from "../pages/Home/Home";
 import MarketplacePage from "../pages/Marketplace/MarketplacePage";
-import Profile        from "../pages/Profile/Profile";
-import Login          from "../pages/Login/Login";
-import Register       from "../pages/Register/Register";
-import CartPage       from "../pages/Cart/CartPage";
+import Profile         from "../pages/Profile/Profile";
+import Login           from "../pages/Login/Login";
+import Register        from "../pages/Register/Register";
+import CartPage        from "../pages/Cart/CartPage";
 
 // ONBOARDING
 import InfluOnboarding   from "../pages/Onboarding/InfluOnboarding/Onboarding";
 import ClientOnboarding  from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
 import CreatorOnboarding from "../pages/Onboarding/CreatorOnboarding/CreatorOnboarding";
 
+// ADMIN
+import AdminPage from "../pages/Admin/AdminPage";
+
 // AUTH
 import MFASetup    from "../components/auth/MFASetup";
-import VerifyEmail from "../pages/VerifyEmail/VerifyEmail"; // ← NUEVO
+import VerifyEmail from "../pages/VerifyEmail/VerifyEmail";
 
 // INFO
 import Pricing from "../pages/Pricing/Pricing";
@@ -66,22 +69,47 @@ const PrivateRoute = ({ children }) => {
 
 /* =========================================================
    PUBLIC ONLY ROUTE
-   (redirige si ya está autenticado, pero deja pasar si
-   está en PENDING_EMAIL o MFA_SETUP para no romper el flujo)
 ========================================================= */
 const PublicOnlyRoute = ({ children }) => {
   const { isAuthenticated, authState } = useContext(AuthContext);
 
-  // Si está en medio del flujo de registro, no redirigir
   if (
     authState === "PENDING_EMAIL" ||
-    authState === "MFA_SETUP" ||
+    authState === "MFA_SETUP"     ||
     authState === "MFA_CHALLENGE"
   ) {
     return children;
   }
 
-  return isAuthenticated ? <Navigate to="/" /> : children;
+  return isAuthenticated ? <Navigate to="/" replace /> : children;
+};
+
+
+/* =========================================================
+   ROLE REDIRECT
+   → Redirige al panel correcto según el rol del usuario.
+   → Si no está autenticado, manda al login.
+   → Usado en la ruta raíz "/" para que superadmin
+     nunca quede atrapado en el Home.
+========================================================= */
+const RoleRedirect = () => {
+  const { isAuthenticated, user, authState } = useContext(AuthContext);
+
+  // Todavía rehidratando — no hacer nada aún
+  if (authState === "UNAUTHENTICATED" && !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role === "superadmin") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  // Resto de roles → Home normal
+  return <Home />;
 };
 
 
@@ -93,8 +121,8 @@ export default function AppRouter() {
     <Routes>
       <Route element={<Layout />}>
 
-        {/* CORE */}
-        <Route path="/" element={<Home />} />
+        {/* CORE — "/" redirige por rol */}
+        <Route path="/" element={<RoleRedirect />} />
 
         <Route
           path="/login"
@@ -121,6 +149,12 @@ export default function AppRouter() {
           element={<PrivateRoute><CartPage /></PrivateRoute>}
         />
 
+        {/* ADMIN */}
+        <Route
+          path="/admin"
+          element={<PrivateRoute><AdminPage /></PrivateRoute>}
+        />
+
         {/* CREATOR PROFILE */}
         <Route
           path="/creator/:id"
@@ -143,7 +177,7 @@ export default function AppRouter() {
 
         {/* AUTH FLOW */}
         <Route path="/mfa-setup"    element={<MFASetup />} />
-        <Route path="/verify-email" element={<VerifyEmail />} /> {/* ← NUEVO */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
         {/* INFO */}
         <Route path="/pricing" element={<Pricing />} />

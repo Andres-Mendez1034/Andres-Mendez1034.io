@@ -6,7 +6,7 @@ export default function MFAVerify() {
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
 
-  const { verifyMFA, user } = useContext(AuthContext); // 👈 IMPORTANTE: user
+  const { verifyMFA, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,7 +14,6 @@ export default function MFAVerify() {
     setError("");
 
     try {
-      // 🧪 DEBUG (puedes quitar luego)
       console.log("🚀 ENVIANDO:", {
         email: user?.email,
         token,
@@ -22,20 +21,27 @@ export default function MFAVerify() {
       });
 
       const res = await verifyMFA({
-        email: user.email,           // ✅ email correcto
-        token: token.trim(),         // ✅ string limpio
+        email: user.email,
+        token: token.trim(),
       });
 
       console.log("🔐 MFA RESPONSE:", res);
 
       if (res?.success) {
         alert("MFA verificado correctamente");
-        navigate("/profile");
+
+        const role = res?.user?.role || user?.role;
+
+        if (role === "superadmin") {
+          navigate("/admin");
+        } else {
+          navigate("/profile");
+        }
+
         return;
       }
 
       setError("Código incorrecto");
-
     } catch (err) {
       console.error("❌ MFA VERIFY ERROR:", err);
       setError("Error al verificar MFA");
@@ -85,7 +91,12 @@ export default function MFAVerify() {
       </form>
 
       {error && (
-        <p style={{ color: "red", marginTop: "10px" }}>
+        <p
+          style={{
+            color: "red",
+            marginTop: "10px",
+          }}
+        >
           {error}
         </p>
       )}

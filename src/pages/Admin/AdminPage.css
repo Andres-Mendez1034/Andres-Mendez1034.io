@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #0a0a0c;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.admin-main {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 100vh;
+  background: #0a0a0c;
+}
+
+/* Shared panel title used across all panels */
+.panel-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 28px;
+  letter-spacing: -0.02em;
+}
+
+/* Shared loading state */
+.panel-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,0.35);
+  padding: 48px 32px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #a78bfa;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

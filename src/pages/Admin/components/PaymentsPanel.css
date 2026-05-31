@@ -1,0 +1,341 @@
+
+/* =========================================================
+   PANEL BASE
+========================================================= */
+
+.payments-panel {
+  position: relative;
+  padding: 26px;
+  border-radius: 20px;
+
+  background: linear-gradient(180deg, #0d1117, #0a0e14);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+
+  overflow: hidden;
+}
+
+/* glow */
+.payments-panel::before {
+  content: "";
+  position: absolute;
+
+  width: 550px;
+  height: 550px;
+
+  background: radial-gradient(
+    circle,
+    rgba(74, 114, 255, 0.12),
+    transparent 60%
+  );
+
+  top: -200px;
+  left: -200px;
+
+  filter: blur(120px);
+  opacity: 0.7;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.panel-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+/* =========================================================
+   VIEW TOGGLE
+========================================================= */
+
+.view-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.view-toggle button {
+  padding: 8px 14px;
+  border-radius: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* active */
+.view-toggle button.active {
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  border: none;
+}
+
+/* hover */
+.view-toggle button:hover {
+  background: rgba(74, 114, 255, 0.2);
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.admin-table thead {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-table th {
+  padding: 14px;
+  text-align: left;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.admin-table td {
+  padding: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(74, 114, 255, 0.06);
+}
+
+/* =========================================================
+   CELLS
+========================================================= */
+
+.cell-mono {
+  font-family: monospace;
+  color: #94a3b8;
+}
+
+.cell-user {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-name {
+  font-weight: 700;
+}
+
+.cell-email {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.cell-amount {
+  font-weight: 800;
+  color: #4a72ff;
+}
+
+.cell-currency {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.cell-date {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   BADGES (STATUS)
+========================================================= */
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* completed */
+.badge--green {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+/* pending */
+.badge--amber {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+/* failed */
+.badge--red {
+  color: #ff6b6b;
+  background: rgba(255, 80, 80, 0.12);
+  border: 1px solid rgba(255, 80, 80, 0.25);
+}
+
+/* =========================================================
+   BAR CHART
+========================================================= */
+
+.bar-chart {
+  padding: 10px 5px;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+
+  height: 200px;
+
+  padding: 10px 0;
+}
+
+/* column */
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+
+  width: 100%;
+}
+
+/* bar */
+.bar-wrap {
+  height: 160px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.bar-fill {
+  width: 18px;
+  border-radius: 6px;
+
+  transition: all 0.4s ease;
+}
+
+/* green */
+.bar-fill--green {
+  background: linear-gradient(180deg, #34d399, #22c55e);
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+}
+
+/* hover grow */
+.bar-fill:hover {
+  transform: scaleY(1.05);
+}
+
+/* labels */
+.bar-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.bar-count {
+  font-size: 0.7rem;
+  color: #34d399;
+}
+
+.bar-failed {
+  font-size: 0.7rem;
+  color: #ff6b6b;
+}
+
+/* legend */
+.chart-legend {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot--green {
+  background: #34d399;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.panel-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #94a3b8;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #4a72ff;
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+  .payments-panel {
+    padding: 20px;
+  }
+
+  .panel-title {
+    font-size: 1.3rem;
+  }
+
+  .chart-bars {
+    gap: 6px;
+  }
+
+  .bar-fill {
+    width: 12px;
+  }
+}

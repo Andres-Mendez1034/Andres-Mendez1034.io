@@ -1,0 +1,213 @@
+/* =========================================================
+   PANEL BASE
+========================================================= */
+
+.stats-panel {
+  position: relative;
+  padding: 26px;
+  border-radius: 20px;
+
+  background: linear-gradient(180deg, #0d1117, #0a0e14);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+
+  overflow: hidden;
+}
+
+/* glow */
+.stats-panel::before {
+  content: "";
+  position: absolute;
+
+  width: 600px;
+  height: 600px;
+
+  background: radial-gradient(
+    circle,
+    rgba(74, 114, 255, 0.12),
+    transparent 60%
+  );
+
+  top: -250px;
+  left: -200px;
+
+  filter: blur(120px);
+  opacity: 0.7;
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.panel-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+
+  letter-spacing: -0.5px;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+  background: rgba(74, 114, 255, 0.08);
+  transform: translateY(-3px);
+}
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  font-size: 20px;
+  color: #fff;
+
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  box-shadow: 0 10px 25px rgba(74, 114, 255, 0.3);
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.stat-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.stat-sub {
+  font-size: 0.75rem;
+  color: #4a72ff;
+  margin-top: 2px;
+}
+
+/* =========================================================
+   COLOR VARIANTS
+========================================================= */
+
+/* purple */
+.stat-card--purple .stat-icon {
+  background: linear-gradient(135deg, #7b5cff, #a78bfa);
+}
+
+/* teal */
+.stat-card--teal .stat-icon {
+  background: linear-gradient(135deg, #34d399, #22c55e);
+}
+
+/* amber */
+.stat-card--amber .stat-icon {
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+}
+
+/* coral */
+.stat-card--coral .stat-icon {
+  background: linear-gradient(135deg, #ff6b6b, #ff8a8a);
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.panel-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #94a3b8;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #4a72ff;
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+}
+
+/* error */
+.panel-error {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-panel {
+    padding: 20px;
+  }
+
+  .panel-title {
+    font-size: 1.3rem;
+  }
+}

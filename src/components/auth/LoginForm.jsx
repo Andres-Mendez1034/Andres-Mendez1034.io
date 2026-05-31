@@ -4,7 +4,6 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../context/AuthContext";
-
 import MFAVerify from "./MFAVerify";
 
 import "./Login.css";
@@ -18,20 +17,15 @@ export default function LoginForm() {
 
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+  const [email,        setEmail]        = useState("");
+  const [password,     setPassword]     = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const [error, setError] = useState("");
-
-  const [loading, setLoading] = useState(false);
+  const [error,        setError]        = useState("");
+  const [loading,      setLoading]      = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     console.log("CLICK LOGIN");
-
     setError("");
 
     try {
@@ -41,39 +35,39 @@ export default function LoginForm() {
         throw new Error("AuthContext no está conectado");
       }
 
-      // LOGIN
       const result = await handleLogin(email, password);
 
       console.log("LOGIN RESULT:", result);
+      console.log("ROLE:", result?.user?.role);
 
-      // ✅ MFA FLOW
+      // ── MFA requerido ──────────────────────────────────────
       if (result?.mfaRequired) {
         console.log("➡ REDIRECT MFA");
-
         navigate("/mfa-setup");
-
         return;
       }
 
-      // ✅ LOGIN NORMAL
-      console.log("➡ REDIRECT HOME");
+      // ── Login sin MFA: redirigir por rol ───────────────────
+      const role = result?.user?.role;
+      console.log("➡ REDIRECT por rol:", role);
 
-      navigate("/");
+      if (role === "superadmin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
 
     } catch (err) {
       console.log("LOGIN ERROR:", err);
-
       setError(
-        err?.message ||
-        "Error al iniciar sesión. Intenta nuevamente."
+        err?.message || "Error al iniciar sesión. Intenta nuevamente."
       );
-
     } finally {
       setLoading(false);
     }
   };
 
-  // MFA VERIFY COMPONENT
+  // ── MFA Challenge: mostrar verificador ────────────────────
   if (isMfaChallenge && user) {
     return <MFAVerify user={user} />;
   }
@@ -87,14 +81,9 @@ export default function LoginForm() {
       >
 
         <header className="auth-header">
-          <span className="auth-badge">
-            Inicia sesión
-          </span>
+          <span className="auth-badge">Inicia sesión</span>
 
-          <h2
-            id="login-title"
-            className="auth-title"
-          >
+          <h2 id="login-title" className="auth-title">
             Bienvenido de nuevo
           </h2>
 
@@ -113,27 +102,18 @@ export default function LoginForm() {
           </div>
         )}
 
-        <form
-          className="auth-form"
-          onSubmit={handleSubmit}
-          noValidate
-        >
+        <form className="auth-form" onSubmit={handleSubmit} noValidate>
 
           {/* EMAIL */}
           <div className="form-field">
-            <label htmlFor="email">
-              Correo electrónico
-            </label>
-
+            <label htmlFor="email">Correo electrónico</label>
             <input
               id="email"
               type="email"
               className="input"
               placeholder="correo@ejemplo.com"
               value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               required
             />
@@ -141,60 +121,38 @@ export default function LoginForm() {
 
           {/* PASSWORD */}
           <div className="form-field">
-            <label htmlFor="password">
-              Contraseña
-            </label>
-
+            <label htmlFor="password">Contraseña</label>
             <div className="input-wrapper">
               <input
                 id="password"
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
+                type={showPassword ? "text" : "password"}
                 className="input"
                 placeholder="********"
                 value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
+                onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
               />
-
               <button
                 type="button"
                 className="password-toggle"
-                onClick={() =>
-                  setShowPassword((v) => !v)
-                }
-                aria-label={
-                  showPassword
-                    ? "Ocultar contraseña"
-                    : "Mostrar contraseña"
-                }
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
-                {showPassword
-                  ? "Ocultar"
-                  : "Mostrar"}
+                {showPassword ? "Ocultar" : "Mostrar"}
               </button>
             </div>
           </div>
 
-          {/* BUTTON */}
+          {/* SUBMIT */}
           <div className="auth-actions">
             <button
               type="submit"
               className="btn btn-primary"
               disabled={loading}
-              aria-busy={
-                loading ? "true" : "false"
-              }
+              aria-busy={loading ? "true" : "false"}
             >
-              {loading
-                ? "Iniciando..."
-                : "Iniciar sesión"}
+              {loading ? "Iniciando..." : "Iniciar sesión"}
             </button>
           </div>
 

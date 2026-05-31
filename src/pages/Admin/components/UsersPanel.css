@@ -1,0 +1,414 @@
+/* =========================================================
+   PANEL BASE
+========================================================= */
+
+.users-panel {
+  position: relative;
+  padding: 26px;
+  border-radius: 20px;
+
+  background: linear-gradient(180deg, #0d1117, #0a0e14);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+
+  overflow: hidden;
+}
+
+/* glow */
+.users-panel::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+
+  background: radial-gradient(
+    circle,
+    rgba(74, 114, 255, 0.12),
+    transparent 60%
+  );
+
+  top: -200px;
+  right: -200px;
+
+  filter: blur(120px);
+  opacity: 0.7;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 18px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.panel-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.panel-count {
+  color: #4a72ff;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  transition: all 0.2s ease;
+}
+
+.search-box:focus-within {
+  border-color: rgba(74, 114, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(74, 114, 255, 0.15);
+}
+
+.search-box i {
+  color: #94a3b8;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+
+  font-size: 0.9rem;
+  width: 200px;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.admin-table thead {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-table th {
+  padding: 14px;
+  text-align: left;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.admin-table td {
+  padding: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* hover */
+.admin-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(74, 114, 255, 0.06);
+}
+
+/* fila baneada */
+.row-banned {
+  opacity: 0.5;
+}
+
+/* =========================================================
+   CELLS
+========================================================= */
+
+.cell-mono {
+  font-family: monospace;
+  color: #94a3b8;
+}
+
+.cell-name {
+  display: block;
+  font-weight: 700;
+}
+
+.cell-email {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.cell-date {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   USER CELL
+========================================================= */
+
+.cell-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inf-avatar {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-weight: 800;
+  color: #fff;
+
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+
+  box-shadow: 0 8px 20px rgba(74, 114, 255, 0.3);
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* roles */
+.badge--purple {
+  color: #7b5cff;
+  background: rgba(123, 92, 255, 0.12);
+  border: 1px solid rgba(123, 92, 255, 0.25);
+}
+
+.badge--teal {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+.badge--gray {
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.badge--red {
+  color: #ff6b6b;
+  background: rgba(255, 80, 80, 0.12);
+  border: 1px solid rgba(255, 80, 80, 0.25);
+}
+
+/* =========================================================
+   VERIFIED
+========================================================= */
+
+.verified-yes {
+  color: #34d399;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verified-no {
+  color: #ff6b6b;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  border: none;
+  cursor: pointer;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+
+  transition: all 0.2s ease;
+}
+
+/* promote */
+.action-btn--promote {
+  background: rgba(123, 92, 255, 0.15);
+  color: #7b5cff;
+}
+
+.action-btn--promote:hover {
+  background: #7b5cff;
+  color: #fff;
+}
+
+/* ban */
+.action-btn--ban {
+  background: rgba(255, 80, 80, 0.12);
+  color: #ff6b6b;
+}
+
+.action-btn--ban:hover {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+/* unban */
+.action-btn--unban {
+  background: rgba(52, 211, 153, 0.12);
+  color: #34d399;
+}
+
+.action-btn--unban:hover {
+  background: #34d399;
+  color: #000;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.panel-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #94a3b8;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #4a72ff;
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 18px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  border: none;
+  cursor: pointer;
+
+  padding: 8px 12px;
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+  background: rgba(74, 114, 255, 0.2);
+}
+
+.page-btn.active {
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  font-weight: 700;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-ellipsis {
+  padding: 6px;
+  color: #94a3b8;
+}
+
+.page-info {
+  margin-left: 10px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+  .users-panel {
+    padding: 20px;
+  }
+
+  .search-box input {
+    width: 140px;
+  }
+
+  .panel-title {
+    font-size: 1.3rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 10px;
+  }
+}
