@@ -4,38 +4,39 @@ import Layout from "../layout/Layout";
 import { AuthContext } from "../context/AuthContext";
 
 // CORE
-import Home from "../pages/Home/Home";
+import Home           from "../pages/Home/Home";
 import MarketplacePage from "../pages/Marketplace/MarketplacePage";
-import Profile from "../pages/Profile/Profile";
-import Login from "../pages/Login/Login";
-import Register from "../pages/Register/Register";
-import CartPage from "../pages/Cart/CartPage";
+import Profile        from "../pages/Profile/Profile";
+import Login          from "../pages/Login/Login";
+import Register       from "../pages/Register/Register";
+import CartPage       from "../pages/Cart/CartPage";
 
 // ONBOARDING
-import InfluOnboarding from "../pages/Onboarding/InfluOnboarding/Onboarding";
-import ClientOnboarding from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
+import InfluOnboarding   from "../pages/Onboarding/InfluOnboarding/Onboarding";
+import ClientOnboarding  from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
 import CreatorOnboarding from "../pages/Onboarding/CreatorOnboarding/CreatorOnboarding";
 
-// MFA
-import MFASetup from "../components/auth/MFASetup";
+// AUTH
+import MFASetup    from "../components/auth/MFASetup";
+import VerifyEmail from "../pages/VerifyEmail/VerifyEmail"; // ← NUEVO
 
 // INFO
 import Pricing from "../pages/Pricing/Pricing";
 import Support from "../pages/Support/Support";
-import Status from "../pages/Status/Status";
+import Status  from "../pages/Status/Status";
 
 // LEGAL
 import Privacy from "../pages/Legal/Privacy/Privacy";
-import Terms from "../pages/Legal/Terms/Terms";
+import Terms   from "../pages/Legal/Terms/Terms";
 import Cookies from "../pages/Legal/Cookies/Cookies";
 
 // CHATBOT
 import ChatbotPage from "../pages/Chatbot/ChatbotPage";
 
 // PAYMENTS
-import Billing from "../pages/Billing/Billing";
+import Billing        from "../pages/Billing/Billing";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
-import Cancel from "../pages/Cancel/Cancel";
+import Cancel         from "../pages/Cancel/Cancel";
 
 // CREATOR PROFILE
 import CreatorProfile from "../pages/CreatorProfile/CreatorProfile";
@@ -44,41 +45,49 @@ import CreatorProfile from "../pages/CreatorProfile/CreatorProfile";
 import NotFound from "../pages/NotFound/NotFound";
 
 
-// 🔐 PRIVATE ROUTE
+/* =========================================================
+   PRIVATE ROUTE
+========================================================= */
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, authState } = useContext(AuthContext);
   const location = useLocation();
 
-  if (authState === "MFA_CHALLENGE") {
+  if (authState === "MFA_CHALLENGE" || authState === "MFA_SETUP") {
     return <Navigate to="/mfa-setup" replace />;
   }
 
   if (!isAuthenticated) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{ from: location.pathname }}
-      />
-    );
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
   return children;
 };
 
 
-// 🚫 PUBLIC ONLY ROUTE
+/* =========================================================
+   PUBLIC ONLY ROUTE
+   (redirige si ya está autenticado, pero deja pasar si
+   está en PENDING_EMAIL o MFA_SETUP para no romper el flujo)
+========================================================= */
 const PublicOnlyRoute = ({ children }) => {
   const { isAuthenticated, authState } = useContext(AuthContext);
 
-  if (authState === "MFA_CHALLENGE") {
-    return <Navigate to="/mfa-setup" replace />;
+  // Si está en medio del flujo de registro, no redirigir
+  if (
+    authState === "PENDING_EMAIL" ||
+    authState === "MFA_SETUP" ||
+    authState === "MFA_CHALLENGE"
+  ) {
+    return children;
   }
 
   return isAuthenticated ? <Navigate to="/" /> : children;
 };
 
 
+/* =========================================================
+   ROUTER
+========================================================= */
 export default function AppRouter() {
   return (
     <Routes>
@@ -123,28 +132,27 @@ export default function AppRouter() {
           path="/onboarding/influencer"
           element={<PrivateRoute><InfluOnboarding /></PrivateRoute>}
         />
-
         <Route
           path="/onboarding/client"
           element={<PrivateRoute><ClientOnboarding /></PrivateRoute>}
         />
-
         <Route
           path="/onboarding/creator"
           element={<PrivateRoute><CreatorOnboarding /></PrivateRoute>}
         />
 
-        {/* MFA */}
-        <Route path="/mfa-setup" element={<MFASetup />} />
+        {/* AUTH FLOW */}
+        <Route path="/mfa-setup"    element={<MFASetup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} /> {/* ← NUEVO */}
 
         {/* INFO */}
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/support" element={<Support />} />
-        <Route path="/status" element={<Status />} />
+        <Route path="/status"  element={<Status />} />
 
         {/* LEGAL */}
         <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
+        <Route path="/terms"   element={<Terms />} />
         <Route path="/cookies" element={<Cookies />} />
 
         {/* CHATBOT */}
@@ -155,10 +163,8 @@ export default function AppRouter() {
           path="/billing"
           element={<PrivateRoute><Billing /></PrivateRoute>}
         />
-
-        {/* ✅ Una sola ruta de éxito — apunta a PaymentSuccess */}
         <Route path="/payment/success" element={<PaymentSuccess />} />
-        <Route path="/payment/cancel" element={<Cancel />} />
+        <Route path="/payment/cancel"  element={<Cancel />} />
 
         {/* ALIAS */}
         <Route

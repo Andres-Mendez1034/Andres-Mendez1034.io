@@ -20,7 +20,7 @@ export const AuthContext = createContext(null);
 /* =========================================================
    STORAGE KEYS
 ========================================================= */
-const USER_KEY = "bc_user";
+const USER_KEY  = "bc_user";
 const TOKEN_KEY = "bc_token";
 
 /* =========================================================
@@ -28,9 +28,10 @@ const TOKEN_KEY = "bc_token";
 ========================================================= */
 const AUTH_STATES = {
   UNAUTHENTICATED: "UNAUTHENTICATED",
-  MFA_SETUP: "MFA_SETUP",
-  MFA_CHALLENGE: "MFA_CHALLENGE",
-  AUTHENTICATED: "AUTHENTICATED",
+  PENDING_EMAIL:   "PENDING_EMAIL",   // ← esperando verificación de correo
+  MFA_SETUP:       "MFA_SETUP",       // ← correo verificado, configurando TOTP
+  MFA_CHALLENGE:   "MFA_CHALLENGE",   // ← login existente, pidiendo código
+  AUTHENTICATED:   "AUTHENTICATED",
 };
 
 /* =========================================================
@@ -44,24 +45,17 @@ const log = (msg, data) => {
    PROVIDER
 ========================================================= */
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [authState, setAuthState] = useState(
-    AUTH_STATES.UNAUTHENTICATED
-  );
+  const [user,      setUser]      = useState(null);
+  const [token,     setToken]     = useState(null);
+  const [authState, setAuthState] = useState(AUTH_STATES.UNAUTHENTICATED);
 
-  const API_URL =
-    import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
   /* =========================================================
      STATE TRACKING
   ========================================================= */
   useEffect(() => {
-    log("STATE CHANGE", {
-      user,
-      token,
-      authState,
-    });
+    log("STATE CHANGE", { user, token, authState });
   }, [user, token, authState]);
 
   /* =========================================================
@@ -71,13 +65,10 @@ export const AuthProvider = ({ children }) => {
     log("REHYDRATION START");
 
     try {
-      const storedUser = localStorage.getItem(USER_KEY);
+      const storedUser  = localStorage.getItem(USER_KEY);
       const storedToken = localStorage.getItem(TOKEN_KEY);
 
-      log("LOCALSTORAGE RAW", {
-        storedUser,
-        storedToken,
-      });
+      log("LOCALSTORAGE RAW", { storedUser, storedToken });
 
       if (storedUser && storedToken) {
         const parsed = JSON.parse(storedUser);
@@ -104,12 +95,8 @@ export const AuthProvider = ({ children }) => {
   ========================================================= */
   const saveSession = (userData, tokenValue) => {
     log("SAVE SESSION", { userData, tokenValue });
-
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
-
-    if (tokenValue) {
-      localStorage.setItem(TOKEN_KEY, tokenValue);
-    }
+    if (tokenValue) localStorage.setItem(TOKEN_KEY, tokenValue);
   };
 
   const clearSession = () => {
@@ -125,13 +112,8 @@ export const AuthProvider = ({ children }) => {
     log("UPDATE USER", data);
 
     setUser((prev) => {
-      const updated = {
-        ...prev,
-        ...data,
-      };
-
+      const updated = { ...prev, ...data };
       log("USER UPDATED", updated);
-
       saveSession(updated, token);
       return updated;
     });
@@ -139,57 +121,57 @@ export const AuthProvider = ({ children }) => {
 
   /* =========================================================
      REGISTER
+     → Crea la cuenta en el backend
+     → Backend envía email de verificación
+     → Aquí solo cambiamos a PENDING_EMAIL
+     → NO hay JWT ni MFA todavía
   ========================================================= */
   const register = async (email, password, name, role) => {
     log("REGISTER START", { email, name, role });
 
     try {
-      const data = await registerService({
-        email,
-        password,
-        name,
-        role,
-      });
+      const data = await registerService({ email, password, name, role });
 
       log("REGISTER RESPONSE", data);
 
-      const safeUser = {
-        ...data?.user,
-        role: data?.user?.role || role || "client",
-        otpauth_url: data?.otpauth_url || null,
-      };
+      // Guardamos solo lo mínimo para mostrar el email en la pantalla
+      // de "revisa tu correo". Sin JWT, sin MFA secret aún.
+      setUser({ email, name, role });
+      setToken(null);
+      setAuthState(AUTH_STATES.PENDING_EMAIL);
 
-      setUser(safeUser);
+      log("REGISTER → PENDING_EMAIL");
 
-      if (data?.mfaRequired) {
-        log("MFA REQUIRED → SWITCH STATE");
+      return { success: true, pendingEmail: true };
 
-        setAuthState(AUTH_STATES.MFA_SETUP);
-        setToken(null);
-
-        return {
-          success: true,
-          mfaRequired: true,
-          user: safeUser,
-        };
-      }
-
-      log("REGISTER → AUTHENTICATED");
-
-      setAuthState(AUTH_STATES.AUTHENTICATED);
-      setToken(data?.token);
-
-      saveSession(safeUser, data?.token);
-
-      return {
-        success: true,
-        mfaRequired: false,
-        user: safeUser,
-      };
     } catch (err) {
       console.error("❌ REGISTER ERROR:", err);
       throw err?.response?.data || err;
     }
+  };
+
+  /* =========================================================
+     CONFIRM EMAIL
+     → Llamado desde <VerifyEmail /> después de que el backend
+       valida el token del link y devuelve:
+       { verified, email, name, otpauth_url }
+     → Cambia estado a MFA_SETUP para que MFASetup muestre el QR
+  ========================================================= */
+  const confirmEmail = (verifyData) => {
+    log("CONFIRM EMAIL", verifyData);
+
+    const safeUser = {
+      email:       verifyData.email,
+      name:        verifyData.name,
+      role:        user?.role || "client",   // conservamos el rol del registro
+      otpauth_url: verifyData.otpauth_url,
+    };
+
+    setUser(safeUser);
+    setToken(null);
+    setAuthState(AUTH_STATES.MFA_SETUP);
+
+    log("CONFIRM EMAIL → MFA_SETUP", safeUser);
   };
 
   /* =========================================================
@@ -211,30 +193,22 @@ export const AuthProvider = ({ children }) => {
       setUser(safeUser);
 
       if (data?.mfaRequired) {
-        log("LOGIN → MFA REQUIRED");
+        log("LOGIN → MFA_CHALLENGE");
 
         setAuthState(AUTH_STATES.MFA_CHALLENGE);
         setToken(null);
 
-        return {
-          success: true,
-          mfaRequired: true,
-          user: safeUser,
-        };
+        return { success: true, mfaRequired: true, user: safeUser };
       }
 
       log("LOGIN → AUTHENTICATED");
 
       setAuthState(AUTH_STATES.AUTHENTICATED);
       setToken(data?.token);
-
       saveSession(safeUser, data?.token);
 
-      return {
-        success: true,
-        mfaRequired: false,
-        user: safeUser,
-      };
+      return { success: true, mfaRequired: false, user: safeUser };
+
     } catch (err) {
       console.error("❌ LOGIN ERROR:", err);
       throw err?.response?.data || err;
@@ -243,14 +217,16 @@ export const AuthProvider = ({ children }) => {
 
   /* =========================================================
      MFA VERIFY
+     → Usado tanto en MFA_SETUP (primer registro)
+       como en MFA_CHALLENGE (login posterior)
   ========================================================= */
-  const verifyMFA = async ({ email, token }) => {
-    log("MFA VERIFY START", { email, token });
+  const verifyMFA = async ({ email, token: mfaToken }) => {
+    log("MFA VERIFY START", { email });
 
     try {
       const data = await verifyMFAService({
         email,
-        token: token?.toString().trim(),
+        token: mfaToken?.toString().trim(),
       });
 
       log("MFA RESPONSE", data);
@@ -261,18 +237,18 @@ export const AuthProvider = ({ children }) => {
           role: data.user?.role || user?.role || "client",
         };
 
-        log("MFA SUCCESS → AUTHENTICATED USER", safeUser);
+        log("MFA SUCCESS → AUTHENTICATED", safeUser);
 
         setUser(safeUser);
         setToken(data?.token);
         setAuthState(AUTH_STATES.AUTHENTICATED);
-
         saveSession(safeUser, data?.token);
       } else {
         log("MFA FAILED");
       }
 
       return data;
+
     } catch (err) {
       console.error("❌ MFA ERROR:", err);
       throw err?.response?.data || err;
@@ -304,9 +280,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const res = await axios.get(`${API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       log("REFRESH RESPONSE", res.data);
@@ -316,11 +290,11 @@ export const AuthProvider = ({ children }) => {
       if (updated) {
         setUser(updated);
         saveSession(updated, token);
-
         log("USER REFRESHED");
       }
 
       return updated;
+
     } catch (err) {
       console.error("❌ REFRESH ERROR:", err);
       return null;
@@ -333,21 +307,21 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     token,
-
     authState,
-    isAuthenticated:
-      authState === AUTH_STATES.AUTHENTICATED,
-    isMfaSetup:
-      authState === AUTH_STATES.MFA_SETUP,
-    isMfaChallenge:
-      authState === AUTH_STATES.MFA_CHALLENGE,
 
+    // Flags derivados del estado
+    isAuthenticated: authState === AUTH_STATES.AUTHENTICATED,
+    isPendingEmail:  authState === AUTH_STATES.PENDING_EMAIL,
+    isMfaSetup:      authState === AUTH_STATES.MFA_SETUP,
+    isMfaChallenge:  authState === AUTH_STATES.MFA_CHALLENGE,
+
+    // Acciones
     register,
+    confirmEmail,   // ← NUEVO
     handleLogin,
     verifyMFA,
     logout,
     refreshUser,
-
     updateUser,
   };
 
@@ -365,10 +339,6 @@ export const AuthProvider = ({ children }) => {
 ========================================================= */
 export const useAuth = () => {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };

@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.verify-email {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #0a111f;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(74, 114, 255, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(123, 92, 255, 0.10) 0%, transparent 60%);
+
+  padding: 2rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.verify-email__card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 460px;
+
+  text-align: center;
+  backdrop-filter: blur(20px);
+
+  animation: fadeIn 0.5s ease;
+}
+
+/* =========================
+   ICON
+========================= */
+
+.verify-email__icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+
+  display: inline-block;
+  animation: pop 0.4s ease;
+}
+
+/* =========================
+   TEXT
+========================= */
+
+.verify-email__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+
+  margin-bottom: 0.5rem;
+}
+
+.verify-email__text {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.verify-email__text--mb {
+  margin-bottom: 1.5rem;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.verify-email__button {
+  margin-top: 0.5rem;
+
+  background: linear-gradient(135deg, #4a72ff, #7b5cff);
+  color: #ffffff;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 0.85rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.verify-email__button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .verify-email__card {
+    padding: 2rem 1.5rem;
+  }
+
+  .verify-email__title {
+    font-size: 1.5rem;
+  }
+}
