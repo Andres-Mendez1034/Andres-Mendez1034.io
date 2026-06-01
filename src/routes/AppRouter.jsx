@@ -12,9 +12,8 @@ import Register        from "../pages/Register/Register";
 import CartPage        from "../pages/Cart/CartPage";
 
 // ONBOARDING
-import InfluOnboarding   from "../pages/Onboarding/InfluOnboarding/Onboarding";
-import ClientOnboarding  from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
-import CreatorOnboarding from "../pages/Onboarding/CreatorOnboarding/CreatorOnboarding";
+import InfluOnboarding  from "../pages/Onboarding/InfluOnboarding/Onboarding";
+import ClientOnboarding from "../pages/Onboarding/ClientOnboarding/ClientOnboarding";
 
 // ADMIN
 import AdminPage from "../pages/Admin/AdminPage";
@@ -87,15 +86,10 @@ const PublicOnlyRoute = ({ children }) => {
 
 /* =========================================================
    ROLE REDIRECT
-   → Redirige al panel correcto según el rol del usuario.
-   → Si no está autenticado, manda al login.
-   → Usado en la ruta raíz "/" para que superadmin
-     nunca quede atrapado en el Home.
 ========================================================= */
 const RoleRedirect = () => {
   const { isAuthenticated, user, authState } = useContext(AuthContext);
 
-  // Todavía rehidratando — no hacer nada aún
   if (authState === "UNAUTHENTICATED" && !user) {
     return <Navigate to="/login" replace />;
   }
@@ -108,7 +102,6 @@ const RoleRedirect = () => {
     return <Navigate to="/admin" replace />;
   }
 
-  // Resto de roles → Home normal
   return <Home />;
 };
 
@@ -121,7 +114,6 @@ export default function AppRouter() {
     <Routes>
       <Route element={<Layout />}>
 
-        {/* CORE — "/" redirige por rol */}
         <Route path="/" element={<RoleRedirect />} />
 
         <Route
@@ -170,10 +162,7 @@ export default function AppRouter() {
           path="/onboarding/client"
           element={<PrivateRoute><ClientOnboarding /></PrivateRoute>}
         />
-        <Route
-          path="/onboarding/creator"
-          element={<PrivateRoute><CreatorOnboarding /></PrivateRoute>}
-        />
+        {/* /onboarding/creator eliminado — fusionado en /onboarding/influencer */}
 
         {/* AUTH FLOW */}
         <Route path="/mfa-setup"    element={<MFASetup />} />

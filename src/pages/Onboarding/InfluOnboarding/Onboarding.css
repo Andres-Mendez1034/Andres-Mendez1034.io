@@ -1,230 +1,564 @@
-/* =========================
-   Onboarding - Brand Connect
-========================= */
-
-.onboarding {
-  max-width: 520px;
-  margin: 5rem auto;
-  padding: 2rem 2.2rem;
-
-  background: linear-gradient(
-    180deg,
-    rgba(22,27,34,0.88),
-    rgba(13,17,23,0.96)
-  );
-
-  border-radius: 20px;
-  border: 1px solid rgba(229,231,235,0.08);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
-
-  color: var(--bc-text, #fff);
-  animation: onboardingIn 0.7s ease both;
+/* ═══════════════════════════════════════════════════════
+   ONBOARDING — Layout
+═══════════════════════════════════════════════════════ */
+.onboarding-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem 4rem;
+  background: var(--bg-page, #f5f4f0);
 }
 
-/* =========================
-   HEADERS
-========================= */
-
-.onboarding h2 {
-  margin-bottom: 1.4rem;
-  text-align: center;
-  font-size: 1.7rem;
-  letter-spacing: 0.4px;
-  text-shadow: 0 0 12px rgba(59,130,246,0.25);
-}
-
-.onboarding h3 {
-  margin-bottom: 0.6rem;
-  font-size: 1.1rem;
-}
-
-.onboarding p {
-  color: var(--bc-muted, #8B95A1);
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-
-/* =========================
-   INPUTS / SELECT
-========================= */
-
-.onboarding input[type="text"],
-.onboarding input[type="number"],
-.onboarding select {
+.ob-card {
   width: 100%;
-  margin-top: 0.5rem;
-  margin-bottom: 0.8rem;
-  padding: 0.75rem 0.9rem;
-
-  background: rgba(22,27,34,0.75);
-  border: 1px solid rgba(229,231,235,0.12);
-  border-radius: 14px;
-
-  color: var(--bc-text, #fff);
-  font-size: 0.9rem;
-
-  transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e8e6e0;
+  overflow: hidden;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.07);
 }
 
-.onboarding input::placeholder {
-  color: var(--bc-muted, #8B95A1);
+/* ═══════════════════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════════════════ */
+.ob-progress {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem 2rem 1rem;
+  position: relative;
+  gap: 4px;
+  background: #fafaf8;
+  border-bottom: 1px solid #e8e6e0;
 }
 
-.onboarding input:focus,
-.onboarding select:focus {
-  outline: none;
-  background: rgba(22,27,34,0.95);
-  border-color: rgba(59,130,246,0.6);
-  box-shadow: 0 0 0 4px rgba(59,130,246,0.18);
+/* línea de fondo gris */
+.ob-progress::before {
+  content: "";
+  position: absolute;
+  top: 2.05rem;
+  left: calc(2rem + 12px);
+  right: calc(2rem + 12px);
+  height: 2px;
+  background: #e8e6e0;
+  z-index: 0;
 }
 
-/* =========================
-   CHECKBOX & RADIO GROUPS
-========================= */
+/* línea de progreso activa */
+.ob-progress-bar {
+  position: absolute;
+  top: 2.05rem;
+  left: calc(2rem + 12px);
+  height: 2px;
+  background: #1a1a1a;
+  z-index: 1;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-.onboarding label {
+.ob-progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+  flex: 1;
+}
+
+.ob-progress-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e8e6e0;
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-
-  margin-bottom: 0.45rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  color: var(--bc-text, #fff);
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 2px solid #e8e6e0;
 }
 
-.onboarding input[type="checkbox"],
-.onboarding input[type="radio"] {
-  accent-color: var(--bc-primary, #3B82F6);
-  transform: scale(1.05);
+.ob-progress-step span {
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
-/* =========================
-   BUTTONS
-========================= */
-
-.onboarding button {
-  padding: 0.6rem 1rem;
-  min-width: 120px;
-
-  border-radius: 14px;
-  border: none;
-
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-
-  background: linear-gradient(
-    135deg,
-    var(--bc-primary, #3B82F6),
-    #4f46e5
-  );
-
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(59,130,246,0.3);
-
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.25s ease,
-    filter 0.25s ease;
-}
-
-.onboarding button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 16px 36px rgba(59,130,246,0.45);
-  filter: brightness(1.08);
-}
-
-.onboarding button:active {
-  transform: scale(0.95);
-}
-
-/* Botón secundario (Atrás) */
-.onboarding button:first-of-type {
-  background: rgba(22,27,34,0.8);
-  color: var(--bc-muted, #8B95A1);
-  box-shadow: none;
-  border: 1px solid rgba(229,231,235,0.14);
-}
-
-.onboarding button:first-of-type:hover {
-  background: rgba(22,27,34,1);
+.ob-progress-step--done .ob-progress-dot {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
   color: #fff;
 }
 
-/* =========================
-   BUTTON GROUP
-========================= */
-
-.onboarding button + button {
-  margin-left: 0.6rem;
+.ob-progress-step--done span {
+  color: #1a1a1a;
 }
 
-.onboarding div[style*="marginTop"] {
-  margin-top: 1.4rem !important;
+/* ═══════════════════════════════════════════════════════
+   STEP CONTENT
+═══════════════════════════════════════════════════════ */
+.ob-content {
+  padding: 2rem;
+}
+
+.ob-step {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.6rem;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-/* =========================
-   STEP TRANSITION FEEL
-========================= */
-
-.onboarding > div {
-  animation: stepFade 0.35s ease;
+.ob-step-header {
+  margin-bottom: 0.25rem;
 }
 
-/* =========================
-   ANIMATIONS
-========================= */
-
-@keyframes onboardingIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.ob-step-emoji {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-@keyframes stepFade {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.ob-step-header h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem;
 }
 
-/* =========================
+.ob-step-header p {
+  font-size: 0.875rem;
+  color: #777;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FIELDS
+═══════════════════════════════════════════════════════ */
+.ob-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ob-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ob-optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #aaa;
+  font-size: 0.75rem;
+}
+
+.ob-required {
+  color: #e53e3e;
+}
+
+.ob-field input,
+.ob-field select,
+.ob-field textarea {
+  width: 100%;
+  padding: 0.65rem 0.875rem;
+  border: 1.5px solid #e0ddd6;
+  border-radius: 8px;
+  font-size: 0.925rem;
+  color: #1a1a1a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.ob-field input:focus,
+.ob-field select:focus,
+.ob-field textarea:focus {
+  border-color: #1a1a1a;
+}
+
+.ob-field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.ob-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ─── Input con prefijo ─── */
+.ob-input-prefix {
+  display: flex;
+  border: 1.5px solid #e0ddd6;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.ob-input-prefix:focus-within {
+  border-color: #1a1a1a;
+}
+
+.ob-input-prefix span {
+  padding: 0.65rem 0.75rem;
+  background: #f5f4f0;
+  font-size: 0.825rem;
+  color: #888;
+  border-right: 1px solid #e0ddd6;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.ob-input-prefix input {
+  border: none !important;
+  border-radius: 0 !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.ob-input-prefix input:focus {
+  border: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TAGS
+═══════════════════════════════════════════════════════ */
+.ob-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ob-tag {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #e0ddd6;
+  background: #fff;
+  font-size: 0.825rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-weight: 500;
+}
+
+.ob-tag:hover {
+  border-color: #aaa;
+  color: #1a1a1a;
+}
+
+.ob-tag--active {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════
+   IMAGE PICKER
+═══════════════════════════════════════════════════════ */
+.ob-field--image {
+  align-items: flex-start;
+}
+
+.ob-image-picker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ob-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0ddd6;
+}
+
+.ob-image-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #f5f4f0;
+  border: 2px dashed #d0cdc6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.ob-image-btn {
+  padding: 8px 16px;
+  border: 1.5px solid #e0ddd6;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #444;
+  font-weight: 500;
+  transition: all 0.2s;
+  background: #fff;
+}
+
+.ob-image-btn:hover {
+  border-color: #1a1a1a;
+  color: #1a1a1a;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAPA
+═══════════════════════════════════════════════════════ */
+.map-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-container {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  border: 1.5px solid #e0ddd6;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.map-loading {
+  height: 320px;
+  border-radius: 12px;
+  border: 1.5px solid #e0ddd6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #888;
+  font-size: 0.875rem;
+  background: #fafaf8;
+}
+
+/* pin personalizado */
+.map-pin {
+  width: 32px;
+  height: 40px;
+  position: relative;
+}
+
+.map-pin::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  background: #1a1a1a;
+  border-radius: 50% 50% 50% 0;
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.map-pin-dot {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.map-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f5f4f0;
+  border: 1.5px solid #e0ddd6;
+  font-size: 0.875rem;
+  color: #888;
+  min-height: 48px;
+  transition: all 0.3s;
+}
+
+.map-result--active {
+  background: #f0f9f4;
+  border-color: #34c47a;
+  color: #1a1a1a;
+}
+
+.map-result-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.map-result strong {
+  display: block;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 0.925rem;
+}
+
+.map-coords {
+  display: block;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 2px;
+}
+
+.map-hint {
+  font-size: 0.825rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+.ob-location-confirm {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #f0f9f4;
+  border: 1px solid #34c47a;
+  font-size: 0.875rem;
+  color: #1a7a45;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ERROR
+═══════════════════════════════════════════════════════ */
+.ob-error {
+  margin: 0 2rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  color: #c53030;
+  font-size: 0.875rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════ */
+.ob-nav {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem 1.75rem;
+  gap: 12px;
+  border-top: 1px solid #f0ede6;
+}
+
+.ob-nav-spacer {
+  flex: 1;
+}
+
+.ob-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: 1.5px solid transparent;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ob-btn--back {
+  background: #fff;
+  border-color: #e0ddd6;
+  color: #666;
+}
+
+.ob-btn--back:hover {
+  border-color: #aaa;
+  color: #1a1a1a;
+}
+
+.ob-btn--next {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+.ob-btn--next:hover {
+  background: #333;
+}
+
+.ob-btn--submit {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+  padding: 0.7rem 1.75rem;
+}
+
+.ob-btn--submit:hover:not(:disabled) {
+  background: #333;
+}
+
+.ob-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Spinners ─── */
+.spinner,
+.ob-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════
    RESPONSIVE
-========================= */
-
-@media (max-width: 640px) {
-  .onboarding {
-    margin: 3rem 1rem;
-    padding: 1.6rem;
+═══════════════════════════════════════════════════════ */
+@media (max-width: 520px) {
+  .ob-content {
+    padding: 1.5rem 1.25rem;
   }
 
-  .onboarding button {
+  .ob-nav {
+    padding: 1rem 1.25rem 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ob-nav-spacer {
+    display: none;
+  }
+
+  .ob-btn--submit {
     width: 100%;
+    justify-content: center;
   }
 
-  .onboarding div[style*="marginTop"] {
-    flex-direction: column-reverse;
+  .ob-row {
+    grid-template-columns: 1fr;
   }
 
-  .onboarding button + button {
-    margin-left: 0;
-    margin-bottom: 0.5rem;
+  .ob-progress {
+    padding: 1.25rem 1rem 0.75rem;
+  }
+
+  .ob-progress-step span {
+    display: none;
   }
 }

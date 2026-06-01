@@ -1,33 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./MapPanel.css";
+import axios from "axios";
 
-const SAMPLE_LOCATIONS = [
-  { id: 1,  name: "Brand Connect HQ",         lat: 4.7110,  lng: -74.0721, type: "oficina",    city: "Chapinero, Bogotá" },
-  { id: 2,  name: "Aliado Engativá Norte",     lat: 4.7073,  lng: -74.1134, type: "aliado",     city: "Engativá, Bogotá" },
-  { id: 3,  name: "Creador Engativá Centro",   lat: 4.6981,  lng: -74.1201, type: "influencer", city: "Engativá, Bogotá" },
-  { id: 4,  name: "Negocio Kennedy Central",   lat: 4.6273,  lng: -74.1462, type: "aliado",     city: "Kennedy, Bogotá" },
-  { id: 5,  name: "Influencer Kennedy Sur",    lat: 4.6089,  lng: -74.1598, type: "influencer", city: "Kennedy, Bogotá" },
-  { id: 6,  name: "Aliado Kennedy Américas",   lat: 4.6401,  lng: -74.1337, type: "aliado",     city: "Kennedy, Bogotá" },
-  { id: 7,  name: "Creador Suba Centro",       lat: 4.7412,  lng: -74.0938, type: "influencer", city: "Suba, Bogotá" },
-  { id: 8,  name: "Negocio Suba Rincón",       lat: 4.7631,  lng: -74.0851, type: "aliado",     city: "Suba, Bogotá" },
-  { id: 9,  name: "Influencer Suba Niza",      lat: 4.7289,  lng: -74.0564, type: "influencer", city: "Suba, Bogotá" },
-  { id: 10, name: "Aliado Fontibón",           lat: 4.6726,  lng: -74.1469, type: "aliado",     city: "Fontibón, Bogotá" },
-  { id: 11, name: "Creador Bosa Central",      lat: 4.5986,  lng: -74.1872, type: "influencer", city: "Bosa, Bogotá" },
-  { id: 12, name: "Negocio Usaquén",           lat: 4.7056,  lng: -74.0317, type: "aliado",     city: "Usaquén, Bogotá" },
-];
-
-const COLORS = {
-  oficina:    "#a78bfa",
-  aliado:     "#34d399",
-  influencer: "#fb923c",
-};
+const API = "http://localhost:3000";
 
 export default function MapPanel() {
-  const mapRef     = useRef(null);
-  const leafletRef = useRef(null);
+  const mapRef         = useRef(null);
+  const leafletRef     = useRef(null);
+  const [loading, setLoading]           = useState(true);
+  const [count, setCount]               = useState(0);
+  const [clientCount, setClientCount]   = useState(0);
 
   useEffect(() => {
-    const loadLeaflet = async () => {
+    const loadMap = async () => {
+      // ── 1. Cargar Leaflet si no está ────────────────────────────────
       if (!window.L) {
         const link  = document.createElement("link");
         link.rel    = "stylesheet";
@@ -63,35 +49,85 @@ export default function MapPanel() {
         }
       ).addTo(map);
 
-      SAMPLE_LOCATIONS.forEach((loc) => {
-        const color = COLORS[loc.type] || "#60a5fa";
+      // ── 2. Traer influencers y negocios en paralelo ──────────────────
+      try {
+        const [infRes, clientRes] = await Promise.all([
+          axios.get(`${API}/api/profiles/influencers/map`),
+          axios.get(`${API}/api/profiles/clients/map`),
+        ]);
 
-        const icon = L.divIcon({
-          className: "",
-          html: `<div style="
-            width:14px;height:14px;
-            background:${color};
-            border:2px solid rgba(255,255,255,0.7);
-            border-radius:50%;
-            box-shadow:0 0 10px ${color}99;
-          "></div>`,
-          iconSize:   [14, 14],
-          iconAnchor: [7, 7],
+        const influencers = infRes.data.influencers || [];
+        const clients     = clientRes.data.clients  || [];
+
+        setCount(influencers.length);
+        setClientCount(clients.length);
+
+        // ── Influencers — círculo naranja ──────────────────────────────
+        influencers.forEach((inf) => {
+          if (!inf.lat || !inf.lng) return;
+
+          const icon = L.divIcon({
+            className: "",
+            html: `<div style="
+              width:14px;height:14px;
+              background:#fb923c;
+              border:2px solid rgba(255,255,255,0.7);
+              border-radius:50%;
+              box-shadow:0 0 10px #fb923c99;
+            "></div>`,
+            iconSize:   [14, 14],
+            iconAnchor: [7, 7],
+          });
+
+          L.marker([Number(inf.lat), Number(inf.lng)], { icon })
+            .addTo(map)
+            .bindPopup(`
+              <div style="font-family:sans-serif;font-size:13px;line-height:1.6">
+                <strong>${inf.full_name}</strong><br/>
+                <span style="color:#aaa">${inf.location || ""}</span><br/>
+                ${inf.category ? `<span style="color:#fb923c;text-transform:capitalize">${inf.category}</span>` : ""}
+                ${inf.tiktok_url ? `<br/><a href="${inf.tiktok_url}" target="_blank" style="color:#fb923c">TikTok ↗</a>` : ""}
+              </div>
+            `);
         });
 
-        L.marker([loc.lat, loc.lng], { icon })
-          .addTo(map)
-          .bindPopup(`
-            <div style="font-family:sans-serif;font-size:13px;line-height:1.6">
-              <strong>${loc.name}</strong><br/>
-              <span style="color:#aaa">${loc.city}</span><br/>
-              <span style="color:${color};text-transform:capitalize">${loc.type}</span>
-            </div>
-          `);
-      });
+        // ── Negocios — cuadro azul ─────────────────────────────────────
+        clients.forEach((c) => {
+          if (!c.lat || !c.lng) return;
+
+          const icon = L.divIcon({
+            className: "",
+            html: `<div style="
+              width:14px;height:14px;
+              background:#38bdf8;
+              border:2px solid rgba(255,255,255,0.7);
+              border-radius:3px;
+              box-shadow:0 0 10px #38bdf899;
+            "></div>`,
+            iconSize:   [14, 14],
+            iconAnchor: [7, 7],
+          });
+
+          L.marker([Number(c.lat), Number(c.lng)], { icon })
+            .addTo(map)
+            .bindPopup(`
+              <div style="font-family:sans-serif;font-size:13px;line-height:1.6">
+                <strong>${c.business_name}</strong><br/>
+                <span style="color:#aaa">${c.location || ""}</span><br/>
+                ${c.business_type ? `<span style="color:#38bdf8;text-transform:capitalize">${c.business_type}</span>` : ""}
+                <br/><span style="color:#aaa;font-size:11px">👤 ${c.owner_name}</span>
+              </div>
+            `);
+        });
+
+      } catch (err) {
+        console.error("MAP DATA ERROR:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    loadLeaflet().catch(console.error);
+    loadMap().catch(console.error);
 
     return () => {
       if (leafletRef.current) {
@@ -104,17 +140,35 @@ export default function MapPanel() {
   return (
     <div className="map-panel">
       <div className="panel-header">
-        <h2 className="panel-title">Mapa de negocios aliados</h2>
+        <h2 className="panel-title">Mapa de influencers y negocios</h2>
         <div className="map-legend">
-          <span><span className="legend-dot" style={{ background: "#a78bfa" }} /> Oficina</span>
-          <span><span className="legend-dot" style={{ background: "#34d399" }} /> Aliado</span>
-          <span><span className="legend-dot" style={{ background: "#fb923c" }} /> Influencer</span>
+          <span>
+            <span className="legend-dot" style={{ background: "#fb923c" }} />
+            Influencer
+          </span>
+          <span>
+            <span className="legend-dot" style={{ background: "#38bdf8", borderRadius: "3px" }} />
+            Negocio
+          </span>
+          {!loading && (
+            <span className="map-count">
+              {count} influencers · {clientCount} negocios
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="map-notice">
-        <i className="ti ti-info-circle" /> Datos de ejemplo — Engativá, Kennedy, Suba y zonas aledañas de Bogotá.
-      </div>
+      {loading && (
+        <div className="map-notice">
+          <i className="ti ti-loader" /> Cargando ubicaciones...
+        </div>
+      )}
+
+      {!loading && count === 0 && clientCount === 0 && (
+        <div className="map-notice">
+          <i className="ti ti-info-circle" /> Aún no hay ubicaciones registradas.
+        </div>
+      )}
 
       <div ref={mapRef} className="map-container" />
     </div>
