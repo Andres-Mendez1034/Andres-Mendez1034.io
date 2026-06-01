@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { chatService } from "../../services/chat.service";
+import OfferAcceptModal from "./OfferAcceptModal";
 import "./CreatorChat.css";
 
 const getInitials = (name = "") =>
@@ -106,6 +107,70 @@ function NegotiatePanel({ onSendOffer, onClose }) {
   );
 }
 
+// ── OfferBubble ──────────────────────────────────────────────────────────────
+// Muestra la burbuja de oferta. Si el mensaje NO es mío y aún no fue respondida,
+// muestra los botones Aceptar / Rechazar.
+function OfferBubble({ msg, isMine, conversationId, onAccepted }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [status, setStatus]       = useState(msg.offer_status ?? null);
+
+  const handleClose = (result) => {
+    setModalOpen(false);
+    if (result === "rejected") setStatus("rejected");
+  };
+
+  const handleSuccess = () => {
+    setStatus("accepted");
+    onAccepted?.();
+  };
+
+  const canRespond = !isMine && !status;
+
+  return (
+    <>
+      {modalOpen && (
+        <OfferAcceptModal
+          offer={msg}
+          conversationId={conversationId}
+          onClose={handleClose}
+          onSuccess={handleSuccess}
+        />
+      )}
+
+      <div className={`chp-bubble chp-bubble--offer ${msg._optimistic ? "chp-bubble--sending" : ""}`}>
+        <div className="chp-offer-badge">💰 Oferta</div>
+        <p className="chp-bubble-text">{msg.text}</p>
+
+        {status === "accepted" && (
+          <div className="chp-offer-status chp-offer-status--accepted">✓ Oferta aceptada — pago iniciado</div>
+        )}
+        {status === "rejected" && (
+          <div className="chp-offer-status chp-offer-status--rejected">✕ Oferta rechazada</div>
+        )}
+
+        {canRespond && (
+          <div className="chp-offer-actions">
+            <button
+              className="chp-offer-btn chp-offer-btn--reject"
+              onClick={() => setStatus("rejected")}
+            >
+              Rechazar
+            </button>
+            <button
+              className="chp-offer-btn chp-offer-btn--accept"
+              onClick={() => setModalOpen(true)}
+            >
+              Aceptar oferta
+            </button>
+          </div>
+        )}
+
+        <span className="chp-bubble-time">{formatTime(msg.created_at)}</span>
+      </div>
+    </>
+  );
+}
+
 // ── CreatorChat ──────────────────────────────────────────────────────────────
 export default function CreatorChat({ initialCreatorId = null }) {
   const { user } = useAuth();
@@ -125,7 +190,6 @@ export default function CreatorChat({ initialCreatorId = null }) {
   const inputRef       = useRef(null);
   const pollRef        = useRef(null);
 
-  // ── Load conversations ─────────────────────────────────────────────────
   const loadConversations = useCallback(async () => {
     try {
       const data = await chatService.getConversations();
@@ -137,7 +201,6 @@ export default function CreatorChat({ initialCreatorId = null }) {
     }
   }, []);
 
-  // ── Load messages ──────────────────────────────────────────────────────
   const loadMessages = useCallback(async (convId) => {
     if (!convId) return;
     setLoadingMsgs(true);
@@ -152,7 +215,6 @@ export default function CreatorChat({ initialCreatorId = null }) {
     }
   }, []);
 
-  // ── Init ───────────────────────────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
 
@@ -183,38 +245,31 @@ export default function CreatorChat({ initialCreatorId = null }) {
     return () => { cancelled = true; };
   }, [initialCreatorId]);
 
-  // ── Polling global de conversaciones (siempre activo) ─────────────────
-  // Corre independientemente de si hay una conv activa o no.
-  // Esto permite que el influencer vea chats nuevos sin tener que recargar.
+  // Polling global de conversaciones (siempre activo)
   useEffect(() => {
     const convPollRef = setInterval(async () => {
       const convs = await chatService.getConversations().catch(() => null);
       if (!convs) return;
 
       setConversations(convs);
-
-      // Si no hay conv activa y llegó una nueva, seleccionarla automáticamente
       setActiveConv((prev) => {
         if (prev) return prev;
         return convs.length > 0 ? convs[0] : null;
       });
 
-      // Actualizar el título del documento con mensajes no leídos
       const totalUnread = convs.reduce((acc, c) => acc + Number(c.unread_count ?? 0), 0);
-      if (totalUnread > 0) {
-        document.title = `(${totalUnread}) Nuevo mensaje — Brand Connect`;
-      } else {
-        document.title = "Brand Connect";
-      }
+      document.title = totalUnread > 0
+        ? `(${totalUnread}) Nuevo mensaje — Brand Connect`
+        : "Brand Connect";
     }, 5000);
 
     return () => {
       clearInterval(convPollRef);
       document.title = "Brand Connect";
     };
-  }, []); // [] → siempre activo, no depende de activeConv
+  }, []);
 
-  // ── Polling de mensajes (solo cuando hay conv activa) ─────────────────
+  // Polling de mensajes (solo cuando hay conv activa)
   useEffect(() => {
     if (!activeConv) return;
     loadMessages(activeConv.id);
@@ -222,13 +277,11 @@ export default function CreatorChat({ initialCreatorId = null }) {
     pollRef.current = setInterval(async () => {
       const msgs = await chatService.getMessages(activeConv.id).catch(() => null);
       if (msgs) setMessages(msgs);
-      // Las conversaciones ya las refresca el polling global de arriba
     }, 5000);
 
     return () => clearInterval(pollRef.current);
   }, [activeConv?.id]);
 
-  // ── Send ───────────────────────────────────────────────────────────────
   const sendMessage = useCallback(async (text, isOffer = false, offerAmount = null) => {
     if (!text?.trim() || !activeConv) return;
 
@@ -304,7 +357,6 @@ export default function CreatorChat({ initialCreatorId = null }) {
         />
       )}
 
-      {/* ── Sidebar ── */}
       <aside className={`chp-sidebar ${mobileView === "chat" ? "chp-sidebar--hidden" : ""}`}>
         <div className="chp-sidebar-header">
           <h2 className="chp-sidebar-title">Mensajes</h2>
@@ -358,7 +410,6 @@ export default function CreatorChat({ initialCreatorId = null }) {
         </div>
       </aside>
 
-      {/* ── Chat area ── */}
       <main className={`chp-chat ${mobileView === "list" ? "chp-chat--hidden" : ""}`}>
         {!activeConv ? (
           <div className="chp-chat-empty">
@@ -425,11 +476,20 @@ export default function CreatorChat({ initialCreatorId = null }) {
                             : <span>{getInitials(msg.sender_name ?? "?")}</span>}
                         </div>
                       )}
-                      <div className={`chp-bubble ${msg.is_offer ? "chp-bubble--offer" : ""} ${msg._optimistic ? "chp-bubble--sending" : ""}`}>
-                        {msg.is_offer && <div className="chp-offer-badge">💰 Oferta</div>}
-                        <p className="chp-bubble-text">{msg.text}</p>
-                        <span className="chp-bubble-time">{formatTime(msg.created_at)}</span>
-                      </div>
+
+                      {msg.is_offer ? (
+                        <OfferBubble
+                          msg={msg}
+                          isMine={isMine}
+                          conversationId={activeConv.id}
+                          onAccepted={() => loadMessages(activeConv.id)}
+                        />
+                      ) : (
+                        <div className={`chp-bubble ${msg._optimistic ? "chp-bubble--sending" : ""}`}>
+                          <p className="chp-bubble-text">{msg.text}</p>
+                          <span className="chp-bubble-time">{formatTime(msg.created_at)}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

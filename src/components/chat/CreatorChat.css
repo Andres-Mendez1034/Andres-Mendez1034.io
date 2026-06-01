@@ -715,6 +715,66 @@
 }
 .chp-neg-send-btn:hover { opacity: 0.9; transform: scale(1.01); }
 .chp-neg-send-btn--sent { background: var(--accent-alt); }
+/* ── Agregar al final de CreatorChat.css ────────────────────────────────────
+   Estilos para los botones Aceptar/Rechazar dentro del bubble de oferta
+   ───────────────────────────────────────────────────────────────────────── */
+
+.chp-offer-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.chp-offer-btn {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.chp-offer-btn--reject {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.chp-offer-btn--reject:hover {
+  background: rgba(239, 68, 68, 0.22);
+}
+
+.chp-offer-btn--accept {
+  background: linear-gradient(135deg, #63e6be, #34d399);
+  color: #022c22;
+  box-shadow: 0 2px 8px rgba(99, 230, 190, 0.2);
+}
+.chp-offer-btn--accept:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 230, 190, 0.3);
+}
+
+.chp-offer-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.chp-offer-status--accepted {
+  background: rgba(99, 230, 190, 0.12);
+  color: #63e6be;
+  border: 1px solid rgba(99, 230, 190, 0.2);
+}
+
+.chp-offer-status--rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
 
 /* ── Mobile ─────────────────────────────────────────────────────────────────── */
 @media (max-width: 700px) {
