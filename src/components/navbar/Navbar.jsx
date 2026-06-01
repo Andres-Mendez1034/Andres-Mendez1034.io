@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import ChatNavIcon from "../chat/ChatNavIcon";
 import "./Navbar.css";
 import cartIcon from "../../assets/cart.png";
 
@@ -20,6 +21,9 @@ export default function Navbar() {
 
   const linkClass = ({ isActive }) => (isActive ? "active" : "");
 
+  const isInfluencer = user?.role === "influencer";
+  const isClient     = user?.role === "client";
+
   return (
     <nav className={`navbar${open ? " open" : ""}`}>
       <div className="container">
@@ -29,48 +33,45 @@ export default function Navbar() {
           <NavLink to="/" className="logo" onClick={closeMenu}>
             Brand Connect
           </NavLink>
-
-          <span className="navbar-greeting">
-            Conecta. Crea. Crece.
-          </span>
+          <span className="navbar-greeting">Conecta. Crea. Crece.</span>
         </div>
 
         {/* DESKTOP MENU */}
         <ul className="desktop-menu">
 
           <li>
-            <NavLink to="/" end className={linkClass}>
-              Home
-            </NavLink>
+            <NavLink to="/" end className={linkClass}>Home</NavLink>
           </li>
 
           {isAuthenticated && (
             <>
-              <li>
-                <NavLink to="/marketplace" className={linkClass}>
-                  Marketplace
-                </NavLink>
-              </li>
+              {/* Marketplace solo para clientes */}
+              {isClient && (
+                <li>
+                  <NavLink to="/marketplace" className={linkClass}>Marketplace</NavLink>
+                </li>
+              )}
 
               <li>
-                <NavLink to="/profile" className={linkClass}>
-                  Profile
-                </NavLink>
+                <NavLink to="/profile" className={linkClass}>Profile</NavLink>
               </li>
 
               <li>
-                <NavLink to="/chatbot" className={linkClass}>
-                  💬 Asistente IA
-                </NavLink>
+                <NavLink to="/chatbot" className={linkClass}>💬 Asistente IA</NavLink>
               </li>
 
-      
-
-              <li className="cart">
-                <NavLink to="/cart" onClick={closeMenu}>
-                  <img src={cartIcon} alt="Carrito" className="cart-icon" />
-                </NavLink>
+              <li>
+                <ChatNavIcon />
               </li>
+
+              {/* Carrito solo para clientes */}
+              {isClient && (
+                <li className="cart">
+                  <NavLink to="/cart" onClick={closeMenu}>
+                    <img src={cartIcon} alt="Carrito" className="cart-icon" />
+                  </NavLink>
+                </li>
+              )}
 
               <li className="navbar-user">
                 👋 Hola, {user?.name || "Usuario"}
@@ -87,15 +88,10 @@ export default function Navbar() {
           {!isAuthenticated && (
             <>
               <li>
-                <NavLink to="/login" className={linkClass}>
-                  Login
-                </NavLink>
+                <NavLink to="/login" className={linkClass}>Login</NavLink>
               </li>
-
               <li>
-                <NavLink to="/register" className={linkClass}>
-                  Register
-                </NavLink>
+                <NavLink to="/register" className={linkClass}>Register</NavLink>
               </li>
             </>
           )}
@@ -108,9 +104,7 @@ export default function Navbar() {
           aria-expanded={open}
           onClick={toggleMenu}
         >
-          <span />
-          <span />
-          <span />
+          <span /><span /><span />
         </button>
       </div>
 
@@ -119,39 +113,37 @@ export default function Navbar() {
         <ul className="mobile-menu">
 
           <li>
-            <NavLink to="/" end onClick={closeMenu} className={linkClass}>
-              Home
-            </NavLink>
+            <NavLink to="/" end onClick={closeMenu} className={linkClass}>Home</NavLink>
           </li>
 
           {isAuthenticated && (
             <>
+              {isClient && (
+                <li>
+                  <NavLink to="/marketplace" onClick={closeMenu} className={linkClass}>Marketplace</NavLink>
+                </li>
+              )}
+
               <li>
-                <NavLink to="/marketplace" onClick={closeMenu} className={linkClass}>
-                  Marketplace
-                </NavLink>
+                <NavLink to="/profile" onClick={closeMenu} className={linkClass}>Profile</NavLink>
               </li>
 
               <li>
-                <NavLink to="/profile" onClick={closeMenu} className={linkClass}>
-                  Profile
-                </NavLink>
+                <NavLink to="/chatbot" onClick={closeMenu} className={linkClass}>💬 Asistente IA</NavLink>
               </li>
 
-              <li>
-                <NavLink to="/chatbot" onClick={closeMenu} className={linkClass}>
-                  💬 Asistente IA
-                </NavLink>
+              <li onClick={closeMenu}>
+                <ChatNavIcon />
               </li>
 
-      
-
-              <li>
-                <NavLink to="/cart" onClick={closeMenu}>
-                  <img src={cartIcon} alt="Carrito" className="cart-icon" />
-                  Carrito
-                </NavLink>
-              </li>
+              {isClient && (
+                <li>
+                  <NavLink to="/cart" onClick={closeMenu}>
+                    <img src={cartIcon} alt="Carrito" className="cart-icon" />
+                    Carrito
+                  </NavLink>
+                </li>
+              )}
 
               <li className="navbar-user">
                 👋 Hola, {user?.name || "Usuario"}
@@ -168,15 +160,10 @@ export default function Navbar() {
           {!isAuthenticated && (
             <>
               <li>
-                <NavLink to="/login" onClick={closeMenu} className={linkClass}>
-                  Login
-                </NavLink>
+                <NavLink to="/login" onClick={closeMenu} className={linkClass}>Login</NavLink>
               </li>
-
               <li>
-                <NavLink to="/register" onClick={closeMenu} className={linkClass}>
-                  Register
-                </NavLink>
+                <NavLink to="/register" onClick={closeMenu} className={linkClass}>Register</NavLink>
               </li>
             </>
           )}

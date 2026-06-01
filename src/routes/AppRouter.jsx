@@ -44,6 +44,9 @@ import Cancel         from "../pages/Cancel/Cancel";
 // CREATOR PROFILE
 import CreatorProfile from "../pages/CreatorProfile/CreatorProfile";
 
+// CHAT
+import ChatPage from "../pages/Chat/ChatPage";
+
 // 404
 import NotFound from "../pages/NotFound/NotFound";
 
@@ -187,7 +190,19 @@ export default function AppRouter() {
           element={<PrivateRoute><CreatorProfile /></PrivateRoute>}
         />
 
-        {/* ONBOARDING — protegido con OnboardingGuard */}
+        {/* CHAT — lista de conversaciones */}
+        <Route
+          path="/chat"
+          element={<PrivateRoute><ChatPage /></PrivateRoute>}
+        />
+
+        {/* CHAT — abre directo con un creador desde "Negociar" */}
+        <Route
+          path="/chat/:creatorId"
+          element={<PrivateRoute><ChatPage /></PrivateRoute>}
+        />
+
+        {/* ONBOARDING */}
         <Route
           path="/onboarding/influencer"
           element={

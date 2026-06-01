@@ -1,0 +1,55 @@
+/* components/chat/NegotiateButton.css */
+.neg-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.neg-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #2dd4bf;
+  color: #0d1117;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 24px;
+  font-family: "Syne", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 24px rgba(45, 212, 191, 0.3);
+  text-decoration: none;
+  letter-spacing: -0.2px;
+}
+.neg-btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 32px rgba(45, 212, 191, 0.4);
+}
+.neg-btn-primary svg {
+  flex-shrink: 0;
+}
+
+.neg-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #8b949e;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  text-decoration: none;
+}
+.neg-btn-secondary:hover {
+  border-color: #2dd4bf;
+  color: #2dd4bf;
+}

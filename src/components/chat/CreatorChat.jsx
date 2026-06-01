@@ -1,387 +1,472 @@
-import { useState, useRef, useCallback } from "react";
+// components/chat/CreatorChat.jsx
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { chatService } from "../../services/chat.service";
 import "./CreatorChat.css";
 
-/**
- * CreatorChat — Chat flotante con modo negociación integrado
- *
- * Props:
- *   creatorId     — ID del creador
- *   creatorName   — Nombre visible del creador
- *   creatorAvatar — URL del avatar del creador
- *   currentUser   — { id, name, avatar }
- *   currency      — símbolo moneda (default "$")
- *   minPrice      — precio mínimo (default 0)
- *   maxPrice      — precio máximo (default 5000)
- *   initialPrice  — precio inicial (default 500)
- */
-export default function CreatorChat({
-  creatorId,
-  creatorName = "Creador",
-  creatorAvatar = null,
-  currentUser = null,
-  currency = "$",
-  minPrice = 0,
-  maxPrice = 5000,
-  initialPrice = 500,
-}) {
-  // ── Chat state ────────────────────────────────────────────────────────────
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [view, setView] = useState("chat"); // "chat" | "negotiate"
+const getInitials = (name = "") =>
+  name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 
-  // ── Negotiation state ─────────────────────────────────────────────────────
-  const [price, setPrice] = useState(initialPrice);
-  const [step, setStep] = useState(50);
-  const [localMin, setLocalMin] = useState(minPrice);
-  const [localMax, setLocalMax] = useState(maxPrice);
+const formatTime = (iso) =>
+  new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+const formatDate = (iso) => {
+  const d = new Date(iso);
+  const today = new Date();
+  const diff = Math.floor((today - d) / 86400000);
+  if (diff === 0) return "Hoy";
+  if (diff === 1) return "Ayer";
+  return d.toLocaleDateString("es-CO", { day: "numeric", month: "short" });
+};
+
+const fmt = (n) => Number(n).toLocaleString("es-CO");
+
+// ── Negotiate Panel ──────────────────────────────────────────────────────────
+function NegotiatePanel({ onSendOffer, onClose }) {
+  const [price, setPrice] = useState(500000);
+  const [step, setStep] = useState(50000);
+  const [min, setMin] = useState(100000);
+  const [max, setMax] = useState(2000000);
+  const [sent, setSent] = useState(false);
   const [animDir, setAnimDir] = useState(null);
-  const [offerSent, setOfferSent] = useState(false);
 
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
-  const typingTimeoutRef = useRef(null);
-
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  const fmt = (n) => n.toLocaleString("es-CO");
-
-  const getInitials = (name = "") =>
-    name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
-
-  const formatTime = (iso) =>
-    new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-  const scrollToBottom = useCallback(() => {
-    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
-  }, []);
-
-  // ── Stance ────────────────────────────────────────────────────────────────
-  const getStance = () => {
-    const span = localMax - localMin || 1;
-    const ratio = (price - localMin) / span;
-    if (ratio <= 0.3)
-      return {
-        emoji: "🟢",
-        label: "Oferta baja — firme",
-        phrase: "«Esta es mi mejor oferta. Si el precio sube, evaluaré otras opciones.»",
-        cls: "neg-stance neg-stance--low",
-      };
-    if (ratio >= 0.75)
-      return {
-        emoji: "🔴",
-        label: "Cerca del límite — pide algo",
-        phrase: "«Estoy en mi tope. Para cerrar necesito algo extra: entrega rápida o garantía.»",
-        cls: "neg-stance neg-stance--high",
-      };
-    return {
-      emoji: "🟡",
-      label: "Punto medio — flexible",
-      phrase: "«Puedo llegar ahí si incluimos los términos acordados. ¿Cerramos hoy?»",
-      cls: "neg-stance neg-stance--mid",
-    };
-  };
-
-  // ── Price controls ────────────────────────────────────────────────────────
-  const changePrice = (dir) => {
+  const change = (dir) => {
     setAnimDir(dir);
     setTimeout(() => setAnimDir(null), 280);
-    setOfferSent(false);
-    setPrice((prev) => {
-      const next = dir === "up" ? prev + step : prev - step;
-      return Math.min(Math.max(next, localMin), localMax);
-    });
+    setSent(false);
+    setPrice((p) => Math.min(Math.max(dir === "up" ? p + step : p - step, min), max));
   };
 
-  // ── Send offer as chat message ────────────────────────────────────────────
-  const sendOffer = () => {
-    const msg = {
-      id: `${Date.now()}_offer`,
-      senderId: currentUser?.id ?? "guest",
-      senderName: currentUser?.name ?? "Tú",
-      senderAvatar: currentUser?.avatar ?? null,
-      text: `💰 Mi oferta: ${currency}${fmt(price)}`,
-      timestamp: new Date().toISOString(),
-      isMine: true,
-      isOffer: true,
-    };
-    setMessages((prev) => [...prev, msg]);
-    setOfferSent(true);
-    setView("chat");
-    scrollToBottom();
+  const span = max - min || 1;
+  const ratio = (price - min) / span;
+  const stance =
+    ratio <= 0.3
+      ? { emoji: "🟢", label: "Oferta baja — firme", cls: "neg-stance--low" }
+      : ratio >= 0.75
+      ? { emoji: "🔴", label: "Cerca del límite", cls: "neg-stance--high" }
+      : { emoji: "🟡", label: "Punto medio — flexible", cls: "neg-stance--mid" };
+
+  const handleSend = () => {
+    onSendOffer(price);
+    setSent(true);
+    setTimeout(onClose, 800);
   };
 
-  // ── Send chat message ─────────────────────────────────────────────────────
-  const sendMessage = useCallback(() => {
-    const text = inputValue.trim();
-    if (!text) return;
-    const msg = {
-      id: `${Date.now()}_${Math.random()}`,
-      senderId: currentUser?.id ?? "guest",
-      senderName: currentUser?.name ?? "Tú",
-      senderAvatar: currentUser?.avatar ?? null,
-      text,
-      timestamp: new Date().toISOString(),
-      isMine: true,
+  return (
+    <div className="chp-neg-overlay" onClick={onClose}>
+      <div className="chp-neg-panel" onClick={(e) => e.stopPropagation()}>
+        <button className="chp-neg-close" onClick={onClose}>✕</button>
+        <h3 className="chp-neg-title">Negociar precio</h3>
+
+        <div className="chp-neg-price-wrap">
+          <span className="chp-neg-currency">COP</span>
+          <span className={`chp-neg-price ${animDir === "up" ? "chp-anim-up" : ""} ${animDir === "down" ? "chp-anim-down" : ""}`}>
+            ${fmt(price)}
+          </span>
+        </div>
+
+        <div className="chp-neg-arrows">
+          <button className="chp-neg-arrow" onClick={() => change("up")}>▲</button>
+          <div className="chp-neg-step-wrap">
+            <span className="chp-neg-step-label">paso</span>
+            <select className="chp-neg-step" value={step} onChange={(e) => setStep(Number(e.target.value))}>
+              {[5000, 10000, 25000, 50000, 100000, 250000, 500000].map((s) => (
+                <option key={s} value={s}>${fmt(s)}</option>
+              ))}
+            </select>
+          </div>
+          <button className="chp-neg-arrow chp-neg-arrow--down" onClick={() => change("down")}>▼</button>
+        </div>
+
+        <div className="chp-neg-ranges">
+          <label>
+            <span>Mín</span>
+            <input type="range" min={0} max={max - step} step={step} value={min}
+              onChange={(e) => { const v = +e.target.value; if (v < max) setMin(v); }} />
+            <span>${fmt(min)}</span>
+          </label>
+          <label>
+            <span>Máx</span>
+            <input type="range" min={min + step} max={5000000} step={step} value={max}
+              onChange={(e) => { const v = +e.target.value; if (v > min) setMax(v); }} />
+            <span>${fmt(max)}</span>
+          </label>
+        </div>
+
+        <div className={`chp-neg-stance ${stance.cls}`}>
+          {stance.emoji} {stance.label}
+        </div>
+
+        <button className={`chp-neg-send-btn ${sent ? "chp-neg-send-btn--sent" : ""}`} onClick={handleSend}>
+          {sent ? "✓ Oferta enviada" : `Enviar oferta · $${fmt(price)}`}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── CreatorChat ──────────────────────────────────────────────────────────────
+export default function CreatorChat({ initialCreatorId = null }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [conversations, setConversations] = useState([]);
+  const [activeConv, setActiveConv]       = useState(null);
+  const [messages, setMessages]           = useState([]);
+  const [input, setInput]                 = useState("");
+  const [loading, setLoading]             = useState(true);
+  const [loadingMsgs, setLoadingMsgs]     = useState(false);
+  const [showNeg, setShowNeg]             = useState(false);
+  const [search, setSearch]               = useState("");
+  const [mobileView, setMobileView]       = useState("list");
+
+  const messagesEndRef = useRef(null);
+  const inputRef       = useRef(null);
+  const pollRef        = useRef(null);
+
+  // ── Load conversations ─────────────────────────────────────────────────
+  const loadConversations = useCallback(async () => {
+    try {
+      const data = await chatService.getConversations();
+      setConversations(data);
+      return data;
+    } catch (err) {
+      console.error("loadConversations:", err);
+      return [];
+    }
+  }, []);
+
+  // ── Load messages ──────────────────────────────────────────────────────
+  const loadMessages = useCallback(async (convId) => {
+    if (!convId) return;
+    setLoadingMsgs(true);
+    try {
+      const data = await chatService.getMessages(convId);
+      setMessages(data);
+      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+    } catch (err) {
+      console.error("loadMessages:", err);
+    } finally {
+      setLoadingMsgs(false);
+    }
+  }, []);
+
+  // ── Init ───────────────────────────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
+
+    async function init() {
+      setLoading(true);
+      const convs = await loadConversations();
+      if (cancelled) return;
+
+      if (initialCreatorId) {
+        try {
+          const conv = await chatService.createConversation(initialCreatorId);
+          if (!cancelled) {
+            setActiveConv(conv);
+            setMobileView("chat");
+            await loadConversations();
+          }
+        } catch (err) {
+          console.error("createConversation:", err);
+        }
+      } else if (convs.length > 0) {
+        setActiveConv(convs[0]);
+      }
+
+      if (!cancelled) setLoading(false);
+    }
+
+    init();
+    return () => { cancelled = true; };
+  }, [initialCreatorId]);
+
+  // ── Polling global de conversaciones (siempre activo) ─────────────────
+  // Corre independientemente de si hay una conv activa o no.
+  // Esto permite que el influencer vea chats nuevos sin tener que recargar.
+  useEffect(() => {
+    const convPollRef = setInterval(async () => {
+      const convs = await chatService.getConversations().catch(() => null);
+      if (!convs) return;
+
+      setConversations(convs);
+
+      // Si no hay conv activa y llegó una nueva, seleccionarla automáticamente
+      setActiveConv((prev) => {
+        if (prev) return prev;
+        return convs.length > 0 ? convs[0] : null;
+      });
+
+      // Actualizar el título del documento con mensajes no leídos
+      const totalUnread = convs.reduce((acc, c) => acc + Number(c.unread_count ?? 0), 0);
+      if (totalUnread > 0) {
+        document.title = `(${totalUnread}) Nuevo mensaje — Brand Connect`;
+      } else {
+        document.title = "Brand Connect";
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(convPollRef);
+      document.title = "Brand Connect";
     };
-    setMessages((prev) => [...prev, msg]);
-    setInputValue("");
-    scrollToBottom();
-  }, [inputValue, currentUser, scrollToBottom]);
+  }, []); // [] → siempre activo, no depende de activeConv
+
+  // ── Polling de mensajes (solo cuando hay conv activa) ─────────────────
+  useEffect(() => {
+    if (!activeConv) return;
+    loadMessages(activeConv.id);
+
+    pollRef.current = setInterval(async () => {
+      const msgs = await chatService.getMessages(activeConv.id).catch(() => null);
+      if (msgs) setMessages(msgs);
+      // Las conversaciones ya las refresca el polling global de arriba
+    }, 5000);
+
+    return () => clearInterval(pollRef.current);
+  }, [activeConv?.id]);
+
+  // ── Send ───────────────────────────────────────────────────────────────
+  const sendMessage = useCallback(async (text, isOffer = false, offerAmount = null) => {
+    if (!text?.trim() || !activeConv) return;
+
+    const optimistic = {
+      id: `opt_${Date.now()}`,
+      conversation_id: activeConv.id,
+      sender_id:    user?.id,
+      sender_name:  user?.name,
+      sender_avatar: null,
+      text: text.trim(),
+      is_offer: isOffer,
+      offer_amount: offerAmount,
+      created_at: new Date().toISOString(),
+      _optimistic: true,
+    };
+
+    setMessages((prev) => [...prev, optimistic]);
+    setInput("");
+    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+
+    try {
+      await chatService.sendMessage(activeConv.id, {
+        text: text.trim(),
+        is_offer: isOffer,
+        offer_amount: offerAmount,
+      });
+      const msgs = await chatService.getMessages(activeConv.id);
+      setMessages(msgs);
+      await loadConversations();
+    } catch (err) {
+      console.error("sendMessage:", err);
+      setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
+    }
+  }, [activeConv, user]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      sendMessage(input);
     }
   };
 
-  // ── Open / close / minimize ───────────────────────────────────────────────
-  const toggleOpen = () => {
-    setIsOpen((prev) => {
-      if (!prev) { setIsMinimized(false); setUnreadCount(0); }
-      return !prev;
-    });
+  const handleSendOffer = (price) => {
+    sendMessage(`💰 Mi oferta: $${fmt(price)} COP`, true, price);
+    setShowNeg(false);
   };
 
-  const toggleMinimize = (e) => {
-    e.stopPropagation();
-    setIsMinimized((prev) => !prev);
-    setUnreadCount(0);
+  const selectConv = (conv) => {
+    setActiveConv(conv);
+    setMobileView("chat");
+    setMessages([]);
   };
 
-  const stance = getStance();
+  const filtered = conversations.filter((c) =>
+    c.other_name?.toLowerCase().includes(search.toLowerCase())
+  );
 
-  // ─────────────────────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="chp-loading">
+        <div className="chp-spinner" />
+        <p>Cargando mensajes...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="cc-wrapper">
-
-      {/* ── Bubble (closed) ── */}
-      {!isOpen && (
-        <button className="cc-bubble" onClick={toggleOpen} aria-label="Abrir chat">
-          <span className="cc-bubble-icon">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="currentColor" />
-            </svg>
-          </span>
-          <span className="cc-bubble-label">Chatear</span>
-          {unreadCount > 0 && (
-            <span className="cc-badge">{unreadCount > 9 ? "9+" : unreadCount}</span>
-          )}
-        </button>
+    <div className="chp-root">
+      {showNeg && (
+        <NegotiatePanel
+          onSendOffer={handleSendOffer}
+          onClose={() => setShowNeg(false)}
+        />
       )}
 
-      {/* ── Chat window ── */}
-      {isOpen && (
-        <div className={`cc-window ${isMinimized ? "cc-window--minimized" : ""}`}>
+      {/* ── Sidebar ── */}
+      <aside className={`chp-sidebar ${mobileView === "chat" ? "chp-sidebar--hidden" : ""}`}>
+        <div className="chp-sidebar-header">
+          <h2 className="chp-sidebar-title">Mensajes</h2>
+        </div>
 
-          {/* Header */}
-          <div
-            className="cc-header"
-            onClick={isMinimized ? toggleMinimize : undefined}
-            style={{ cursor: isMinimized ? "pointer" : "default" }}
-          >
-            <div className="cc-header-info">
-              <div className="cc-avatar cc-avatar--sm">
-                {creatorAvatar
-                  ? <img src={creatorAvatar} alt={creatorName} />
-                  : <span>{getInitials(creatorName)}</span>}
-                <span className="cc-status-dot cc-status-dot--online" />
-              </div>
-              <div className="cc-header-text">
-                <span className="cc-header-name">{creatorName}</span>
-                <span className="cc-header-status">En línea</span>
-              </div>
+        <div className="chp-search-wrap">
+          <svg className="chp-search-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+            <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <input
+            className="chp-search"
+            placeholder="Buscar conversación..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="chp-conv-list">
+          {filtered.length === 0 && (
+            <div className="chp-conv-empty">
+              <span>💬</span>
+              <p>Sin conversaciones aún</p>
             </div>
+          )}
+          {filtered.map((conv) => (
+            <button
+              key={conv.id}
+              className={`chp-conv-item ${activeConv?.id === conv.id ? "chp-conv-item--active" : ""}`}
+              onClick={() => selectConv(conv)}
+            >
+              <div className="chp-conv-avatar">
+                {conv.other_avatar
+                  ? <img src={conv.other_avatar} alt={conv.other_name} />
+                  : <span>{getInitials(conv.other_name ?? "?")}</span>}
+                {Number(conv.unread_count) > 0 && (
+                  <span className="chp-conv-badge">
+                    {conv.unread_count > 9 ? "9+" : conv.unread_count}
+                  </span>
+                )}
+              </div>
+              <div className="chp-conv-info">
+                <span className="chp-conv-name">{conv.other_name ?? "Usuario"}</span>
+                <span className="chp-conv-last">{conv.last_message ?? "Sin mensajes"}</span>
+              </div>
+              {conv.last_message_at && (
+                <span className="chp-conv-time">{formatDate(conv.last_message_at)}</span>
+              )}
+            </button>
+          ))}
+        </div>
+      </aside>
 
-            <div className="cc-header-actions">
-              {unreadCount > 0 && isMinimized && (
-                <span className="cc-badge cc-badge--header">{unreadCount}</span>
-              )}
-              {/* Toggle negociar */}
-              {!isMinimized && (
-                <button
-                  className={`cc-icon-btn cc-neg-toggle ${view === "negotiate" ? "cc-neg-toggle--active" : ""}`}
-                  onClick={(e) => { e.stopPropagation(); setView(v => v === "negotiate" ? "chat" : "negotiate"); }}
-                  aria-label="Modo negociación"
-                  title="Negociar precio"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              )}
-              <button
-                className="cc-icon-btn"
-                onClick={toggleMinimize}
-                aria-label={isMinimized ? "Expandir" : "Minimizar"}
-              >
-                {isMinimized
-                  ? <svg viewBox="0 0 24 24" fill="none"><path d="M5 15l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  : <svg viewBox="0 0 24 24" fill="none"><path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-              </button>
-              <button
-                className="cc-icon-btn cc-icon-btn--close"
-                onClick={toggleOpen}
-                aria-label="Cerrar chat"
-              >
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      {/* ── Chat area ── */}
+      <main className={`chp-chat ${mobileView === "list" ? "chp-chat--hidden" : ""}`}>
+        {!activeConv ? (
+          <div className="chp-chat-empty">
+            <div className="chp-chat-empty-icon">💬</div>
+            <h3>Selecciona una conversación</h3>
+            <p>Elige un chat de la lista para empezar</p>
+          </div>
+        ) : (
+          <>
+            <div className="chp-chat-header">
+              <button className="chp-back-btn" onClick={() => setMobileView("list")}>
+                <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                  <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
+              <div className="chp-chat-header-avatar">
+                {activeConv.other_avatar
+                  ? <img src={activeConv.other_avatar} alt={activeConv.other_name} />
+                  : <span>{getInitials(activeConv.other_name ?? "?")}</span>}
+                <span className="chp-status-dot" />
+              </div>
+              <div className="chp-chat-header-info">
+                <span className="chp-chat-header-name">{activeConv.other_name ?? "Usuario"}</span>
+                <span className="chp-chat-header-status">En línea</span>
+              </div>
             </div>
-          </div>
 
-          {!isMinimized && (
-            <>
-              {/* ══════════════ NEGOTIATE VIEW ══════════════ */}
-              {view === "negotiate" && (
-                <div className="neg-panel">
+            <div className="chp-messages">
+              {loadingMsgs && (
+                <div className="chp-msgs-loading">
+                  <div className="chp-spinner chp-spinner--sm" />
+                </div>
+              )}
 
-                  {/* Price display */}
-                  <div className="neg-price-section">
-                    <p className="neg-price-label">tu oferta</p>
-                    <div className={`neg-price-value ${animDir === "up" ? "neg-anim-up" : ""} ${animDir === "down" ? "neg-anim-down" : ""}`}>
-                      <span className="neg-currency">{currency}</span>
-                      {fmt(price)}
-                    </div>
-
-                    {/* Arrows */}
-                    <div className="neg-arrows">
-                      <button className="neg-arrow-btn" onClick={() => changePrice("up")} aria-label="Subir precio">
-                        <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                          <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
-                      <button className="neg-arrow-btn neg-arrow-btn--down" onClick={() => changePrice("down")} aria-label="Bajar precio">
-                        <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
-                    </div>
-
-                    {/* Step */}
-                    <div className="neg-step-row">
-                      <span className="neg-step-label">paso</span>
-                      <select className="neg-step-select" value={step} onChange={(e) => setStep(Number(e.target.value))}>
-                        {[5, 10, 25, 50, 100, 250, 500].map((s) => (
-                          <option key={s} value={s}>{currency}{fmt(s)}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Range sliders */}
-                  <div className="neg-ranges">
-                    <div className="neg-range-row">
-                      <span className="neg-range-label">mín</span>
-                      <input
-                        type="range" min={minPrice} max={maxPrice} step={step} value={localMin}
-                        onChange={(e) => { const v = Number(e.target.value); if (v < localMax) { setLocalMin(v); if (price < v) setPrice(v); } }}
-                      />
-                      <span className="neg-range-val">{currency}{fmt(localMin)}</span>
-                    </div>
-                    <div className="neg-range-row">
-                      <span className="neg-range-label">máx</span>
-                      <input
-                        type="range" min={minPrice} max={maxPrice} step={step} value={localMax}
-                        onChange={(e) => { const v = Number(e.target.value); if (v > localMin) { setLocalMax(v); if (price > v) setPrice(v); } }}
-                      />
-                      <span className="neg-range-val">{currency}{fmt(localMax)}</span>
-                    </div>
-                  </div>
-
-                  {/* Stance */}
-                  <div className={stance.cls}>
-                    <p className="neg-stance-title">{stance.emoji} {stance.label}</p>
-                    <p className="neg-stance-phrase">{stance.phrase}</p>
-                  </div>
-
-                  {/* Send offer */}
-                  <button
-                    className={`neg-offer-btn ${offerSent ? "neg-offer-btn--sent" : ""}`}
-                    onClick={sendOffer}
-                  >
-                    {offerSent ? "✓ Oferta enviada al chat" : `Enviar oferta · ${currency}${fmt(price)}`}
+              {!loadingMsgs && messages.length === 0 && (
+                <div className="chp-msgs-empty">
+                  <span>👋</span>
+                  <p>Inicia la conversación con <strong>{activeConv.other_name}</strong></p>
+                  <button className="chp-start-neg-btn" onClick={() => setShowNeg(true)}>
+                    🤝 Negociar precio
                   </button>
                 </div>
               )}
 
-              {/* ══════════════ CHAT VIEW ══════════════ */}
-              {view === "chat" && (
-                <>
-                  <div className="cc-messages">
-                    {messages.length === 0 && (
-                      <div className="cc-empty">
-                        <span className="cc-empty-icon">💬</span>
-                        <p>Inicia la conversación con <strong>{creatorName}</strong></p>
-                        <button className="cc-neg-hint" onClick={() => setView("negotiate")}>
-                          🤝 Negociar precio
-                        </button>
+              {messages.map((msg, i) => {
+                const isMine = String(msg.sender_id) === String(user?.id);
+                const prev = messages[i - 1];
+                const showDate =
+                  !prev || formatDate(prev.created_at) !== formatDate(msg.created_at);
+
+                return (
+                  <div key={msg.id}>
+                    {showDate && (
+                      <div className="chp-date-divider">
+                        <span>{formatDate(msg.created_at)}</span>
                       </div>
                     )}
-
-                    {messages.map((msg) => {
-                      const isMine = msg.senderId === currentUser?.id || msg.isMine;
-                      return (
-                        <div key={msg.id} className={`cc-message ${isMine ? "cc-message--mine" : "cc-message--theirs"}`}>
-                          {!isMine && (
-                            <div className="cc-avatar cc-avatar--xs">
-                              {msg.senderAvatar
-                                ? <img src={msg.senderAvatar} alt={msg.senderName} />
-                                : <span>{getInitials(msg.senderName)}</span>}
-                            </div>
-                          )}
-                          <div className={`cc-bubble-msg ${msg.isOffer ? "cc-bubble-msg--offer" : ""}`}>
-                            {!isMine && <span className="cc-sender-name">{msg.senderName}</span>}
-                            <p className="cc-text">{msg.text}</p>
-                            <span className="cc-time">{formatTime(msg.timestamp)}</span>
-                          </div>
+                    <div className={`chp-msg ${isMine ? "chp-msg--mine" : "chp-msg--theirs"}`}>
+                      {!isMine && (
+                        <div className="chp-msg-avatar">
+                          {msg.sender_avatar
+                            ? <img src={msg.sender_avatar} alt={msg.sender_name} />
+                            : <span>{getInitials(msg.sender_name ?? "?")}</span>}
                         </div>
-                      );
-                    })}
-                    <div ref={messagesEndRef} />
+                      )}
+                      <div className={`chp-bubble ${msg.is_offer ? "chp-bubble--offer" : ""} ${msg._optimistic ? "chp-bubble--sending" : ""}`}>
+                        {msg.is_offer && <div className="chp-offer-badge">💰 Oferta</div>}
+                        <p className="chp-bubble-text">{msg.text}</p>
+                        <span className="chp-bubble-time">{formatTime(msg.created_at)}</span>
+                      </div>
+                    </div>
                   </div>
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </div>
 
-                  {/* Footer */}
-                  <div className="cc-footer">
-                    <button
-                      className="cc-footer-neg-btn"
-                      onClick={() => setView("negotiate")}
-                      title="Negociar precio"
-                      aria-label="Abrir modo negociación"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                    <textarea
-                      ref={inputRef}
-                      className="cc-input"
-                      placeholder="Escribe un mensaje..."
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      rows={1}
-                    />
-                    <button
-                      className="cc-send-btn"
-                      onClick={sendMessage}
-                      disabled={!inputValue.trim()}
-                      aria-label="Enviar"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </div>
-      )}
+            <div className="chp-input-bar">
+              <button className="chp-neg-btn" onClick={() => setShowNeg(true)} title="Negociar precio">
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <textarea
+                ref={inputRef}
+                className="chp-input"
+                placeholder="Escribe un mensaje..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                rows={1}
+              />
+              <button
+                className="chp-send-btn"
+                onClick={() => sendMessage(input)}
+                disabled={!input.trim()}
+              >
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </>
+        )}
+      </main>
     </div>
   );
 }

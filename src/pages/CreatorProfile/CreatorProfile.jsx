@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchCreatorById } from "../../services/influencer.service";
 import { useAuth } from "../../hooks/useAuth";
-import CreatorChat from "../../components/chat/CreatorChat";
+import NegotiateButton from "../../components/chat/NegotiateButton";
 import Recommendations from "../../components/recommendations/Recommendations";
 import "./CreatorProfile.css";
 
@@ -174,20 +174,7 @@ export default function CreatorProfile() {
           </div>
 
           <div className="cp-cta-wrap">
-            <CreatorChat
-              creatorId={creator.id}
-              creatorName={name || "Creador"}
-              creatorAvatar={avatar}
-              currentUser={
-                user
-                  ? {
-                      id: user.id ?? user.uid,
-                      name: user.name ?? user.displayName ?? user.email,
-                      avatar: user.avatar ?? user.photoURL ?? null,
-                    }
-                  : null
-              }
-            />
+            <NegotiateButton creatorId={creator.id} creatorName={name} />
           </div>
         </div>
       </header>

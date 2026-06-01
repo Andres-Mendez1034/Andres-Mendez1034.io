@@ -1,0 +1,49 @@
+/* components/chat/ChatNavIcon.css */
+.chni-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  color: #8b949e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+.chni-btn:hover {
+  color: #e6edf3;
+  background: rgba(255,255,255,0.06);
+}
+.chni-btn--active {
+  color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.12);
+}
+
+.chni-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.chni-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: #2dd4bf;
+  color: #0d1117;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 4px;
+  min-width: 15px;
+  text-align: center;
+  line-height: 1.4;
+  font-family: "Syne", sans-serif;
+  pointer-events: none;
+  animation: chni-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes chni-pop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
