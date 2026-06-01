@@ -3,8 +3,14 @@ import "./InfluencersPanel.css";
 
 const API = import.meta.env.VITE_API_URL;
 
+const TABS = [
+  { id: "top",      label: "Top Influencers" },
+  { id: "ingresos", label: "Por Ingresos"    },
+];
+
 export default function InfluencersPanel({ token }) {
   const [influencers, setInfluencers] = useState([]);
+  const [tab,         setTab]         = useState("top");
   const [loading,     setLoading]     = useState(true);
   const [error,       setError]       = useState(null);
 
@@ -23,7 +29,7 @@ export default function InfluencersPanel({ token }) {
   }, [token]);
 
   if (loading) return <div className="panel-loading"><span className="spinner" />Cargando influencers...</div>;
-  if (error)   return (
+  if (error) return (
     <div className="influencers-panel">
       <h2 className="panel-title">Top Influencers</h2>
       <div className="panel-error">
@@ -32,9 +38,27 @@ export default function InfluencersPanel({ token }) {
     </div>
   );
 
+  const sorted = tab === "ingresos"
+    ? [...influencers].sort((a, b) => Number(b.total_revenue) - Number(a.total_revenue))
+    : [...influencers].sort((a, b) => Number(b.total_orders)  - Number(a.total_orders));
+
   return (
     <div className="influencers-panel">
-      <h2 className="panel-title">Top Influencers</h2>
+      <div className="panel-header">
+        <h2 className="panel-title">Influencers</h2>
+      </div>
+
+      <div className="pp-tabs">
+        {TABS.map(t => (
+          <button
+            key={t.id}
+            className={`pp-tab ${tab === t.id ? "active" : ""}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
 
       <div className="table-wrap">
         <table className="admin-table">
@@ -42,21 +66,21 @@ export default function InfluencersPanel({ token }) {
             <tr>
               <th>#</th>
               <th>Influencer</th>
-              <th>Categoría</th>
+              <th>Tags</th>
               <th>Órdenes</th>
               <th>Ingresos</th>
             </tr>
           </thead>
           <tbody>
-            {influencers.length === 0 ? (
+            {sorted.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ textAlign: "center", color: "rgba(255,255,255,0.25)", padding: "32px" }}>
-                  No hay datos aún.
-                </td>
+                <td colSpan={5} className="cell-empty">No hay datos aún.</td>
               </tr>
-            ) : influencers.map((inf, i) => (
+            ) : sorted.map((inf, i) => (
               <tr key={inf.id}>
-                <td className="cell-mono">{i + 1}</td>
+                <td className="cell-mono">
+                  {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1}
+                </td>
                 <td>
                   <div className="cell-user">
                     <div className="inf-avatar">{inf.name?.[0]?.toUpperCase() || "?"}</div>
@@ -67,14 +91,19 @@ export default function InfluencersPanel({ token }) {
                   </div>
                 </td>
                 <td>
-                  {inf.category
-                    ? <span className="badge badge--purple">{inf.category}</span>
-                    : <span className="cell-email">—</span>
-                  }
+                  <div className="inf-tags">
+                    {inf.category
+                      ? inf.category.split(", ").map(tag => (
+                          <span key={tag} className="badge badge--purple">{tag}</span>
+                        ))
+                      : <span className="cell-email">—</span>
+                    }
+                  </div>
                 </td>
                 <td><span className="inf-orders">{inf.total_orders}</span></td>
                 <td className="cell-amount">
-                  ${Number(inf.total_revenue).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  {Number(inf.total_revenue).toLocaleString("es-CO")}
+                  <span className="cell-currency"> COP</span>
                 </td>
               </tr>
             ))}

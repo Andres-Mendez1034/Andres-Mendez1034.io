@@ -1,264 +1,210 @@
-/* =========================================================
-   PANEL BASE (MISMA PALETA DEL HERO)
-========================================================= */
-
+/* CONTENEDOR */
 .influencers-panel {
-  position: relative;
-  padding: 28px;
-  border-radius: 20px;
-
-  background: linear-gradient(180deg, #0d1117, #0a0e14);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-
-  color: #ffffff;
-  font-family: "Inter", sans-serif;
-
-  overflow: hidden;
+  background: #0f172a;
+  color: #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
 }
 
-/* glow decorativo */
-.influencers-panel::before {
-  content: "";
-  position: absolute;
-  width: 500px;
-  height: 500px;
-
-  background: radial-gradient(
-    circle,
-    rgba(74, 114, 255, 0.12),
-    transparent 60%
-  );
-
-  top: -200px;
-  right: -200px;
-  filter: blur(100px);
-  opacity: 0.7;
+/* HEADER */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
-
-/* =========================================================
-   TITLE
-========================================================= */
 
 .panel-title {
-  font-size: 1.6rem;
-  font-weight: 900;
-  margin-bottom: 20px;
-
-  letter-spacing: -0.5px;
+  font-size: 24px;
+  font-weight: 700;
 }
 
-/* =========================================================
-   LOADING
-========================================================= */
-
-.panel-loading {
+/* TABS */
+.pp-tabs {
   display: flex;
-  align-items: center;
-  gap: 12px;
-
-  color: #94a3b8;
-  font-weight: 600;
-}
-
-/* spinner */
-.spinner {
-  width: 18px;
-  height: 18px;
-
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid #4a72ff;
-  border-radius: 50%;
-
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-.panel-error {
-  display: flex;
-  align-items: center;
   gap: 10px;
-
-  padding: 14px;
-  border-radius: 12px;
-
-  background: rgba(255, 80, 80, 0.08);
-  border: 1px solid rgba(255, 80, 80, 0.2);
-
-  color: #ff6b6b;
-  font-weight: 600;
+  margin-bottom: 16px;
 }
 
-/* =========================================================
-   TABLE WRAPPER
-========================================================= */
+.pp-tab {
+  background: #1f2937;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: 0.25s;
+}
 
+.pp-tab:hover {
+  background: #374151;
+  transform: scale(1.05);
+}
+
+.pp-tab.active {
+  background: #6366f1;
+  color: white;
+}
+
+/* TABLA */
 .table-wrap {
   overflow-x: auto;
 }
 
-/* =========================================================
-   TABLE
-========================================================= */
-
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-/* header */
-.admin-table thead {
-  background: rgba(255, 255, 255, 0.04);
+  font-size: 14px;
 }
 
 .admin-table th {
   text-align: left;
-  padding: 14px;
-  font-weight: 700;
-  color: #94a3b8;
+  padding: 12px;
+  color: #9ca3af;
+  border-bottom: 1px solid #1f2937;
 }
 
-/* rows */
 .admin-table td {
-  padding: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 12px; /* más espacio 👌 */
+  border-bottom: 1px solid #1f2937;
+  vertical-align: middle;
 }
 
-/* hover */
-.admin-table tbody tr {
-  transition: all 0.2s ease;
+.admin-table tr:hover {
+  background: rgba(255,255,255,0.03);
 }
 
-.admin-table tbody tr:hover {
-  background: rgba(74, 114, 255, 0.06);
-}
-
-/* =========================================================
-   CELLS
-========================================================= */
-
-.cell-mono {
-  font-family: monospace;
-  color: #94a3b8;
-}
-
-.cell-name {
-  display: block;
-  font-weight: 700;
-}
-
-.cell-email {
-  font-size: 0.8rem;
-  color: #94a3b8;
-}
-
-/* money */
-.cell-amount {
-  font-weight: 800;
-  color: #4a72ff;
-}
-
-/* =========================================================
-   USER CELL
-========================================================= */
-
+/* USUARIO */
 .cell-user {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* avatar */
+.cell-name {
+  display: block;
+  font-weight: 600;
+}
+
+.cell-email {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.cell-mono {
+  font-family: monospace;
+}
+
+/* AVATAR */
 .inf-avatar {
   width: 38px;
   height: 38px;
-
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  border-radius: 50%;
-
-  background: linear-gradient(135deg, #4a72ff, #7b5cff);
-  color: #fff;
-
-  font-weight: 800;
-
-  box-shadow: 0 8px 20px rgba(74, 114, 255, 0.3);
+  color: white;
+  font-weight: 600;
 }
 
-/* =========================================================
-   BADGES
-========================================================= */
+/* TAGS 🔥 (aquí está la clave) */
+.inf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 
+/* Badge estilo chip inline */
 .badge {
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: 999px;
-
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-/* purple */
 .badge--purple {
-  color: #7b5cff;
-  background: rgba(123, 92, 255, 0.12);
-  border: 1px solid rgba(123, 92, 255, 0.25);
+  background: rgba(139,92,246,0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(139,92,246,0.3);
 }
 
-/* =========================================================
-   ORDERS
-========================================================= */
+/* IMPORTANTE: evita que se posicionen raro */
+.inf-tags .badge {
+  position: static !important;
+}
 
+/* ORDENES */
 .inf-orders {
-  font-weight: 800;
-  color: #ffffff;
+  font-weight: 700;
+  color: #facc15;
 }
 
-/* =========================================================
-   EMPTY STATE (YA LO USAS INLINE, PERO TE LO DEJO)
-========================================================= */
+/* DINERO */
+.cell-amount {
+  font-weight: 600;
+  color: #22c55e;
+}
 
-.admin-table td[colspan] {
+.cell-currency {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* VACÍO */
+.cell-empty {
   text-align: center;
+  padding: 20px;
+  color: #6b7280;
 }
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+/* LOADING */
+.panel-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #374151;
+  border-top: 3px solid #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ERROR */
+.panel-error {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.15);
+  color: #f87171;
+}
+
+/* ANIMACIÓN */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .influencers-panel {
-    padding: 20px;
+  .inf-tags {
+    gap: 4px;
   }
 
-  .panel-title {
-    font-size: 1.3rem;
-  }
-
-  .admin-table th,
-  .admin-table td {
-    padding: 10px;
-  }
-
-  .cell-user {
-    gap: 8px;
+  .badge {
+    font-size: 10px;
+    padding: 3px 8px;
   }
 
   .inf-avatar {
     width: 32px;
     height: 32px;
-    font-size: 0.8rem;
   }
 }
