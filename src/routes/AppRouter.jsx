@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import Layout from "../layout/Layout";
 import { AuthContext } from "../context/AuthContext";
 
@@ -46,6 +47,8 @@ import CreatorProfile from "../pages/CreatorProfile/CreatorProfile";
 // 404
 import NotFound from "../pages/NotFound/NotFound";
 
+const API = "http://localhost:3000";
+
 
 /* =========================================================
    PRIVATE ROUTE
@@ -81,6 +84,37 @@ const PublicOnlyRoute = ({ children }) => {
   }
 
   return isAuthenticated ? <Navigate to="/" replace /> : children;
+};
+
+
+/* =========================================================
+   ONBOARDING GUARD
+   Si el usuario ya tiene perfil → redirige a inicio
+========================================================= */
+const OnboardingGuard = ({ children, profileType }) => {
+  const { user, token } = useContext(AuthContext);
+  const [checking,   setChecking]   = useState(true);
+  const [hasProfile, setHasProfile] = useState(false);
+
+  useEffect(() => {
+    const userId = user?.id || user?.user_id;
+    if (!userId) { setChecking(false); return; }
+
+    axios
+      .get(`${API}/api/profiles/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(({ data }) => {
+        if (profileType === "influencer" && data.influencer) setHasProfile(true);
+        if (profileType === "client"     && data.client)     setHasProfile(true);
+      })
+      .catch(() => {})
+      .finally(() => setChecking(false));
+  }, [user, token, profileType]);
+
+  if (checking)    return null;
+  if (hasProfile)  return <Navigate to="/" replace />;
+  return children;
 };
 
 
@@ -153,16 +187,27 @@ export default function AppRouter() {
           element={<PrivateRoute><CreatorProfile /></PrivateRoute>}
         />
 
-        {/* ONBOARDING */}
+        {/* ONBOARDING — protegido con OnboardingGuard */}
         <Route
           path="/onboarding/influencer"
-          element={<PrivateRoute><InfluOnboarding /></PrivateRoute>}
+          element={
+            <PrivateRoute>
+              <OnboardingGuard profileType="influencer">
+                <InfluOnboarding />
+              </OnboardingGuard>
+            </PrivateRoute>
+          }
         />
         <Route
           path="/onboarding/client"
-          element={<PrivateRoute><ClientOnboarding /></PrivateRoute>}
+          element={
+            <PrivateRoute>
+              <OnboardingGuard profileType="client">
+                <ClientOnboarding />
+              </OnboardingGuard>
+            </PrivateRoute>
+          }
         />
-        {/* /onboarding/creator eliminado — fusionado en /onboarding/influencer */}
 
         {/* AUTH FLOW */}
         <Route path="/mfa-setup"    element={<MFASetup />} />

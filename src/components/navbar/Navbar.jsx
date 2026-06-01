@@ -64,11 +64,7 @@ export default function Navbar() {
                 </NavLink>
               </li>
 
-              <li>
-                <NavLink to="/onboarding/creator" className={linkClass}>
-                  Crear perfil
-                </NavLink>
-              </li>
+      
 
               <li className="cart">
                 <NavLink to="/cart" onClick={closeMenu}>
@@ -148,11 +144,7 @@ export default function Navbar() {
                 </NavLink>
               </li>
 
-              <li>
-                <NavLink to="/onboarding/creator" onClick={closeMenu} className={linkClass}>
-                  Crear perfil
-                </NavLink>
-              </li>
+      
 
               <li>
                 <NavLink to="/cart" onClick={closeMenu}>

@@ -1,6 +1,9 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const API = "http://localhost:3000";
 
 export default function MFAVerify() {
   const [token, setToken] = useState("");
@@ -14,28 +17,28 @@ export default function MFAVerify() {
     setError("");
 
     try {
-      console.log("🚀 ENVIANDO:", {
-        email: user?.email,
-        token,
-        type: typeof token,
-      });
-
       const res = await verifyMFA({
         email: user.email,
         token: token.trim(),
       });
 
-      console.log("🔐 MFA RESPONSE:", res);
-
       if (res?.success) {
-        alert("MFA verificado correctamente");
-
-        const role = res?.user?.role || user?.role;
+        const role   = res?.user?.role   || user?.role;
+        const userId = res?.user?.id     || res?.user?.user_id;
 
         if (role === "superadmin") {
           navigate("/admin");
-        } else {
-          navigate("/profile");
+          return;
+        }
+
+        // Verificar si ya tiene perfil completado
+        try {
+          const { data } = await axios.get(`${API}/api/profiles/user/${userId}`);
+          const profileType   = role === "influencer" ? "influencer" : "client";
+          const alreadyExists = data?.[profileType];
+          navigate(alreadyExists ? "/" : `/onboarding/${profileType}`);
+        } catch {
+          navigate(`/onboarding/${role === "influencer" ? "influencer" : "client"}`);
         }
 
         return;
@@ -49,15 +52,8 @@ export default function MFAVerify() {
   };
 
   return (
-    <div
-      style={{
-        textAlign: "center",
-        marginTop: "50px",
-        fontFamily: "Arial",
-      }}
-    >
+    <div style={{ textAlign: "center", marginTop: "50px", fontFamily: "Arial" }}>
       <h2>🔐 Verificación MFA</h2>
-
       <p>Ingresa el código de 6 dígitos de tu app (Google Authenticator)</p>
 
       <form onSubmit={handleSubmit}>
@@ -75,31 +71,16 @@ export default function MFAVerify() {
             marginTop: "10px",
           }}
         />
-
         <br />
-
         <button
           type="submit"
-          style={{
-            marginTop: "15px",
-            padding: "10px 20px",
-            cursor: "pointer",
-          }}
+          style={{ marginTop: "15px", padding: "10px 20px", cursor: "pointer" }}
         >
           Verificar
         </button>
       </form>
 
-      {error && (
-        <p
-          style={{
-            color: "red",
-            marginTop: "10px",
-          }}
-        >
-          {error}
-        </p>
-      )}
+      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
     </div>
   );
 }
