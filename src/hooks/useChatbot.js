@@ -44,7 +44,7 @@ export default function useChatbot() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/chatbot/message", {
+      const response = await fetch("https://brandconnect.azurewebsites.net/api/chatbot/message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

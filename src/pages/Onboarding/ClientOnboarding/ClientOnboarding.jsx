@@ -259,7 +259,7 @@ export default function ClientOnboarding() {
         facebook_url:   form.facebookUrl   || null,
       };
 
-      await axios.post("http://localhost:3000/api/profiles/client", payload);
+      await axios.post("https://brandconnect.azurewebsites.net/api/profiles/client", payload);
 
       if (typeof updateUser === "function") {
         updateUser({

@@ -7,7 +7,7 @@ import MFAVerify from "./MFAVerify";
 
 import "./Login.css";
 
-const API = "http://localhost:3000";
+const API = "https://brandconnect.azurewebsites.net";
 
 export default function LoginForm() {
   const {

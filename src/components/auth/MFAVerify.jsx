@@ -3,7 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API = "http://localhost:3000";
+const API = "https://brandconnect.azurewebsites.net";
 
 export default function MFAVerify() {
   const [token, setToken] = useState("");

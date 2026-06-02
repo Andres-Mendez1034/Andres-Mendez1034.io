@@ -50,7 +50,7 @@ import ChatPage from "../pages/Chat/ChatPage";
 // 404
 import NotFound from "../pages/NotFound/NotFound";
 
-const API = "http://localhost:3000";
+const API = "https://brandconnect.azurewebsites.net";
 
 
 /* =========================================================
