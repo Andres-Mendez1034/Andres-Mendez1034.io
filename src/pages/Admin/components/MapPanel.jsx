@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./MapPanel.css";
 import axios from "axios";
 
-const API = "https://brandconnect.azurewebsites.net";
+const API = "https://api.brandconnect.social";
 
 export default function MapPanel() {
   const mapRef         = useRef(null);

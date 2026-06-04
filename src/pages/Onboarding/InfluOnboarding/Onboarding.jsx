@@ -271,7 +271,7 @@ export default function OnboardingPage() {
       const userId = Number(user.id || user.user_id);
 
       // 1️⃣ influencer_profiles
-      await axios.post("https://brandconnect.azurewebsites.net/api/profiles/influencer", {
+      await axios.post("https://api.brandconnect.social/api/profiles/influencer", {
         user_id:    userId,
         full_name:  form.fullName.trim(),
         id_number:  form.idNumber.trim(),
@@ -302,7 +302,7 @@ export default function OnboardingPage() {
         formData.append("profile_image", form.profileImage);
       }
 
-      await axios.post("https://brandconnect.azurewebsites.net/api/profiles/creator", formData, {
+      await axios.post("https://api.brandconnect.social/api/profiles/creator", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
