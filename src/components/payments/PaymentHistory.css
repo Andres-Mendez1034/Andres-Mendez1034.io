@@ -1,0 +1,104 @@
+.ph-wrap { display: flex; flex-direction: column; gap: 12px; }
+
+.ph-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #111);
+  margin: 0 0 4px;
+}
+
+.ph-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ph-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  transition: box-shadow 0.15s;
+}
+.ph-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+
+.ph-item-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+.ph-item-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ph-item-label {
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--text-primary, #111);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ph-item-to {
+  font-size: .78rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.ph-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.ph-item-amount {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text-primary, #111);
+}
+.ph-item-date {
+  font-size: .75rem;
+  color: var(--text-muted, #9ca3af);
+}
+
+/* badges */
+.ph-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.ph-badge--green { background: #dcfce7; color: #16a34a; }
+.ph-badge--amber { background: #fef9c3; color: #b45309; }
+.ph-badge--red   { background: #fee2e2; color: #dc2626; }
+.ph-badge--gray  { background: #f3f4f6; color: #6b7280; }
+
+/* estados vacíos */
+.ph-loading, .ph-error, .ph-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: var(--text-muted, #9ca3af);
+  font-size: .9rem;
+}
+.ph-empty-icon { font-size: 2rem; }
+.ph-spinner {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #6b7280;
+  border-radius: 50%;
+  animation: ph-spin .7s linear infinite;
+}
+@keyframes ph-spin { to { transform: rotate(360deg); } }

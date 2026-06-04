@@ -36,7 +36,7 @@ export default function OfferAcceptModal({ offer, conversationId, onClose, onSuc
     try {
       const token = localStorage.getItem("bc_token");
 
-      // VITE_API_URL ya contiene la base, ej: "http://localhost:3000/api"
+      // VITE_API_URL ya contiene la base, ej: "https://brandconnect.azurewebsites.net/api"
       // La ruta es /payments/checkout-offer — sin /api extra
       const BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 
