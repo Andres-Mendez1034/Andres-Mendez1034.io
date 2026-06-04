@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/auth";
+const API_URL = "https://brandconnect.azurewebsites.net/api/auth";
 
 export const register = async (userData) => {
   const res = await axios.post(`${API_URL}/register`, userData);
